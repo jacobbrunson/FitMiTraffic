@@ -1,13 +1,15 @@
 ﻿using FitMi_Research_Puck;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Diagnostics;
+using FitMiTraffic.Main.Vehicle;
+using FitMiTraffic.Main.Environment;
+using FitMiTraffic.Main.Input;
 
-namespace FitMiTraffic
+namespace FitMiTraffic.Main
 {
 	class Message
 	{
@@ -46,12 +48,9 @@ namespace FitMiTraffic
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-		HIDPuckDongle puck;
-
 		TrafficManager TrafficManager;
 
 		public static bool DEBUG = true;
-		private KeyboardState prevKeyState;
 
 		public static DebugView DebugView;
 
@@ -119,12 +118,7 @@ namespace FitMiTraffic
 			world = new World(Vector2.Zero);
 			//carBody.LinearVelocity = Vector2.UnitY * 5.0f;
 
-
-
-			puck = new HIDPuckDongle();
-			puck.Open();
-			puck.SendCommand(0, HidPuckCommands.SENDVEL, 0x00, 0x01);
-			puck.SendCommand(1, HidPuckCommands.SENDVEL, 0x00, 0x01);
+			InputManager.Initialize();
 			base.Initialize();
         }
 
@@ -160,23 +154,26 @@ namespace FitMiTraffic
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+			InputManager.Update();
 
-            var kstate = Keyboard.GetState();
-			puck.CheckForNewPuckData();
+			if (InputManager.Escape)
+			{
+				Exit();
+			}
 
-			if (prevKeyState.IsKeyUp(Keys.Z) && kstate.IsKeyDown(Keys.Z))
+			
+
+			if (InputManager.ToggleDebug)
 			{
 				DEBUG = !DEBUG;
 			}
 
-			if (prevKeyState.IsKeyUp(Keys.OemOpenBrackets) && kstate.IsKeyDown(Keys.OemOpenBrackets))
+			if (InputManager.ZoomOut)
 			{
 				scale /= 1.5f;
 			}
 
-			if (prevKeyState.IsKeyUp(Keys.OemCloseBrackets) && kstate.IsKeyDown(Keys.OemCloseBrackets))
+			if (InputManager.ZoomIn)
 			{
 				scale *= 1.5f;
 			}
@@ -187,7 +184,7 @@ namespace FitMiTraffic
 
 			cameraPosition = new Vector2(0, player.Position.Y + 5);
 			Road.Update(player.Position.Y);
-			player.Update(gameTime, kstate, puck.PuckPack0.Gyrometer[0]);
+			player.Update(gameTime, InputManager.LateralMovement);
 
 			if (!player.crashed)
 			{
@@ -198,7 +195,6 @@ namespace FitMiTraffic
 			UpdateMessageQueue(gameTime, scoreMessages);
 
 
-			prevKeyState = kstate;
             base.Update(gameTime);
         }
 

@@ -9,7 +9,7 @@ using tainicom.Aether.Physics2D.Collision.Shapes;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Common;
 
-namespace FitMiTraffic
+namespace FitMiTraffic.Main.Vehicle
 {
 	class CastedRay
 	{

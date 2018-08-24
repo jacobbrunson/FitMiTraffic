@@ -10,7 +10,7 @@ using tainicom.Aether.Physics2D.Collision;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Dynamics.Contacts;
 
-namespace FitMiTraffic
+namespace FitMiTraffic.Main.Vehicle
 {
 	class Dodge
 	{
@@ -41,7 +41,7 @@ namespace FitMiTraffic
 			Body.Mass = 4000.0f;
 		}
 
-		public void Update(GameTime gameTime, KeyboardState keyboardState, int gyro)
+		public void Update(GameTime gameTime, float movement)
 		{
 			if (crashed)
 			{
@@ -53,25 +53,7 @@ namespace FitMiTraffic
 			{
 				float maxLateralSpeed = 6.5f;
 
-				float desiredSpeed = 0;
-
-				if (gyro < -50)
-				{
-					desiredSpeed = Math.Max(-maxLateralSpeed, gyro * 0.005f);
-				} else if (gyro > 50)
-				{
-					desiredSpeed = Math.Min(maxLateralSpeed, gyro * 0.005f);
-				} else
-				{
-					if (keyboardState.IsKeyDown(Keys.A))
-					{
-						desiredSpeed = -maxLateralSpeed / 2;
-					}
-					else if (keyboardState.IsKeyDown(Keys.D))
-					{
-						desiredSpeed = maxLateralSpeed / 2;
-					}
-				}
+				float desiredSpeed = movement * maxLateralSpeed;
 
 				float lateralSpeed = desiredSpeed * 0.5f + Body.LinearVelocity.X * 0.5f;
 

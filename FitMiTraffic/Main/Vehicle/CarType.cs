@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FitMiTraffic
+namespace FitMiTraffic.Main.Vehicle
 {
 	class CarType
 	{

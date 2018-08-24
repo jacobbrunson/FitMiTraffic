@@ -9,8 +9,8 @@
     <ProjectGuid>{7852EB47-2377-48C8-B2D1-1F0A5545B45B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestGame</RootNamespace>
-    <AssemblyName>TestGame</AssemblyName>
+    <RootNamespace>FitMiTraffic</RootNamespace>
+    <AssemblyName>FitMiTraffic</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
@@ -42,14 +42,16 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Game\Car\Car.cs" />
-    <Compile Include="Game\Car\CarType.cs" />
-    <Compile Include="Game\Game.cs" />
-    <Compile Include="Game\Car\Player.cs" />
+    <Compile Include="Main\Utility\ExtensionMethods.cs" />
+    <Compile Include="Main\Vehicle\Car.cs" />
+    <Compile Include="Main\Vehicle\CarType.cs" />
+    <Compile Include="Main\Game.cs" />
+    <Compile Include="Main\Vehicle\Player.cs" />
+    <Compile Include="Main\Input\InputManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Game\Environment\Road.cs" />
-    <Compile Include="Game\Car\TrafficManager.cs" />
+    <Compile Include="Main\Environment\Road.cs" />
+    <Compile Include="Main\Vehicle\TrafficManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Aether.Physics2D, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
