@@ -45,18 +45,9 @@ namespace FitMiTraffic.Main.Vehicle
 			get
 			{
 				Random random = new Random();
-				int v = random.Next(0, 6);
+				int i = random.Next(1, CarType.ALL.Length);
 
-				switch (v)
-				{
-					case 0: return RED_CAR;
-					case 1: return BLUE_CAR;
-					case 2: return PORSCHE;
-					case 3: return SEMI_TRUCK;
-					case 4: return SEDAN;
-				}
-
-				return RED_CAR;
+				return CarType.ALL[i];
 			}
 		}
 
