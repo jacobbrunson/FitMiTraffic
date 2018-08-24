@@ -136,19 +136,19 @@ namespace TestGame
 
 			if (Ray != null)
 			{
-				Game1.DebugView.BeginCustomDraw(Game1.cameraEffect.Projection, Game1.cameraEffect.View);
+				TrafficGame.DebugView.BeginCustomDraw(TrafficGame.cameraEffect.Projection, TrafficGame.cameraEffect.View);
 
 				if (Ray.Hit)
 				{
-					Game1.DebugView.DrawPoint(Ray.P1, .25f, new Color(0.9f, 0.4f, 0.4f));
-					Game1.DebugView.DrawSegment(Ray.P2, Ray.P1, new Color(0.8f, 0.4f, 0.4f));
+					TrafficGame.DebugView.DrawPoint(Ray.P1, .25f, new Color(0.9f, 0.4f, 0.4f));
+					TrafficGame.DebugView.DrawSegment(Ray.P2, Ray.P1, new Color(0.8f, 0.4f, 0.4f));
 				}
 				else
 				{
-					Game1.DebugView.DrawPoint(Ray.P1, .25f, new Color(0.4f, 0.9f, 0.4f));
-					Game1.DebugView.DrawSegment(Ray.P2, Ray.P1, new Color(0.8f, 0.8f, 0.8f));
+					TrafficGame.DebugView.DrawPoint(Ray.P1, .25f, new Color(0.4f, 0.9f, 0.4f));
+					TrafficGame.DebugView.DrawSegment(Ray.P2, Ray.P1, new Color(0.8f, 0.8f, 0.8f));
 				}
-				Game1.DebugView.EndCustomDraw();
+				TrafficGame.DebugView.EndCustomDraw();
 			}
 		}
 	}

@@ -42,19 +42,17 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Car.cs" />
-    <Compile Include="CarType.cs" />
-    <Compile Include="Circle.cs" />
-    <Compile Include="DebugView.cs" />
-    <Compile Include="Game1.cs" />
-    <Compile Include="IPrimitiveBatch.cs" />
-    <Compile Include="Player.cs" />
-    <Compile Include="PrimitiveBatch.cs" />
+    <Compile Include="Game\Car\Car.cs" />
+    <Compile Include="Game\Car\CarType.cs" />
+    <Compile Include="Game\Debug\DebugView.cs" />
+    <Compile Include="Game\Game.cs" />
+    <Compile Include="Game\Debug\IPrimitiveBatch.cs" />
+    <Compile Include="Game\Car\Player.cs" />
+    <Compile Include="Game\Debug\PrimitiveBatch.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DebugShape.cs" />
-    <Compile Include="Road.cs" />
-    <Compile Include="TrafficManager.cs" />
+    <Compile Include="Game\Environment\Road.cs" />
+    <Compile Include="Game\Car\TrafficManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Aether.Physics2D, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">

@@ -24,7 +24,7 @@ namespace TestGame
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class Game1 : Game
+    public class TrafficGame : Game
     {
         Texture2D car_texture;
 		Texture2D blue_car;
@@ -62,7 +62,7 @@ namespace TestGame
 
 		static int score = 0;
 
-		public Game1()
+		public TrafficGame()
         {
             graphics = new GraphicsDeviceManager(this);
 			graphics.PreferredBackBufferWidth = 600;
@@ -135,9 +135,6 @@ namespace TestGame
 			car_texture = Content.Load<Texture2D>(CarType.MERCEDES.TextureName);
 			road_texture = Content.Load<Texture2D>("road");
 			Font = Content.Load<SpriteFont>("Font");
-
-			DebugShape.TextureRectangle = Content.Load<Texture2D>("outline_square");
-			DebugShape.TextureCircle = Content.Load<Texture2D>("outline_circle");
 
 			Road = new Road(road_texture);
 

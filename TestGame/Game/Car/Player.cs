@@ -100,7 +100,7 @@ namespace TestGame
 					d.Body.FixtureList[0].GetAABB(out aabb, 0);
 					if (d.Body.Position.Y - aabb.Height / 2 < Position.Y)
 					{
-						Game1.DodgeCompleted();
+						TrafficGame.DodgeCompleted();
 						Dodges.Dequeue();
 					}
 				}
