@@ -19,6 +19,8 @@ namespace TestGame
 		private Texture2D texture;
 		private CarType Type;
 
+		private float DesiredSpeed;
+
 		public int Lane = -1;
 
 		public Vector2 Position
@@ -30,7 +32,10 @@ namespace TestGame
 		public Vector2 Velocity
 		{
 			get { return Body.LinearVelocity; }
-			set { Body.LinearVelocity = value; }
+			set {
+				Body.LinearVelocity = new Vector2(value.X, Body.LinearVelocity.Y);
+				DesiredSpeed = value.Y;
+			}
 		}
 
 
@@ -38,11 +43,12 @@ namespace TestGame
 		private Vector2 textureSizePx;
 		public Vector2 BodySize;
 
-		public Car(CarType type, World world, Texture2D texture)
+		public Car(CarType type, World world, Texture2D texture, float initialSpeed)
 		{
 			this.World = world;
 			this.texture = texture;
 			Type = type;
+			DesiredSpeed = initialSpeed;
 
 			var textureSize = new Vector2(type.Width, type.Height);
 			textureSizePx = new Vector2(texture.Width, texture.Height);
@@ -76,6 +82,16 @@ namespace TestGame
 			Body.CreatePolygon(verts, 1f);
 			Body.BodyType = BodyType.Dynamic;
 			Body.AngularDamping = 0.5f;
+			Body.LinearVelocity = new Vector2(0, initialSpeed);
+		}
+
+		public void Update(GameTime gameTime)
+		{
+			if (Math.Abs(Velocity.Y - DesiredSpeed) > 0.1)
+			{
+				
+				Body.LinearVelocity = new Vector2(Velocity.X, Velocity.Y * 0.9f + DesiredSpeed * 0.1f);
+			}
 		}
 
 		public void Render(SpriteBatch spriteBatch)

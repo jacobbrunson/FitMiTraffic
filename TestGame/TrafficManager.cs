@@ -77,7 +77,7 @@ namespace TestGame
 					foreach (Car c in cars)
 					{
 						Console.WriteLine(c.Position.Y - posY);
-						if (c.Lane == lane && Math.Abs(c.Position.Y - posY) < Math.Max(c.BodySize.Y*2, type.Height))
+						if (c.Lane == lane && Math.Abs(c.Position.Y - posY) < Math.Max(c.BodySize.Y, type.Height) + 1)
 						{
 							Console.WriteLine("bad car spawn position; retrying");
 							foundSpawnPos = false;
@@ -86,9 +86,8 @@ namespace TestGame
 					}
 				} while (!foundSpawnPos);
 
-				Car car = new Car(type, World, texture);
+				Car car = new Car(type, World, texture, (float)random.NextDouble() * 7.0f + 3);
 				car.Position = new Vector2(posX, posY);
-				car.Velocity = Vector2.UnitY * (float)(random.NextDouble() * 7.0f + 3);
 				car.Lane = lane;
 				
 				cars.Add(car);
@@ -118,6 +117,11 @@ namespace TestGame
 					World.Remove(cars[i].Body);
 					cars.Remove(cars[i]);
 				}
+			}
+
+			foreach (Car car in cars)
+			{
+				car.Update(gameTime);
 			}
 
 			//rays.RemoveAll(ray => gameTime.TotalGameTime.TotalSeconds >= ray.SpawnTime + 0.25f);

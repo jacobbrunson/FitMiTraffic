@@ -18,7 +18,7 @@ namespace TestGame
 
 		float previousTime;
 
-		public Player(CarType type, World world, Texture2D texture) : base(type, world, texture)
+		public Player(CarType type, World world, Texture2D texture, float initialSpeed) : base(type, world, texture, initialSpeed)
 		{
 			Console.WriteLine(Body.Mass);
 			Body.OnCollision += Collision;

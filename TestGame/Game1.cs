@@ -84,8 +84,7 @@ namespace TestGame
 			Traffic = new TrafficManager(Content, world, 500, Road.NumLanes, Road.LaneWidth);
 
 
-			player = new Player(CarType.MERCEDES, world, car_texture);
-			player.Velocity = new Vector2(0, 15.0f);
+			player = new Player(CarType.MERCEDES, world, car_texture, 15.0f);
 			player.Body.LinearDamping = 0.0f;
 
 			cameraEffect = new BasicEffect(GraphicsDevice);
