@@ -81,7 +81,7 @@ namespace TestGame
 
 			Road = new Road(road_texture);
 
-			Traffic = new TrafficManager(Content, world, 1000, Road.NumLanes, Road.LaneWidth);
+			Traffic = new TrafficManager(Content, world, 500, Road.NumLanes, Road.LaneWidth);
 
 
 			player = new Player(CarType.MERCEDES, world, car_texture);
@@ -114,6 +114,16 @@ namespace TestGame
 			if (prevKeyState.IsKeyUp(Keys.Z) && kstate.IsKeyDown(Keys.Z))
 			{
 				DEBUG = !DEBUG;
+			}
+
+			if (prevKeyState.IsKeyUp(Keys.OemOpenBrackets) && kstate.IsKeyDown(Keys.OemOpenBrackets))
+			{
+				scale /= 1.5f;
+			}
+
+			if (prevKeyState.IsKeyUp(Keys.OemCloseBrackets) && kstate.IsKeyDown(Keys.OemCloseBrackets))
+			{
+				scale *= 1.5f;
 			}
 
 			Traffic.Update(gameTime, player.Position.Y);

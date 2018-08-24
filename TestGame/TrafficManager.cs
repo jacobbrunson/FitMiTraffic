@@ -61,8 +61,9 @@ namespace TestGame
 				int lane = 0;
 				float posX = 0, posY = 0;
 
-				var foundSpawnPos = false;
-				while (!foundSpawnPos) {
+				var foundSpawnPos = true;
+				do
+				{
 					lane = random.Next(0, NumLanes);
 					var lanePos = LaneWidth * (lane - NumLanes / 2) + LaneWidth / 2;
 
@@ -71,7 +72,19 @@ namespace TestGame
 
 					posX = lanePos + laneOffset;
 					posY = playerY + (float)random.NextDouble() * 30 + 20;
-				}
+
+					foundSpawnPos = true;
+					foreach (Car c in cars)
+					{
+						Console.WriteLine(c.Position.Y - posY);
+						if (c.Lane == lane && Math.Abs(c.Position.Y - posY) < Math.Max(c.BodySize.Y*2, type.Height))
+						{
+							Console.WriteLine("bad car spawn position; retrying");
+							foundSpawnPos = false;
+							break;
+						}
+					}
+				} while (!foundSpawnPos);
 
 				Car car = new Car(type, World, texture);
 				car.Position = new Vector2(posX, posY);
@@ -90,9 +103,9 @@ namespace TestGame
 				rays.Add(new RayDraw(p1, p2, gameTime.TotalGameTime.TotalSeconds));
 				List<Fixture> hits = World.RayCast(p1, p2);
 
+				//anticipated collision
 				if (hits.Count > 0)
 				{
-					Console.WriteLine("rear-end collision anticipated; matching speed");
 					car.Velocity = new Vector2(0, Math.Min(car.Velocity.Y, hits[0].Body.LinearVelocity.Y - 1));
 				}
 			}
