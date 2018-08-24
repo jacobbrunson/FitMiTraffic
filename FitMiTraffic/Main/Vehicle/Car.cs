@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using tainicom.Aether.Physics2D.Collision.Shapes;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Common;
+using Microsoft.Xna.Framework.Content;
 
 namespace FitMiTraffic.Main.Vehicle
 {
@@ -59,10 +60,10 @@ namespace FitMiTraffic.Main.Vehicle
 		private Vector2 textureSizePx;
 		public Vector2 BodySize;
 
-		public Car(CarType type, World world, Texture2D texture, float initialSpeed)
+		public Car(CarType type, World world, float initialSpeed)
 		{
 			this.World = world;
-			this.texture = texture;
+			this.texture = type.Texture;
 			Type = type;
 			DesiredSpeed = initialSpeed;
 
@@ -150,6 +151,11 @@ namespace FitMiTraffic.Main.Vehicle
 				}
 				TrafficGame.DebugView.EndCustomDraw();
 			}
+		}
+
+		public static void LoadContent(ContentManager content)
+		{
+			CarType.LoadContent(content);
 		}
 	}
 }

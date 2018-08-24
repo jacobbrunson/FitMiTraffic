@@ -28,13 +28,8 @@ namespace FitMiTraffic.Main
     /// </summary>
     public class TrafficGame : Game
     {
-        Texture2D car_texture;
-		Texture2D blue_car;
-		Texture2D road_texture;
 
 		Player player;
-
-		List<Car> cars = new List<Car>();
 
 		Road Road;
 
@@ -110,6 +105,31 @@ namespace FitMiTraffic.Main
 			}
 		}
 
+		private void HandleInput()
+		{
+			InputManager.Update();
+
+			if (InputManager.Escape)
+			{
+				Exit();
+			}
+
+			if (InputManager.ToggleDebug)
+			{
+				DEBUG = !DEBUG;
+			}
+
+			if (InputManager.ZoomOut)
+			{
+				scale /= 1.5f;
+			}
+
+			if (InputManager.ZoomIn)
+			{
+				scale *= 1.5f;
+			}
+		}
+
         protected override void Initialize()
         {
 			tainicom.Aether.Physics2D.Settings.MaxPolygonVertices = 16;
@@ -126,16 +146,17 @@ namespace FitMiTraffic.Main
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-			car_texture = Content.Load<Texture2D>(CarType.MERCEDES.TextureName);
-			road_texture = Content.Load<Texture2D>("road");
+			Car.LoadContent(Content);
+			Road.LoadContent(Content);
+
 			Font = Content.Load<SpriteFont>("Font");
 
-			Road = new Road(road_texture);
+			Road = new Road();
 
 			TrafficManager = new TrafficManager(Content, world, 500, Road.NumLanes, Road.LaneWidth);
 
 
-			player = new Player(CarType.MERCEDES, world, car_texture, 15.0f);
+			player = new Player(CarType.MERCEDES, world, 15.0f);
 			player.Body.LinearDamping = 0.0f;
 
 			cameraEffect = new BasicEffect(GraphicsDevice);
@@ -154,29 +175,7 @@ namespace FitMiTraffic.Main
 
         protected override void Update(GameTime gameTime)
         {
-			InputManager.Update();
-
-			if (InputManager.Escape)
-			{
-				Exit();
-			}
-
-			
-
-			if (InputManager.ToggleDebug)
-			{
-				DEBUG = !DEBUG;
-			}
-
-			if (InputManager.ZoomOut)
-			{
-				scale /= 1.5f;
-			}
-
-			if (InputManager.ZoomIn)
-			{
-				scale *= 1.5f;
-			}
+			HandleInput();
 
 			TrafficManager.Update(gameTime, player.Position.Y);
 

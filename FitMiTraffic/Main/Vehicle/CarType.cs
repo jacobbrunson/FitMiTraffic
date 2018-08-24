@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace FitMiTraffic.Main.Vehicle
 {
@@ -24,6 +26,7 @@ namespace FitMiTraffic.Main.Vehicle
 		public int OffsetY; //Number of empty pixels on top or bottom
 		public float RadiusTop;
 		public float RadiusBottom;
+		public Texture2D Texture;
 
 
 		public CarType(string textureName, float width, float height, int offsetX, int offsetY, float radiusTop, float radiusBottom)
@@ -54,6 +57,30 @@ namespace FitMiTraffic.Main.Vehicle
 				}
 
 				return RED_CAR;
+			}
+		}
+
+		public static CarType[] ALL
+		{
+			get
+			{
+				return new CarType[]
+				{
+					MERCEDES,
+					RED_CAR,
+					BLUE_CAR,
+					PORSCHE,
+					SEMI_TRUCK,
+					SEDAN
+				};
+			}
+		}
+
+		public static void LoadContent(ContentManager content)
+		{
+			foreach (CarType ct in CarType.ALL)
+			{
+				ct.Texture = content.Load<Texture2D>(ct.TextureName);
 			}
 		}
 	}

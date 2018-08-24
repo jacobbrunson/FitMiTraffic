@@ -35,7 +35,7 @@ namespace FitMiTraffic.Main.Vehicle
 
 		Queue<Dodge> Dodges = new Queue<Dodge>();
 
-		public Player(CarType type, World world, Texture2D texture, float initialSpeed) : base(type, world, texture, initialSpeed)
+		public Player(CarType type, World world, float initialSpeed) : base(type, world, initialSpeed)
 		{
 			Body.OnCollision += Collision;
 			Body.Mass = 4000.0f;
@@ -89,6 +89,11 @@ namespace FitMiTraffic.Main.Vehicle
 			}
 
 			previousTime = (float)gameTime.TotalGameTime.TotalSeconds;
+		}
+
+		public static void LoadContent()
+		{
+
 		}
 
 		bool Collision(Fixture a, Fixture b, Contact c)

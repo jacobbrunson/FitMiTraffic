@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace FitMiTraffic.Main.Environment
@@ -16,13 +17,12 @@ namespace FitMiTraffic.Main.Environment
 		public const float LaneWidth = 2.25f;
 		private const float Size = NumLanes * LaneWidth;
 
-		private Texture2D texture;
+		private static Texture2D Texture;
 		private Vector2 textureSize;
 
-		public Road(Texture2D texture)
+		public Road()
 		{
-			this.texture = texture;
-			this.textureSize = new Vector2(texture.Width, texture.Height);
+			this.textureSize = new Vector2(Texture.Width, Texture.Height);
 			for (int i = 0; i < 6; i++)
 			{
 				segments.AddLast(Size * (i-1));
@@ -42,9 +42,14 @@ namespace FitMiTraffic.Main.Environment
 		{
 			foreach (float p in segments)
 			{
-				spriteBatch.Draw(texture, new Vector2(0, p), null, Color.White, 0,
+				spriteBatch.Draw(Texture, new Vector2(0, p), null, Color.White, 0,
 					textureSize / 2, Vector2.One * Size / textureSize, SpriteEffects.None, 0.0f);
 			}
+		}
+
+		public static void LoadContent(ContentManager content)
+		{
+			Texture = content.Load<Texture2D>("road");
 		}
 
 	}

@@ -41,7 +41,6 @@ namespace FitMiTraffic.Main.Vehicle
 				LastSpawnMillis = (long)gameTime.TotalGameTime.TotalMilliseconds;
 
 				var type = CarType.RANDOM;
-				var texture = Content.Load<Texture2D>(type.TextureName);
 
 				int lane = 0;
 				float posX = 0, posY = 0;
@@ -76,7 +75,7 @@ namespace FitMiTraffic.Main.Vehicle
 				if (foundSpawnPos) {
 					float speed = (float)random.NextDouble() * 5.0f + (NumLanes - lane + 1) * 2.0f;
 
-					Car car = new Car(type, World, texture, speed);
+					Car car = new Car(type, World, speed);
 					car.Position = new Vector2(posX, posY);
 					car.Lane = lane;
 
