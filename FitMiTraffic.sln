@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitMiTraffic", "TestGame\FitMiTraffic.csproj", "{7852EB47-2377-48C8-B2D1-1F0A5545B45B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FitMiTraffic", "FitMiTraffic\FitMiTraffic.csproj", "{7852EB47-2377-48C8-B2D1-1F0A5545B45B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
