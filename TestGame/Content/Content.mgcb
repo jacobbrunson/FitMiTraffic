@@ -140,3 +140,10 @@
 /processorParam:TextureFormat=Compressed
 /build:Font.spriteFont
 
+#begin DiagnosticsFont.spriteFont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:DiagnosticsFont.spriteFont
+
