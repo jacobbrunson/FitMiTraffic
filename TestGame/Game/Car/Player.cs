@@ -10,7 +10,7 @@ using tainicom.Aether.Physics2D.Collision;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Dynamics.Contacts;
 
-namespace TestGame
+namespace FitMiTraffic
 {
 	class Dodge
 	{

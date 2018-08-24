@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Diagnostics;
 
-namespace TestGame
+namespace FitMiTraffic
 {
 	class Message
 	{
