@@ -79,14 +79,15 @@ namespace TestGame
 						Console.WriteLine(c.Position.Y - posY);
 						if (c.Lane == lane && Math.Abs(c.Position.Y - posY) < Math.Max(c.BodySize.Y, type.Height) + 1)
 						{
-							Console.WriteLine("bad car spawn position; retrying");
 							foundSpawnPos = false;
 							break;
 						}
 					}
 				} while (!foundSpawnPos);
 
-				Car car = new Car(type, World, texture, (float)random.NextDouble() * 7.0f + 3);
+				float speed = (float)random.NextDouble() * 7.0f + (NumLanes-lane) * 3.0f;
+
+				Car car = new Car(type, World, texture, speed);
 				car.Position = new Vector2(posX, posY);
 				car.Lane = lane;
 				
