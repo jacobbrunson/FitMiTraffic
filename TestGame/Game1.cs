@@ -13,6 +13,7 @@ namespace TestGame
 	{
 		public String Text;
 		public double Expiration;
+		public Vector2 Offset;
 
 		public Message(String text)
 		{
@@ -55,8 +56,11 @@ namespace TestGame
 		public static DebugView DebugView;
 
 		private static Queue<Message> messages = new Queue<Message>();
+		private static Queue<Message> scoreMessages = new Queue<Message>();
 
 		private SpriteFont Font;
+
+		static int score = 0;
 
 		public Game1()
         {
@@ -67,16 +71,44 @@ namespace TestGame
             Content.RootDirectory = "Content";
         }
 
+		private static void AddScore(int points)
+		{
+			score += points;
+
+			Random r = new Random();
+
+			Message m = new Message(String.Format("+{0:n0}", points));
+			m.Offset = new Vector2((float)r.NextDouble() * 50 - 50, r.Next(0, 2) == 0 ? -20 : 20);
+			scoreMessages.Enqueue(m);
+		}
+
 		public static void DodgeCompleted()
 		{
 			Console.WriteLine("NICE DODGE!");
 			WriteMessage("NICE DODGE!");
+			AddScore(10000);
 		}
 
 		private static void WriteMessage(String message)
 		{
 				Message m = new Message(message);
 				messages.Enqueue(m);
+		}
+
+		private void UpdateMessageQueue(GameTime gameTime, Queue<Message> queue)
+		{
+			foreach (Message m in queue)
+			{
+				if (m.Expiration < 0)
+				{
+					m.Expiration = gameTime.TotalGameTime.TotalSeconds + 2;
+				}
+			}
+
+			if (queue.Count > 0 && queue.Peek().Expiration < gameTime.TotalGameTime.TotalSeconds)
+			{
+				queue.Dequeue();
+			}
 		}
 
         protected override void Initialize()
@@ -159,20 +191,15 @@ namespace TestGame
 			cameraPosition = new Vector2(0, player.Position.Y + 5);
 			Road.Update(player.Position.Y);
 			player.Update(gameTime, kstate, puck.PuckPack0.Gyrometer[0]);
-			
-			foreach (Message m in messages)
+
+			if (!player.crashed)
 			{
-				if (m.Expiration < 0)
-				{
-					m.Expiration = gameTime.TotalGameTime.TotalSeconds + 2;
-					Console.WriteLine(m.Expiration);
-				}
+				score += (int)(player.Velocity.Y * 1);
 			}
 
-			if (messages.Count > 0 && messages.Peek().Expiration < gameTime.TotalGameTime.TotalSeconds)
-			{
-				messages.Dequeue();
-			}
+			UpdateMessageQueue(gameTime, messages);
+			UpdateMessageQueue(gameTime, scoreMessages);
+
 
 			prevKeyState = kstate;
             base.Update(gameTime);
@@ -212,6 +239,13 @@ namespace TestGame
 			}
 
 			spriteBatch.Begin();
+			spriteBatch.DrawString(Font, "Score: " + score, new Vector2(GraphicsDevice.Viewport.Width - 200, GraphicsDevice.Viewport.Height - 50), Color.Blue, 0, Vector2.Zero, 2, SpriteEffects.None, 0);
+			foreach (Message m in scoreMessages)
+			{
+				Color color = Color.Orange;
+				spriteBatch.DrawString(Font, m.Text, new Vector2(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 40) + m.Offset, color, 0, Vector2.Zero, 1.5f, SpriteEffects.None, 0);
+			}
+
 
 			int i = 1;
 			foreach (Message m in messages)
