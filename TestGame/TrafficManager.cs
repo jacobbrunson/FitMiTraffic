@@ -10,24 +10,9 @@ using tainicom.Aether.Physics2D.Dynamics;
 
 namespace TestGame
 {
-	class RayDraw
-	{
-		public Vector2 P1;
-		public Vector2 P2;
-		public double SpawnTime;
-
-		public RayDraw(Vector2 p1, Vector2 p2, double spawnTime)
-		{
-			P1 = p1;
-			P2 = p2;
-			SpawnTime = spawnTime;
-		}
-	}
-
 	class TrafficManager
 	{
 		List<Car> cars = new List<Car>();
-		List<RayDraw> rays = new List<RayDraw>();
 		public int Interval;
 
 		private World World;
@@ -79,7 +64,6 @@ namespace TestGame
 					foundSpawnPos = true;
 					foreach (Car c in cars)
 					{
-						Console.WriteLine(c.Position.Y - posY);
 						if (c.Lane == lane && Math.Abs(c.Position.Y - posY) < Math.Max(c.BodySize.Y, type.Height) + 1)
 						{
 							Console.WriteLine("bad car spawn position; retrying");
@@ -106,7 +90,7 @@ namespace TestGame
 				Vector2 p1 = new Vector2(car.Position.X, car.Position.Y + car.BodySize.Y/2);
 				Vector2 p2 = p1 + Vector2.UnitY * rayDist;
 
-				rays.Add(new RayDraw(p1, p2, gameTime.TotalGameTime.TotalSeconds));
+				//rays.Add(new RayDraw(p1, p2, gameTime.TotalGameTime.TotalSeconds));
 				List<Fixture> hits = World.RayCast(p1, p2);
 
 				//anticipated collision
@@ -128,11 +112,19 @@ namespace TestGame
 
 			foreach (Car car in cars)
 			{
+				Body b = car.AnticipateCollision(3);
+
+				if (b != null)
+				{
+					car.Velocity = new Vector2(0, Math.Min(car.Velocity.Y, b.LinearVelocity.Y - 1));
+				}
+
 				car.Update(gameTime);
 			}
 
 			//rays.RemoveAll(ray => gameTime.TotalGameTime.TotalSeconds >= ray.SpawnTime + 0.25f);
 		}
+
 
 		public void RenderTraffic(SpriteBatch spriteBatch)
 		{
@@ -141,16 +133,11 @@ namespace TestGame
 				car.Render(spriteBatch);
 			}
 
-			foreach (RayDraw ray in rays)
+			/*foreach (RayDraw ray in rays)
 			{
-				Game1.DebugView.BeginCustomDraw(Game1.cameraEffect.Projection, Game1.cameraEffect.View);
-				Game1.DebugView.DrawPoint(ray.P1, .25f, new Color(0.4f, 0.9f, 0.4f));
-
-				Game1.DebugView.DrawSegment(ray.P2, ray.P1, new Color(0.8f, 0.8f, 0.8f));
-
-				Game1.DebugView.EndCustomDraw();
+				
 			}
-			rays.RemoveAll(ray => true);
+			rays.RemoveAll(ray => true);*/
 		}
 
 	}

@@ -6,11 +6,24 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using tainicom.Aether.Physics2D.Collision;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Dynamics.Contacts;
 
 namespace TestGame
 {
+	class Dodge
+	{
+		public Body Body;
+		public double Time;
+
+		public Dodge(Body body, double time)
+		{
+			Body = body;
+			Time = time;
+		}
+	}
+
 	class Player : Car
 	{
 		public bool crashed = false;
@@ -18,9 +31,12 @@ namespace TestGame
 
 		float previousTime;
 
+		Body ApproachingBody;
+
+		Queue<Dodge> Dodges = new Queue<Dodge>();
+
 		public Player(CarType type, World world, Texture2D texture, float initialSpeed) : base(type, world, texture, initialSpeed)
 		{
-			Console.WriteLine(Body.Mass);
 			Body.OnCollision += Collision;
 			Body.Mass = 4000.0f;
 		}
@@ -61,6 +77,33 @@ namespace TestGame
 
 				Body.LinearVelocity = new Vector2(lateralSpeed, 15.0f);
 				Body.Rotation = -lateralSpeed * 0.1f;
+
+				Body b = AnticipateCollision(2.0f);
+
+				if (ApproachingBody != null && !ApproachingBody.Equals(b))
+				{
+					//Game1.DodgeCompleted();
+					Dodges.Enqueue(new Dodge(ApproachingBody, gameTime.TotalGameTime.TotalSeconds));
+					ApproachingBody = null;
+				}
+
+				if (b != null)
+				{
+					ApproachingBody = b;
+					Console.WriteLine("WE ARE GONNA CRASH!");
+				}
+
+				if (Dodges.Count > 0)
+				{
+					Dodge d = Dodges.Peek();
+					AABB aabb;
+					d.Body.FixtureList[0].GetAABB(out aabb, 0);
+					if (d.Body.Position.Y - aabb.Height / 2 < Position.Y)
+					{
+						Game1.DodgeCompleted();
+						Dodges.Dequeue();
+					}
+				}
 			}
 
 			previousTime = (float)gameTime.TotalGameTime.TotalSeconds;

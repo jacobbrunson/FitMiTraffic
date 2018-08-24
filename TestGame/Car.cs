@@ -11,6 +11,20 @@ using tainicom.Aether.Physics2D.Common;
 
 namespace TestGame
 {
+	class CastedRay
+	{
+		public readonly Vector2 P1;
+		public readonly Vector2 P2;
+		public readonly bool Hit;
+
+		public CastedRay(Vector2 p1, Vector2 p2, bool hit)
+		{
+			P1 = p1;
+			P2 = p2;
+			Hit = hit;
+		}
+	}
+
 	class Car
 	{
 		public Body Body;
@@ -22,6 +36,8 @@ namespace TestGame
 		private float DesiredSpeed;
 
 		public int Lane = -1;
+
+		private CastedRay Ray;
 
 		public Vector2 Position
 		{
@@ -85,6 +101,25 @@ namespace TestGame
 			Body.LinearVelocity = new Vector2(0, initialSpeed);
 		}
 
+		public Body AnticipateCollision(float maxDistance)
+		{
+			Vector2 p1 = new Vector2(Position.X, Position.Y + BodySize.Y / 2);
+			Vector2 p2 = p1 + Vector2.UnitY * maxDistance;
+			List<Fixture> hits = World.RayCast(p1, p2);
+
+			bool hit = hits.Count > 0;
+
+			Ray = new CastedRay(p1, p2, hit);
+
+			//anticipated collision
+			if (hit)
+			{
+				return hits[0].Body;
+				//car.Velocity = new Vector2(0, Math.Min(car.Velocity.Y, hits[0].Body.LinearVelocity.Y - 1));
+			}
+			return null;
+		}
+
 		public void Update(GameTime gameTime)
 		{
 			if (Math.Abs(Velocity.Y - DesiredSpeed) > 0.1)
@@ -98,6 +133,23 @@ namespace TestGame
 		{
 			spriteBatch.Draw(texture, Body.Position, null, Color.White, Body.Rotation,
 			textureSizePx / 2, scale, SpriteEffects.FlipVertically, 0.0f);
+
+			if (Ray != null)
+			{
+				Game1.DebugView.BeginCustomDraw(Game1.cameraEffect.Projection, Game1.cameraEffect.View);
+
+				if (Ray.Hit)
+				{
+					Game1.DebugView.DrawPoint(Ray.P1, .25f, new Color(0.9f, 0.4f, 0.4f));
+					Game1.DebugView.DrawSegment(Ray.P2, Ray.P1, new Color(0.8f, 0.4f, 0.4f));
+				}
+				else
+				{
+					Game1.DebugView.DrawPoint(Ray.P1, .25f, new Color(0.4f, 0.9f, 0.4f));
+					Game1.DebugView.DrawSegment(Ray.P2, Ray.P1, new Color(0.8f, 0.8f, 0.8f));
+				}
+				Game1.DebugView.EndCustomDraw();
+			}
 		}
 	}
 }

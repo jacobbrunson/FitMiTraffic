@@ -9,6 +9,17 @@ using tainicom.Aether.Physics2D.Diagnostics;
 
 namespace TestGame
 {
+	class Message
+	{
+		public String Text;
+		public double Expiration;
+
+		public Message(String text)
+		{
+			Text = text;
+			Expiration = -1;
+		}
+	}
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
@@ -36,12 +47,16 @@ namespace TestGame
 
 		HIDPuckDongle puck;
 
-		TrafficManager Traffic;
+		TrafficManager TrafficManager;
 
 		public static bool DEBUG = true;
 		private KeyboardState prevKeyState;
 
 		public static DebugView DebugView;
+
+		private static Queue<Message> messages = new Queue<Message>();
+
+		private SpriteFont Font;
 
 		public Game1()
         {
@@ -51,6 +66,18 @@ namespace TestGame
 
             Content.RootDirectory = "Content";
         }
+
+		public static void DodgeCompleted()
+		{
+			Console.WriteLine("NICE DODGE!");
+			WriteMessage("NICE DODGE!");
+		}
+
+		private static void WriteMessage(String message)
+		{
+				Message m = new Message(message);
+				messages.Enqueue(m);
+		}
 
         protected override void Initialize()
         {
@@ -75,13 +102,14 @@ namespace TestGame
 
 			car_texture = Content.Load<Texture2D>(CarType.MERCEDES.TextureName);
 			road_texture = Content.Load<Texture2D>("road");
+			Font = Content.Load<SpriteFont>("Font");
 
 			DebugShape.TextureRectangle = Content.Load<Texture2D>("outline_square");
 			DebugShape.TextureCircle = Content.Load<Texture2D>("outline_circle");
 
 			Road = new Road(road_texture);
 
-			Traffic = new TrafficManager(Content, world, 500, Road.NumLanes, Road.LaneWidth);
+			TrafficManager = new TrafficManager(Content, world, 500, Road.NumLanes, Road.LaneWidth);
 
 
 			player = new Player(CarType.MERCEDES, world, car_texture, 15.0f);
@@ -93,7 +121,7 @@ namespace TestGame
 			DebugView = new DebugView(world);
 			DebugView.LoadContent(GraphicsDevice, Content);
 			DebugView.AppendFlags(DebugViewFlags.DebugPanel | DebugViewFlags.PolygonPoints);
-        }
+		}
 
 
         protected override void UnloadContent()
@@ -106,7 +134,6 @@ namespace TestGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
             var kstate = Keyboard.GetState();
 			puck.CheckForNewPuckData();
 
@@ -125,13 +152,27 @@ namespace TestGame
 				scale *= 1.5f;
 			}
 
-			Traffic.Update(gameTime, player.Position.Y);
+			TrafficManager.Update(gameTime, player.Position.Y);
 
 			world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
 
 			cameraPosition = new Vector2(0, player.Position.Y + 5);
 			Road.Update(player.Position.Y);
 			player.Update(gameTime, kstate, puck.PuckPack0.Gyrometer[0]);
+			
+			foreach (Message m in messages)
+			{
+				if (m.Expiration < 0)
+				{
+					m.Expiration = gameTime.TotalGameTime.TotalSeconds + 2;
+					Console.WriteLine(m.Expiration);
+				}
+			}
+
+			if (messages.Count > 0 && messages.Peek().Expiration < gameTime.TotalGameTime.TotalSeconds)
+			{
+				messages.Dequeue();
+			}
 
 			prevKeyState = kstate;
             base.Update(gameTime);
@@ -150,10 +191,11 @@ namespace TestGame
 
 			Road.Render(spriteBatch);
 
+
 			if (!DEBUG)
 			{
 				player.Render(spriteBatch);
-				Traffic.RenderTraffic(spriteBatch);
+				TrafficManager.RenderTraffic(spriteBatch);
 			}
 
             spriteBatch.End();
@@ -163,11 +205,22 @@ namespace TestGame
 				cameraEffect.Alpha = 0.25f;
 				spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, RasterizerState.CullNone, cameraEffect);
 				player.Render(spriteBatch);
-				Traffic.RenderTraffic(spriteBatch);
+				TrafficManager.RenderTraffic(spriteBatch);
 				spriteBatch.End();
 
 				DebugView.RenderDebugData(cameraEffect.Projection, cameraEffect.View);
 			}
+
+			spriteBatch.Begin();
+
+			int i = 1;
+			foreach (Message m in messages)
+			{
+				Color color = new Color(1f, 0.2f, 0.2f);
+				spriteBatch.DrawString(Font, m.Text, new Vector2(50, GraphicsDevice.Viewport.Height - i * 50), color, 0, Vector2.Zero, 4, SpriteEffects.None, 0);
+				i += 1;
+			}
+			spriteBatch.End();
 
 			base.Draw(gameTime);
         }
