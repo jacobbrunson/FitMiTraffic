@@ -45,7 +45,7 @@ namespace FitMiTraffic.Main
 
 		TrafficManager TrafficManager;
 
-		public static bool DEBUG = true;
+		public static bool DEBUG = false;
 
 		public static DebugView DebugView;
 
@@ -134,11 +134,16 @@ namespace FitMiTraffic.Main
         {
 			tainicom.Aether.Physics2D.Settings.MaxPolygonVertices = 16;
 
-			// TODO: Add your initialization logic here
 			world = new World(Vector2.Zero);
-			//carBody.LinearVelocity = Vector2.UnitY * 5.0f;
+			DebugView = new DebugView(world);
+			DebugView.AppendFlags(DebugViewFlags.DebugPanel | DebugViewFlags.PolygonPoints);
 
 			InputManager.Initialize();
+
+			Road = new Road();
+			TrafficManager = new TrafficManager(Content, world, 500, Road.NumLanes, Road.LaneWidth);
+
+
 			base.Initialize();
         }
 
@@ -149,22 +154,14 @@ namespace FitMiTraffic.Main
 			Car.LoadContent(Content);
 			Road.LoadContent(Content);
 
-			Font = Content.Load<SpriteFont>("Font");
-
-			Road = new Road();
-
-			TrafficManager = new TrafficManager(Content, world, 500, Road.NumLanes, Road.LaneWidth);
-
-
 			player = new Player(CarType.MERCEDES, world, 15.0f);
-			player.Body.LinearDamping = 0.0f;
+
+			Font = Content.Load<SpriteFont>("Font");
 
 			cameraEffect = new BasicEffect(GraphicsDevice);
 			cameraEffect.TextureEnabled = true;
 
-			DebugView = new DebugView(world);
 			DebugView.LoadContent(GraphicsDevice, Content);
-			DebugView.AppendFlags(DebugViewFlags.DebugPanel | DebugViewFlags.PolygonPoints);
 		}
 
 
@@ -180,7 +177,7 @@ namespace FitMiTraffic.Main
 			TrafficManager.Update(gameTime, player.Position.Y);
 
 			world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
-
+			
 			cameraPosition = new Vector2(0, player.Position.Y + 5);
 			Road.Update(player.Position.Y);
 			player.Update(gameTime, InputManager.LateralMovement);

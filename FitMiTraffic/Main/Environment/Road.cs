@@ -11,45 +11,45 @@ namespace FitMiTraffic.Main.Environment
 {
 	class Road
 	{
-		LinkedList<float> segments = new LinkedList<float>();
+		LinkedList<float> Segments = new LinkedList<float>();
 
 		public const int NumLanes = 4;
 		public const float LaneWidth = 2.25f;
 		private const float Size = NumLanes * LaneWidth;
 
 		private static Texture2D Texture;
-		private Vector2 textureSize;
+		private static Vector2 TextureSize;
 
 		public Road()
 		{
-			this.textureSize = new Vector2(Texture.Width, Texture.Height);
 			for (int i = 0; i < 6; i++)
 			{
-				segments.AddLast(Size * (i-1));
+				Segments.AddLast(Size * (i-1));
 			}
 		}
 
 		public void Update(float playerY)
 		{
-			if (playerY - segments.First.Value > Size*2)
+			if (playerY - Segments.First.Value > Size*2)
 			{
-				segments.RemoveFirst();
-				segments.AddLast(segments.Last.Value + Size);
+				Segments.RemoveFirst();
+				Segments.AddLast(Segments.Last.Value + Size);
 			}
 		}
 
 		public void Render(SpriteBatch spriteBatch)
 		{
-			foreach (float p in segments)
+			foreach (float p in Segments)
 			{
 				spriteBatch.Draw(Texture, new Vector2(0, p), null, Color.White, 0,
-					textureSize / 2, Vector2.One * Size / textureSize, SpriteEffects.None, 0.0f);
+					TextureSize / 2, Vector2.One * Size / TextureSize, SpriteEffects.None, 0.0f);
 			}
 		}
 
 		public static void LoadContent(ContentManager content)
 		{
 			Texture = content.Load<Texture2D>("road");
+			TextureSize = new Vector2(Texture.Width, Texture.Height);
 		}
 
 	}

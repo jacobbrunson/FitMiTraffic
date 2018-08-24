@@ -39,6 +39,7 @@ namespace FitMiTraffic.Main.Vehicle
 		{
 			Body.OnCollision += Collision;
 			Body.Mass = 4000.0f;
+			Body.LinearDamping = 0.0f;
 		}
 
 		public void Update(GameTime gameTime, float movement)
@@ -53,7 +54,7 @@ namespace FitMiTraffic.Main.Vehicle
 			{
 				float maxLateralSpeed = 6.5f;
 
-				float desiredSpeed = movement * maxLateralSpeed;
+				float desiredSpeed = movement * 0.5f * maxLateralSpeed;
 
 				float lateralSpeed = desiredSpeed * 0.5f + Body.LinearVelocity.X * 0.5f;
 

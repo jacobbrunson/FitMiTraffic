@@ -31,7 +31,6 @@ namespace FitMiTraffic.Main.Vehicle
 		public Body Body;
 
 		private World World;
-		private Texture2D texture;
 		private CarType Type;
 
 		private float DesiredSpeed;
@@ -63,12 +62,11 @@ namespace FitMiTraffic.Main.Vehicle
 		public Car(CarType type, World world, float initialSpeed)
 		{
 			this.World = world;
-			this.texture = type.Texture;
 			Type = type;
 			DesiredSpeed = initialSpeed;
 
 			var textureSize = new Vector2(type.Width, type.Height);
-			textureSizePx = new Vector2(texture.Width, texture.Height);
+			textureSizePx = new Vector2(type.Texture.Width, type.Texture.Height);
 
 			scale = textureSize / textureSizePx;
 
@@ -132,7 +130,7 @@ namespace FitMiTraffic.Main.Vehicle
 
 		public void Render(SpriteBatch spriteBatch)
 		{
-			spriteBatch.Draw(texture, Body.Position, null, Color.White, Body.Rotation,
+			spriteBatch.Draw(Type.Texture, Body.Position, null, Color.White, Body.Rotation,
 			textureSizePx / 2, scale, SpriteEffects.FlipVertically, 0.0f);
 
 			if (Ray != null)
