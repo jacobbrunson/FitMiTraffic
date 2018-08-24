@@ -62,8 +62,11 @@ namespace TestGame
 				float posX = 0, posY = 0;
 
 				var foundSpawnPos = true;
+				var spawnAttempts = 0;
 				do
 				{
+					spawnAttempts += 1;
+
 					lane = random.Next(0, NumLanes);
 					var lanePos = LaneWidth * (lane - NumLanes / 2) + LaneWidth / 2;
 
@@ -84,15 +87,17 @@ namespace TestGame
 							break;
 						}
 					}
-				} while (!foundSpawnPos);
+				} while (!foundSpawnPos && spawnAttempts < 5);
 
-				float speed = (float)random.NextDouble() * 5.0f + (NumLanes-lane+1) * 2.0f;
+				if (foundSpawnPos) {
+					float speed = (float)random.NextDouble() * 5.0f + (NumLanes - lane + 1) * 2.0f;
 
-				Car car = new Car(type, World, texture, speed);
-				car.Position = new Vector2(posX, posY);
-				car.Lane = lane;
-				
-				cars.Add(car);
+					Car car = new Car(type, World, texture, speed);
+					car.Position = new Vector2(posX, posY);
+					car.Lane = lane;
+
+					cars.Add(car);
+				}
 			}
 
 			float rayDist = 3f;
