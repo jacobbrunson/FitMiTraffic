@@ -86,7 +86,9 @@ namespace TestGame
 					}
 				} while (!foundSpawnPos);
 
-				Car car = new Car(type, World, texture, (float)random.NextDouble() * 7.0f + 3);
+				float speed = (float)random.NextDouble() * 5.0f + (NumLanes-lane+1) * 2.0f;
+
+				Car car = new Car(type, World, texture, speed);
 				car.Position = new Vector2(posX, posY);
 				car.Lane = lane;
 				
