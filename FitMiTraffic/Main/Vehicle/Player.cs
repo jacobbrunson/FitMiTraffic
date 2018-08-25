@@ -40,6 +40,8 @@ namespace FitMiTraffic.Main.Vehicle
 			Body.OnCollision += Collision;
 			Body.Mass = 4000.0f;
 			Body.LinearDamping = 0.0f;
+			State = CarState.Player;
+			Body.Position = new Vector2(-5.5f, 0);
 		}
 
 		public void Update(GameTime gameTime, float movement)
@@ -73,7 +75,6 @@ namespace FitMiTraffic.Main.Vehicle
 				if (b != null)
 				{
 					ApproachingBody = b;
-					Console.WriteLine("WE ARE GONNA CRASH!");
 				}
 
 				if (Dodges.Count > 0)

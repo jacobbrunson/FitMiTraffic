@@ -1,5 +1,4 @@
-﻿using FitMi_Research_Puck;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -34,7 +33,7 @@ namespace FitMiTraffic.Main
 		Road Road;
 
 		Vector2 cameraPosition;
-		float scale = 50.0f; // 50 pixels per meter
+		float scale = 10.0f; // 50 pixels per meter
 
 		public static BasicEffect cameraEffect; //TODO: probably shouldn't be public nor static
 
@@ -45,7 +44,7 @@ namespace FitMiTraffic.Main
 
 		TrafficManager TrafficManager;
 
-		public static bool DEBUG = false;
+		public static bool DEBUG = true;
 
 		public static DebugView DebugView;
 
@@ -141,7 +140,7 @@ namespace FitMiTraffic.Main
 			InputManager.Initialize();
 
 			Road = new Road();
-			TrafficManager = new TrafficManager(Content, world, 500, Road.NumLanes, Road.LaneWidth);
+			TrafficManager = new TrafficManager(Content, world, 1000, Road.NumLanes, Road.LaneWidth);
 
 
 			base.Initialize();
@@ -210,8 +209,8 @@ namespace FitMiTraffic.Main
 
 			if (!DEBUG)
 			{
-				player.Render(spriteBatch);
-				TrafficManager.RenderTraffic(spriteBatch);
+				player.Render(spriteBatch, gameTime);
+				TrafficManager.RenderTraffic(spriteBatch, gameTime);
 			}
 
             spriteBatch.End();
@@ -220,8 +219,8 @@ namespace FitMiTraffic.Main
 			{
 				cameraEffect.Alpha = 0.25f;
 				spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, RasterizerState.CullNone, cameraEffect);
-				player.Render(spriteBatch);
-				TrafficManager.RenderTraffic(spriteBatch);
+				player.Render(spriteBatch, gameTime);
+				TrafficManager.RenderTraffic(spriteBatch, gameTime);
 				spriteBatch.End();
 
 				DebugView.RenderDebugData(cameraEffect.Projection, cameraEffect.View);

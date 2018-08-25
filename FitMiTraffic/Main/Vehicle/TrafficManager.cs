@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FitMiTraffic.Main.Environment;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,7 +20,7 @@ namespace FitMiTraffic.Main.Vehicle
 		private long LastSpawnMillis;
 		private ContentManager Content;
 		private int NumLanes;
-		private float LaneWidth;
+		public float LaneWidth;
 
 		public TrafficManager(ContentManager content, World world, int interval, int numLanes, float laneWidth)
 		{
@@ -52,7 +53,7 @@ namespace FitMiTraffic.Main.Vehicle
 					spawnAttempts += 1;
 
 					lane = random.Next(0, NumLanes);
-					var lanePos = LaneWidth * (lane - NumLanes / 2) + LaneWidth / 2;
+					var lanePos = Road.GetCenterOfLane(lane);
 
 					var wiggleRoom = Math.Max(0, LaneWidth - type.Width - 0.1f);
 					var laneOffset = (float)random.NextDouble() * wiggleRoom - wiggleRoom / 2;
@@ -63,9 +64,8 @@ namespace FitMiTraffic.Main.Vehicle
 					foundSpawnPos = true;
 					foreach (Car c in cars)
 					{
-						if (c.Lane == lane && Math.Abs(c.Position.Y - posY) < Math.Max(c.BodySize.Y, type.Height) + 1)
+						if ((c.Lane == lane || c.Lane == lane - 1 && c.State == CarState.MovingRight || c.Lane == lane + 1 && c.State == CarState.MovingLeft) && Math.Abs(c.Position.Y - posY) < Math.Max(c.BodySize.Y, type.Height) + 1)
 						{
-							Console.WriteLine("bad car spawn position; retrying");
 							foundSpawnPos = false;
 							break;
 						}
@@ -78,24 +78,9 @@ namespace FitMiTraffic.Main.Vehicle
 					Car car = new Car(type, World, speed);
 					car.Position = new Vector2(posX, posY);
 					car.Lane = lane;
+					car.DesiredLane = lane;
 
 					cars.Add(car);
-				}
-			}
-
-			float rayDist = 3f;
-			foreach (Car car in cars)
-			{
-				Vector2 p1 = new Vector2(car.Position.X, car.Position.Y + car.BodySize.Y/2);
-				Vector2 p2 = p1 + Vector2.UnitY * rayDist;
-
-				//rays.Add(new RayDraw(p1, p2, gameTime.TotalGameTime.TotalSeconds));
-				List<Fixture> hits = World.RayCast(p1, p2);
-
-				//anticipated collision
-				if (hits.Count > 0)
-				{
-					car.Velocity = new Vector2(0, Math.Min(car.Velocity.Y, hits[0].Body.LinearVelocity.Y - 1));
 				}
 			}
 
@@ -111,13 +96,6 @@ namespace FitMiTraffic.Main.Vehicle
 
 			foreach (Car car in cars)
 			{
-				Body b = car.AnticipateCollision(3);
-
-				if (b != null)
-				{
-					car.Velocity = new Vector2(0, Math.Min(car.Velocity.Y, b.LinearVelocity.Y - 1));
-				}
-
 				car.Update(gameTime);
 			}
 
@@ -125,11 +103,11 @@ namespace FitMiTraffic.Main.Vehicle
 		}
 
 
-		public void RenderTraffic(SpriteBatch spriteBatch)
+		public void RenderTraffic(SpriteBatch spriteBatch, GameTime gameTime)
 		{
 			foreach (Car car in cars)
 			{
-				car.Render(spriteBatch);
+				car.Render(spriteBatch, gameTime);
 			}
 
 			/*foreach (RayDraw ray in rays)

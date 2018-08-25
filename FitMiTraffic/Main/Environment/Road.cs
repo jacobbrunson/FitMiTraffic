@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using FitMiTraffic.Main.Utility;
 
 namespace FitMiTraffic.Main.Environment
 {
@@ -14,8 +15,8 @@ namespace FitMiTraffic.Main.Environment
 		LinkedList<float> Segments = new LinkedList<float>();
 
 		public const int NumLanes = 4;
-		public const float LaneWidth = 2.25f;
-		private const float Size = NumLanes * LaneWidth;
+		public static float LaneWidth = 2.25f;
+		private float Size = NumLanes * LaneWidth;
 
 		private static Texture2D Texture;
 		private static Vector2 TextureSize;
@@ -26,6 +27,24 @@ namespace FitMiTraffic.Main.Environment
 			{
 				Segments.AddLast(Size * (i-1));
 			}
+		}
+
+		public static int GetLane(float x, float tolerance=0.1f)
+		{
+			float f = x.Map(-LaneWidth * NumLanes / 2, LaneWidth * NumLanes / 2, 0, NumLanes);
+			int i = (int)f;
+
+			if (Math.Abs(x - GetCenterOfLane(i)) > tolerance)
+			{
+				return -1;
+			}
+
+			return i;
+		}
+
+		public static float GetCenterOfLane(int lane)
+		{
+			return LaneWidth * (lane - NumLanes / 2) + LaneWidth / 2;
 		}
 
 		public void Update(float playerY)

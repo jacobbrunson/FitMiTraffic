@@ -17,5 +17,10 @@ namespace FitMiTraffic.Main.Utility
 		{
 			return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
 		}
+
+		public static float Map(this double value, float fromSource, float toSource, float fromTarget, float toTarget)
+		{
+			return ((float)value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
+		}
 	}
 }
