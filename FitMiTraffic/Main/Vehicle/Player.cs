@@ -63,7 +63,7 @@ namespace FitMiTraffic.Main.Vehicle
 				float lateralSpeed = desiredSpeed * 0.5f + Body.LinearVelocity.X * 0.5f;
 
 				Body.LinearVelocity = new Vector2(lateralSpeed, Velocity.Y);
-				Body.Rotation = -lateralSpeed * 0.1f;
+				Body.Rotation = -lateralSpeed * 0.05f;
 
 				Body b = AnticipateCollision(2.0f);
 

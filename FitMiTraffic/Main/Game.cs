@@ -19,8 +19,8 @@ namespace FitMiTraffic.Main
 		private GraphicsDeviceManager graphics;
 		private SpriteBatch spriteBatch;
 		private Vector2 cameraPosition;
-		private float scale = 45.0f; //pixels per meter
-		private BasicEffect cameraEffect;
+		private float scale = 40f; //pixels per meter
+		public static BasicEffect cameraEffect;
 
 		private MessagesUI messagesUI;
 		private ScoreUI scoreUI;
@@ -107,7 +107,7 @@ namespace FitMiTraffic.Main
 			ScoreUI.LoadContent(Content);
 
 			player = new Player(CarType.MERCEDES, world, 20);
-			player.Position = new Vector2(-10, -10);
+			player.Position = new Vector2(0, -10);
 			player.DodgeCompleteCallback = DodgeCompleted;
 
 			cameraEffect = new BasicEffect(GraphicsDevice);
@@ -151,30 +151,24 @@ namespace FitMiTraffic.Main
 
 			Vector3 cameraPosition3D = new Vector3(cameraPosition, 0);
 			cameraEffect.View = Matrix.CreateLookAt(new Vector3(cameraPosition, 0), cameraPosition3D + Vector3.Forward, Vector3.Up);
-			cameraEffect.Projection = Matrix.CreateOrthographic(GraphicsDevice.Viewport.Width / scale, GraphicsDevice.Viewport.Height / scale, 0, -1.0f);
+			cameraEffect.Projection = Matrix.CreateOrthographic(GraphicsDevice.Viewport.Width / scale, GraphicsDevice.Viewport.Height / scale, -1000f, 1000f);
 			cameraEffect.Alpha = 1f;
 
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, RasterizerState.CullNone, cameraEffect);
 
 			road.Render(spriteBatch);
+			spriteBatch.End();
 
 
-			if (!DEBUG)
-			{
-				player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
-				trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
-			}
+			GraphicsDevice.BlendState = BlendState.Opaque;
+			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
+			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
 
-            spriteBatch.End();
+            
 
 			if (DEBUG)
 			{
-				cameraEffect.Alpha = 0.25f;
-				spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, RasterizerState.CullNone, cameraEffect);
-				player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
-				trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
-				spriteBatch.End();
-
 				DebugView.RenderDebugData(cameraEffect.Projection, cameraEffect.View);
 			}
 

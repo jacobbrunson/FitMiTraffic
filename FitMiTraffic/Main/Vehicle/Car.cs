@@ -269,19 +269,35 @@ namespace FitMiTraffic.Main.Vehicle
 				Velocity = new Vector2(lateralSpeed, Velocity.Y);
 			}
 
-			float desiredAngle = -Velocity.X * 0.1f;
+			float desiredAngle = -Velocity.X * 0.05f;
 			Body.Rotation = Body.Rotation * 0.5f + desiredAngle * 0.5f;
 		}
 
 		public void Render(SpriteBatch spriteBatch, GameTime gameTime, Matrix projection, Matrix view)
 		{
 
-			if (State == CarState.Driving || (int)gameTime.TotalGameTime.TotalMilliseconds % 1000 <= 500)
+			/*if (State == CarState.Driving || (int)gameTime.TotalGameTime.TotalMilliseconds % 1000 <= 500)
 				spriteBatch.Draw(Type.Texture, Body.Position, null, Color.White, Body.Rotation,
 				textureSizePx / 2, scale, SpriteEffects.FlipVertically, 0.0f);
 			else
 				spriteBatch.Draw(Type.Texture, Body.Position, null, Color.White, Body.Rotation,
-				textureSizePx / 2, scale * 0.75f, SpriteEffects.FlipVertically, 0.0f);
+				textureSizePx / 2, scale * 0.75f, SpriteEffects.FlipVertically, 0.0f);*/
+
+			
+			foreach (ModelMesh mesh in model.Meshes)
+			{
+				foreach (BasicEffect effect in mesh.Effects)
+				{
+					effect.EnableDefaultLighting();
+					effect.World = Matrix.CreateScale(0.02f) * Matrix.CreateFromYawPitchRoll(0, 0, Body.Rotation) * Matrix.CreateTranslation(Position.X, Position.Y, 0);
+					effect.View = view;
+					effect.Projection = projection;
+					effect.Alpha = 1;
+				}
+				mesh.Draw();
+			}
+
+
 
 			foreach (CastedRay ray in Rays)
 			{
@@ -303,9 +319,12 @@ namespace FitMiTraffic.Main.Vehicle
 			Rays.Clear();
 		}
 
+		private static Model model;
+
 		public static void LoadContent(ContentManager content)
 		{
 			CarType.LoadContent(content);
+			model = content.Load<Model>("bmw");
 		}
 	}
 }
