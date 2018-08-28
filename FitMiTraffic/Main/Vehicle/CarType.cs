@@ -15,7 +15,7 @@ namespace FitMiTraffic.Main.Vehicle
 		public static readonly CarType RED_CAR = new CarType("red_car", 1.74f, 3.57f, 8, 2, 14, 0);
 		public static readonly CarType BLUE_CAR = new CarType("blue_car", 1.74f, 3.57f, 8, 2, 14, 0);
 		public static readonly CarType PORSCHE = new CarType("porsche", 1.6f, 3.79f, 5, 1, 59, 72);
-		public static readonly CarType SEMI_TRUCK = new CarType("semi_truck", 1.8f, 6.4f, 0, 0, 0, 0);
+		public static readonly CarType SEMI_TRUCK = new CarType("semi_truck", 1.7f, 6.4f, 0, 0, 0, 0);
 		public static readonly CarType SEDAN = new CarType("sedan", 1.5f, 3.11f, 7, 1, 19, 20);
 		public static readonly CarType MERCEDES = new CarType("mercedes", 1.6f, 3.56f, 25, 20, 90, 65);
 
@@ -51,6 +51,17 @@ namespace FitMiTraffic.Main.Vehicle
 			}
 		}
 
+		public static CarType RANDOM_SMALL
+		{
+			get
+			{
+				Random random = new Random();
+				int i = random.Next(1, CarType.ALL.Length-1);
+
+				return CarType.ALL[i];
+			}
+		}
+
 		public static CarType[] ALL
 		{
 			get
@@ -61,8 +72,8 @@ namespace FitMiTraffic.Main.Vehicle
 					RED_CAR,
 					BLUE_CAR,
 					PORSCHE,
+					SEDAN,
 					SEMI_TRUCK,
-					SEDAN
 				};
 			}
 		}

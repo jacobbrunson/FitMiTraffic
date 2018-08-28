@@ -13,7 +13,7 @@ namespace FitMiTraffic.Main.Vehicle
 {
 	class TrafficManager
 	{
-		List<Car> cars = new List<Car>();
+		public List<Car> cars = new List<Car>();
 		public int Interval;
 
 		private World World;
@@ -21,6 +21,9 @@ namespace FitMiTraffic.Main.Vehicle
 		private ContentManager Content;
 		private int NumLanes;
 		public float LaneWidth;
+
+		private float LastOnRamp = -1;
+		private float LastOnRampSeconds; 
 
 		public TrafficManager(ContentManager content, World world, int interval, int numLanes, float laneWidth)
 		{
@@ -41,7 +44,7 @@ namespace FitMiTraffic.Main.Vehicle
 			{
 				LastSpawnMillis = (long)gameTime.TotalGameTime.TotalMilliseconds;
 
-				var type = CarType.RANDOM;
+				CarType type;
 
 				int lane = 0;
 				float posX = 0, posY = 0;
@@ -50,21 +53,23 @@ namespace FitMiTraffic.Main.Vehicle
 				var spawnAttempts = 0;
 				do
 				{
+					type = CarType.RANDOM;
 					spawnAttempts += 1;
 
 					lane = random.Next(0, NumLanes);
+					Console.WriteLine(type.TextureName + ", " + lane);
 					var lanePos = Road.GetCenterOfLane(lane);
 
 					var wiggleRoom = Math.Max(0, LaneWidth - type.Width - 0.1f);
 					var laneOffset = (float)random.NextDouble() * wiggleRoom - wiggleRoom / 2;
 
 					posX = lanePos + laneOffset;
-					posY = playerY + (float)random.NextDouble() * 30 + 20;
+					posY = playerY + (float)random.NextDouble() * 20 + 15;
 
 					foundSpawnPos = true;
 					foreach (Car c in cars)
 					{
-						if ((c.Lane == lane || c.Lane == lane - 1 && c.State == CarState.MovingRight || c.Lane == lane + 1 && c.State == CarState.MovingLeft) && Math.Abs(c.Position.Y - posY) < Math.Max(c.BodySize.Y, type.Height) + 1)
+						if ((c.Lane == lane || c.Lane == lane - 1 && c.State == CarState.MovingRight || c.Lane == lane + 1 && (c.State == CarState.MovingLeft || c.State == CarState.Merging)) && Math.Abs(c.Position.Y - posY) < Math.Max(c.BodySize.Y, type.Height) + 1)
 						{
 							foundSpawnPos = false;
 							break;
@@ -103,18 +108,12 @@ namespace FitMiTraffic.Main.Vehicle
 		}
 
 
-		public void RenderTraffic(SpriteBatch spriteBatch, GameTime gameTime)
+		public void RenderTraffic(SpriteBatch spriteBatch, GameTime gameTime, Matrix projection, Matrix view)
 		{
 			foreach (Car car in cars)
 			{
-				car.Render(spriteBatch, gameTime);
+				car.Render(spriteBatch, gameTime, projection, view);
 			}
-
-			/*foreach (RayDraw ray in rays)
-			{
-				
-			}
-			rays.RemoveAll(ray => true);*/
 		}
 
 	}

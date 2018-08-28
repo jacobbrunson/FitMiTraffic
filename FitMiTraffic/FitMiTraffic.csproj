@@ -42,6 +42,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Main\Gui\MessageQueue.cs" />
+    <Compile Include="Main\Gui\MessagesUI.cs" />
+    <Compile Include="Main\Gui\ScoreUI.cs" />
     <Compile Include="Main\Utility\ExtensionMethods.cs" />
     <Compile Include="Main\Vehicle\Car.cs" />
     <Compile Include="Main\Vehicle\CarType.cs" />

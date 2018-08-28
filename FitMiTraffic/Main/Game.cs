@@ -7,53 +7,33 @@ using tainicom.Aether.Physics2D.Diagnostics;
 using FitMiTraffic.Main.Vehicle;
 using FitMiTraffic.Main.Environment;
 using FitMiTraffic.Main.Input;
+using FitMiTraffic.Main.Gui;
 
 namespace FitMiTraffic.Main
 {
-	class Message
-	{
-		public String Text;
-		public double Expiration;
-		public Vector2 Offset;
-
-		public Message(String text)
-		{
-			Text = text;
-			Expiration = -1;
-		}
-	}
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
     public class TrafficGame : Game
     {
 
-		Player player;
+		private const int DodgePoints = 1000;
 
-		Road Road;
+		private GraphicsDeviceManager graphics;
+		private SpriteBatch spriteBatch;
+		private Vector2 cameraPosition;
+		private float scale = 45.0f; //pixels per meter
+		private BasicEffect cameraEffect;
 
-		Vector2 cameraPosition;
-		float scale = 10.0f; // 50 pixels per meter
+		private MessagesUI messagesUI;
+		private ScoreUI scoreUI;
 
-		public static BasicEffect cameraEffect; //TODO: probably shouldn't be public nor static
+		private World world;
+		private Player player;
+		private Road road;
+		private TrafficManager trafficManager;
 
-        World world;
-        
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-
-		TrafficManager TrafficManager;
+		private int score = 0;
 
 		public static bool DEBUG = true;
-
 		public static DebugView DebugView;
-
-		private static Queue<Message> messages = new Queue<Message>();
-		private static Queue<Message> scoreMessages = new Queue<Message>();
-
-		private SpriteFont Font;
-
-		static int score = 0;
 
 		public TrafficGame()
         {
@@ -64,44 +44,11 @@ namespace FitMiTraffic.Main
             Content.RootDirectory = "Content";
         }
 
-		private static void AddScore(int points)
+		private void DodgeCompleted()
 		{
-			score += points;
-
-			Random r = new Random();
-
-			Message m = new Message(String.Format("+{0:n0}", points));
-			m.Offset = new Vector2((float)r.NextDouble() * 50 - 50, r.Next(0, 2) == 0 ? -20 : 20);
-			scoreMessages.Enqueue(m);
-		}
-
-		public static void DodgeCompleted()
-		{
-			Console.WriteLine("NICE DODGE!");
-			WriteMessage("NICE DODGE!");
-			AddScore(10000);
-		}
-
-		private static void WriteMessage(String message)
-		{
-				Message m = new Message(message);
-				messages.Enqueue(m);
-		}
-
-		private void UpdateMessageQueue(GameTime gameTime, Queue<Message> queue)
-		{
-			foreach (Message m in queue)
-			{
-				if (m.Expiration < 0)
-				{
-					m.Expiration = gameTime.TotalGameTime.TotalSeconds + 2;
-				}
-			}
-
-			if (queue.Count > 0 && queue.Peek().Expiration < gameTime.TotalGameTime.TotalSeconds)
-			{
-				queue.Dequeue();
-			}
+			messagesUI.WriteMessage("NICE DODGE!");
+			scoreUI.ShowPoints(DodgePoints);
+			score += DodgePoints;
 		}
 
 		private void HandleInput()
@@ -139,8 +86,11 @@ namespace FitMiTraffic.Main
 
 			InputManager.Initialize();
 
-			Road = new Road();
-			TrafficManager = new TrafficManager(Content, world, 1000, Road.NumLanes, Road.LaneWidth);
+			road = new Road();
+			trafficManager = new TrafficManager(Content, world, 1000, Road.NumLanes, Road.LaneWidth);
+
+			messagesUI = new MessagesUI();
+			scoreUI = new ScoreUI();
 
 
 			base.Initialize();
@@ -153,9 +103,12 @@ namespace FitMiTraffic.Main
 			Car.LoadContent(Content);
 			Road.LoadContent(Content);
 
-			player = new Player(CarType.MERCEDES, world, 15.0f);
+			MessagesUI.LoadContent(Content);
+			ScoreUI.LoadContent(Content);
 
-			Font = Content.Load<SpriteFont>("Font");
+			player = new Player(CarType.MERCEDES, world, 20);
+			player.Position = new Vector2(-10, -10);
+			player.DodgeCompleteCallback = DodgeCompleted;
 
 			cameraEffect = new BasicEffect(GraphicsDevice);
 			cameraEffect.TextureEnabled = true;
@@ -173,12 +126,12 @@ namespace FitMiTraffic.Main
         {
 			HandleInput();
 
-			TrafficManager.Update(gameTime, player.Position.Y);
+			trafficManager.Update(gameTime, player.Position.Y);
 
 			world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
 			
 			cameraPosition = new Vector2(0, player.Position.Y + 5);
-			Road.Update(player.Position.Y);
+			road.Update(player.Position.Y);
 			player.Update(gameTime, InputManager.LateralMovement);
 
 			if (!player.crashed)
@@ -186,9 +139,8 @@ namespace FitMiTraffic.Main
 				score += (int)(player.Velocity.Y * 1);
 			}
 
-			UpdateMessageQueue(gameTime, messages);
-			UpdateMessageQueue(gameTime, scoreMessages);
-
+			messagesUI.Update(gameTime);
+			scoreUI.Update(gameTime, score);
 
             base.Update(gameTime);
         }
@@ -202,15 +154,15 @@ namespace FitMiTraffic.Main
 			cameraEffect.Projection = Matrix.CreateOrthographic(GraphicsDevice.Viewport.Width / scale, GraphicsDevice.Viewport.Height / scale, 0, -1.0f);
 			cameraEffect.Alpha = 1f;
 
-			spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, RasterizerState.CullNone, cameraEffect);
+			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, RasterizerState.CullNone, cameraEffect);
 
-			Road.Render(spriteBatch);
+			road.Render(spriteBatch);
 
 
 			if (!DEBUG)
 			{
-				player.Render(spriteBatch, gameTime);
-				TrafficManager.RenderTraffic(spriteBatch, gameTime);
+				player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
+				trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
 			}
 
             spriteBatch.End();
@@ -219,29 +171,20 @@ namespace FitMiTraffic.Main
 			{
 				cameraEffect.Alpha = 0.25f;
 				spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, RasterizerState.CullNone, cameraEffect);
-				player.Render(spriteBatch, gameTime);
-				TrafficManager.RenderTraffic(spriteBatch, gameTime);
+				player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
+				trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
 				spriteBatch.End();
 
 				DebugView.RenderDebugData(cameraEffect.Projection, cameraEffect.View);
 			}
 
 			spriteBatch.Begin();
-			spriteBatch.DrawString(Font, "Score: " + score, new Vector2(GraphicsDevice.Viewport.Width - 200, GraphicsDevice.Viewport.Height - 50), Color.Blue, 0, Vector2.Zero, 2, SpriteEffects.None, 0);
-			foreach (Message m in scoreMessages)
-			{
-				Color color = Color.Orange;
-				spriteBatch.DrawString(Font, m.Text, new Vector2(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 40) + m.Offset, color, 0, Vector2.Zero, 1.5f, SpriteEffects.None, 0);
-			}
 
 
-			int i = 1;
-			foreach (Message m in messages)
-			{
-				Color color = new Color(1f, 0.2f, 0.2f);
-				spriteBatch.DrawString(Font, m.Text, new Vector2(50, GraphicsDevice.Viewport.Height - i * 50), color, 0, Vector2.Zero, 4, SpriteEffects.None, 0);
-				i += 1;
-			}
+			messagesUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+			scoreUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+
+
 			spriteBatch.End();
 
 			base.Draw(gameTime);

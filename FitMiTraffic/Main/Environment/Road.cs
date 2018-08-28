@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using FitMiTraffic.Main.Utility;
+using FitMiTraffic.Main.Vehicle;
 
 namespace FitMiTraffic.Main.Environment
 {
@@ -15,11 +16,14 @@ namespace FitMiTraffic.Main.Environment
 		LinkedList<float> Segments = new LinkedList<float>();
 
 		public const int NumLanes = 4;
-		public static float LaneWidth = 2.25f;
-		private float Size = NumLanes * LaneWidth;
+		public static float LaneWidth = 2.45f;
+		private static float Size = NumLanes * LaneWidth;
 
+		public static Vector2 Scale;
 		private static Texture2D Texture;
 		private static Vector2 TextureSize;
+
+		Car car;
 
 		public Road()
 		{
@@ -27,6 +31,7 @@ namespace FitMiTraffic.Main.Environment
 			{
 				Segments.AddLast(Size * (i-1));
 			}
+
 		}
 
 		public static int GetLane(float x, float tolerance=0.1f)
@@ -69,6 +74,7 @@ namespace FitMiTraffic.Main.Environment
 		{
 			Texture = content.Load<Texture2D>("road");
 			TextureSize = new Vector2(Texture.Width, Texture.Height);
+			Scale = Vector2.One * Size / TextureSize;
 		}
 
 	}

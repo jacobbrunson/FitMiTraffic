@@ -33,6 +33,9 @@ namespace FitMiTraffic.Main.Vehicle
 
 		Body ApproachingBody;
 
+		public delegate void DodgeCompleteDelegate();
+		public DodgeCompleteDelegate DodgeCompleteCallback;
+
 		Queue<Dodge> Dodges = new Queue<Dodge>();
 
 		public Player(CarType type, World world, float initialSpeed) : base(type, world, initialSpeed)
@@ -40,8 +43,7 @@ namespace FitMiTraffic.Main.Vehicle
 			Body.OnCollision += Collision;
 			Body.Mass = 4000.0f;
 			Body.LinearDamping = 0.0f;
-			State = CarState.Player;
-			Body.Position = new Vector2(-5.5f, 0);
+			Body.LinearVelocity = new Vector2(0, initialSpeed);
 		}
 
 		public void Update(GameTime gameTime, float movement)
@@ -60,7 +62,7 @@ namespace FitMiTraffic.Main.Vehicle
 
 				float lateralSpeed = desiredSpeed * 0.5f + Body.LinearVelocity.X * 0.5f;
 
-				Body.LinearVelocity = new Vector2(lateralSpeed, 15.0f);
+				Body.LinearVelocity = new Vector2(lateralSpeed, Velocity.Y);
 				Body.Rotation = -lateralSpeed * 0.1f;
 
 				Body b = AnticipateCollision(2.0f);
@@ -84,7 +86,7 @@ namespace FitMiTraffic.Main.Vehicle
 					d.Body.FixtureList[0].GetAABB(out aabb, 0);
 					if (d.Body.Position.Y - aabb.Height / 2 < Position.Y)
 					{
-						TrafficGame.DodgeCompleted();
+						DodgeCompleteCallback();
 						Dodges.Dequeue();
 					}
 				}

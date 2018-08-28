@@ -28,7 +28,7 @@ namespace FitMiTraffic.Main.Vehicle
 		}
 	}
 
-	enum CarState { Player, Driving, LookingRight, MovingRight, LookingLeft, MovingLeft, Merging, Exiting }
+	enum CarState { Driving, LookingRight, MovingRight, LookingLeft, MovingLeft, Merging, Exiting }
 
 	class Car
 	{
@@ -38,6 +38,7 @@ namespace FitMiTraffic.Main.Vehicle
 		private CarType Type;
 
 		private float DesiredSpeed;
+		private float InitialSpeed;
 
 		public int DesiredLane = 0;
 		private int _Lane;
@@ -84,6 +85,7 @@ namespace FitMiTraffic.Main.Vehicle
 			this.World = world;
 			Type = type;
 			DesiredSpeed = initialSpeed;
+			InitialSpeed = initialSpeed;
 
 			var textureSize = new Vector2(type.Width, type.Height);
 			textureSizePx = new Vector2(type.Texture.Width, type.Texture.Height);
@@ -178,11 +180,9 @@ namespace FitMiTraffic.Main.Vehicle
 		public void Update(GameTime gameTime)
 		{
 			Random random = new Random((int)gameTime.TotalGameTime.TotalMilliseconds + (int)State + (int)(Velocity.Y*100) + GetHashCode());
-			float laneChangeSpeed = 2f;
 
 			if (State == CarState.Driving)
 			{
-				//gameTime.ElapsedGameTime.TotalMilliseconds
 				double d = random.NextDouble();
 				if (d < gameTime.ElapsedGameTime.TotalSeconds * 0.05f)
 				{
@@ -243,6 +243,10 @@ namespace FitMiTraffic.Main.Vehicle
 			{
 				Velocity = new Vector2(Velocity.X, Math.Min(Velocity.Y, b.LinearVelocity.Y - 1));
 			}
+			else
+			{
+				Velocity = new Vector2(Velocity.X, InitialSpeed);
+			}
 
 			if (Math.Abs(Velocity.Y - DesiredSpeed) > 0.1)
 			{
@@ -269,10 +273,10 @@ namespace FitMiTraffic.Main.Vehicle
 			Body.Rotation = Body.Rotation * 0.5f + desiredAngle * 0.5f;
 		}
 
-		public void Render(SpriteBatch spriteBatch, GameTime gameTime)
+		public void Render(SpriteBatch spriteBatch, GameTime gameTime, Matrix projection, Matrix view)
 		{
 
-			if (State == CarState.Driving || State == CarState.Player || (int)gameTime.TotalGameTime.TotalMilliseconds % 1000 <= 500)
+			if (State == CarState.Driving || (int)gameTime.TotalGameTime.TotalMilliseconds % 1000 <= 500)
 				spriteBatch.Draw(Type.Texture, Body.Position, null, Color.White, Body.Rotation,
 				textureSizePx / 2, scale, SpriteEffects.FlipVertically, 0.0f);
 			else
@@ -281,7 +285,7 @@ namespace FitMiTraffic.Main.Vehicle
 
 			foreach (CastedRay ray in Rays)
 			{
-				TrafficGame.DebugView.BeginCustomDraw(TrafficGame.cameraEffect.Projection, TrafficGame.cameraEffect.View);
+				TrafficGame.DebugView.BeginCustomDraw(projection, view);
 
 				if (ray.Hit)
 				{
