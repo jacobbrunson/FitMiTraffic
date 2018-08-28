@@ -106,7 +106,7 @@ namespace FitMiTraffic.Main
 			MessagesUI.LoadContent(Content);
 			ScoreUI.LoadContent(Content);
 
-			player = new Player(CarType.MERCEDES, world, 20);
+			player = new Player(CarType.TEST, world, 20);
 			player.Position = new Vector2(0, -10);
 			player.DodgeCompleteCallback = DodgeCompleted;
 
@@ -149,9 +149,17 @@ namespace FitMiTraffic.Main
         {
             GraphicsDevice.Clear(Color.DarkOliveGreen);
 
-			Vector3 cameraPosition3D = new Vector3(cameraPosition, 0);
-			cameraEffect.View = Matrix.CreateLookAt(new Vector3(cameraPosition, 0), cameraPosition3D + Vector3.Forward, Vector3.Up);
-			cameraEffect.Projection = Matrix.CreateOrthographic(GraphicsDevice.Viewport.Width / scale, GraphicsDevice.Viewport.Height / scale, -1000f, 1000f);
+			if (!DEBUG)
+			{
+				Vector3 cameraPosition3D = new Vector3(cameraPosition + Vector2.UnitY * -5, 10);
+				cameraEffect.View = Matrix.CreateLookAt(cameraPosition3D, new Vector3(cameraPosition, 0), Vector3.Up);
+				cameraEffect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver2, GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000f);
+			} else
+			{
+				Vector3 cameraPosition3D = new Vector3(cameraPosition, 10);
+				cameraEffect.View = Matrix.CreateLookAt(cameraPosition3D, new Vector3(cameraPosition, 0), Vector3.Up);
+				cameraEffect.Projection = Matrix.CreateOrthographic(GraphicsDevice.Viewport.Width / scale, GraphicsDevice.Viewport.Height / scale, -1000f, 1000f);
+			}
 			cameraEffect.Alpha = 1f;
 
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, RasterizerState.CullNone, cameraEffect);

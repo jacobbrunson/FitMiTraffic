@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//using FitMi_Research_Puck;
+using FitMi_Research_Puck;
 using Microsoft.Xna.Framework.Input;
 using FitMiTraffic.Main.Utility;
 
@@ -16,20 +16,20 @@ namespace FitMiTraffic.Main.Input
 		private static KeyboardState PreviousState;
 		private static KeyboardState CurrentState;
 
-		/*private static HIDPuckDongle PuckManager;
+		private static HIDPuckDongle PuckManager;
 		private static PuckPacket Puck
 		{
 			get
 			{
 				return PuckManager.PuckPack0;
 			}
-		}*/
+		}
 
 		public static float LateralMovement
 		{
 			get
 			{
-				var gyro = 0;// Puck.Gyrometer[0];
+				var gyro = Puck.Gyrometer[0];
 
 				if (Math.Abs(gyro) > 50)
 				{
@@ -85,10 +85,10 @@ namespace FitMiTraffic.Main.Input
 
 		public static bool Initialize()
 		{
-			//PuckManager = new HIDPuckDongle();
-			//PuckManager.Open();
-			//PuckManager.SendCommand(0, HidPuckCommands.SENDVEL, 0x00, 0x01);
-			//PuckManager.SendCommand(1, HidPuckCommands.SENDVEL, 0x00, 0x01);
+			PuckManager = new HIDPuckDongle();
+			PuckManager.Open();
+			PuckManager.SendCommand(0, HidPuckCommands.SENDVEL, 0x00, 0x01);
+			PuckManager.SendCommand(1, HidPuckCommands.SENDVEL, 0x00, 0x01);
 
 			return true;
 		}
@@ -97,7 +97,7 @@ namespace FitMiTraffic.Main.Input
 		{
 			PreviousState = CurrentState;
 			CurrentState = Keyboard.GetState();
-			//PuckManager.CheckForNewPuckData();
+			PuckManager.CheckForNewPuckData();
 		}
 	}
 }

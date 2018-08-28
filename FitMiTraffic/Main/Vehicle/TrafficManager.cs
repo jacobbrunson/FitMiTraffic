@@ -57,7 +57,6 @@ namespace FitMiTraffic.Main.Vehicle
 					spawnAttempts += 1;
 
 					lane = random.Next(0, NumLanes);
-					Console.WriteLine(type.TextureName + ", " + lane);
 					var lanePos = Road.GetCenterOfLane(lane);
 
 					var wiggleRoom = Math.Max(0, LaneWidth - type.Width - 0.1f);

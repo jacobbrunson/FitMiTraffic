@@ -28,10 +28,12 @@ namespace FitMiTraffic.Main.Gui
 
 		public void Render(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight)
 		{
+			int i = 0;
 			foreach (Message m in messages)
 			{
-				Color color = Color.Orange;
-				spriteBatch.DrawString(Font, m.Text, new Vector2(viewportWidth - 100, viewportHeight - 40) + m.Offset, color, 0, Vector2.Zero, 1.5f, SpriteEffects.None, 0);
+				i += 1;
+				Color color = Color.Red;
+				spriteBatch.DrawString(Font, m.Text, new Vector2(50, viewportHeight - 50 * i), color, 0, Vector2.Zero, 3f, SpriteEffects.None, 0);
 			}
 		}
 

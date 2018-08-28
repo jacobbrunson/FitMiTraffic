@@ -92,7 +92,7 @@ namespace FitMiTraffic.Main.Vehicle
 
 			scale = textureSize / textureSizePx;
 
-			BodySize = new Vector2(type.Width - type.OffsetX * 2 * scale.X, type.Height - type.OffsetY * 2 * scale.Y);
+			BodySize = new Vector2(type.Width, type.Height);
 
 			float rTop = Type.RadiusTop * scale.Y;
 			float rBot = Type.RadiusBottom * scale.Y;
@@ -289,7 +289,9 @@ namespace FitMiTraffic.Main.Vehicle
 				foreach (BasicEffect effect in mesh.Effects)
 				{
 					effect.EnableDefaultLighting();
-					effect.World = Matrix.CreateScale(0.02f) * Matrix.CreateFromYawPitchRoll(0, 0, Body.Rotation) * Matrix.CreateTranslation(Position.X, Position.Y, 0);
+					effect.TextureEnabled = true;
+					effect.Texture = Type.Texture;
+					effect.World = Matrix.CreateScale(0.05f) * Matrix.CreateFromYawPitchRoll(0, 0, Body.Rotation) * Matrix.CreateTranslation(Position.X, Position.Y, 0);
 					effect.View = view;
 					effect.Projection = projection;
 					effect.Alpha = 1;
@@ -324,7 +326,7 @@ namespace FitMiTraffic.Main.Vehicle
 		public static void LoadContent(ContentManager content)
 		{
 			CarType.LoadContent(content);
-			model = content.Load<Model>("bmw");
+			model = content.Load<Model>("low_poly_cars_set/test");
 		}
 	}
 }

@@ -10,53 +10,35 @@ namespace FitMiTraffic.Main.Vehicle
 {
 	class CarType
 	{
+		public static readonly CarType TEST = new CarType("test", 1.6f, 3.9f, 0, 0, 0.04f);
 
-
-		public static readonly CarType RED_CAR = new CarType("red_car", 1.74f, 3.57f, 8, 2, 14, 0);
-		public static readonly CarType BLUE_CAR = new CarType("blue_car", 1.74f, 3.57f, 8, 2, 14, 0);
-		public static readonly CarType PORSCHE = new CarType("porsche", 1.6f, 3.79f, 5, 1, 59, 72);
-		public static readonly CarType SEMI_TRUCK = new CarType("semi_truck", 1.7f, 6.4f, 0, 0, 0, 0);
-		public static readonly CarType SEDAN = new CarType("sedan", 1.5f, 3.11f, 7, 1, 19, 20);
-		public static readonly CarType MERCEDES = new CarType("mercedes", 1.6f, 3.56f, 25, 20, 90, 65);
-
-		public string TextureName;
+		public string Name;
 		public float Width;
 		public float Height;
-		public int OffsetX; //Number of empty pixels on left or right
-		public int OffsetY; //Number of empty pixels on top or bottom
 		public float RadiusTop;
 		public float RadiusBottom;
+		public Model Model;
 		public Texture2D Texture;
+		public float Scale;
 
 
-		public CarType(string textureName, float width, float height, int offsetX, int offsetY, float radiusTop, float radiusBottom)
+		public CarType(string name, float width, float height, float radiusTop, float radiusBottom, float modelScale)
 		{
-			TextureName = textureName;
+			Name = name;
 			Width = width;
 			Height = height;
-			OffsetX = offsetX;
-			OffsetY = offsetY;
 			RadiusTop = radiusTop;
 			RadiusBottom = radiusBottom;
+			Scale = modelScale;
 		}
 
 		public static CarType RANDOM
 		{
 			get
 			{
+				return CarType.TEST;
 				Random random = new Random();
 				int i = random.Next(1, CarType.ALL.Length);
-
-				return CarType.ALL[i];
-			}
-		}
-
-		public static CarType RANDOM_SMALL
-		{
-			get
-			{
-				Random random = new Random();
-				int i = random.Next(1, CarType.ALL.Length-1);
 
 				return CarType.ALL[i];
 			}
@@ -68,12 +50,7 @@ namespace FitMiTraffic.Main.Vehicle
 			{
 				return new CarType[]
 				{
-					MERCEDES,
-					RED_CAR,
-					BLUE_CAR,
-					PORSCHE,
-					SEDAN,
-					SEMI_TRUCK,
+					TEST
 				};
 			}
 		}
@@ -82,7 +59,8 @@ namespace FitMiTraffic.Main.Vehicle
 		{
 			foreach (CarType ct in CarType.ALL)
 			{
-				ct.Texture = content.Load<Texture2D>(ct.TextureName);
+				ct.Texture = content.Load<Texture2D>("cars/tex/" + ct.Name);
+				ct.Model = content.Load<Model>("cars/" + ct.Name);
 			}
 		}
 	}
