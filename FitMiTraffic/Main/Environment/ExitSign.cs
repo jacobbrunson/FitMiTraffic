@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using FitMiTraffic.Main.Graphics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -9,35 +10,13 @@ using System.Threading.Tasks;
 
 namespace FitMiTraffic.Main.Environment
 {
-	public class ExitSign
+	public class ExitSign : RenderedModel
 	{
+		private const string ModelName = "Exit";
 
-		public Vector2 Position;
-
-		public ExitSign() { }
-
-		public void Render(SpriteBatch spriteBatch, GameTime gameTime, Matrix projection, Matrix view)
+		public ExitSign(ContentManager content) : base(content, ModelName)
 		{
-			foreach (ModelMesh mesh in model.Meshes)
-			{
-				foreach (BasicEffect effect in mesh.Effects)
-				{
-					effect.EnableDefaultLighting();
-					effect.TextureEnabled = true;
-					effect.World = Matrix.CreateScale(3f) * Matrix.CreateFromYawPitchRoll(0, 0, -MathHelper.PiOver2) * Matrix.CreateTranslation(Position.X, Position.Y, 0);
-					effect.View = view;
-					effect.Projection = projection;
-					effect.Alpha = 1;
-				}
-				mesh.Draw();
-			}
-		}
-
-		private static Model model;
-
-		public static void LoadContent(ContentManager content)
-		{
-			model = content.Load<Model>("exit");
+			this.Rotation = new Vector3(0, 0, -MathHelper.PiOver2);
 		}
 	}
 }

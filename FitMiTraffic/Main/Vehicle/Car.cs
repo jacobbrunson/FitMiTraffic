@@ -288,7 +288,11 @@ namespace FitMiTraffic.Main.Vehicle
 			{
 				foreach (BasicEffect effect in mesh.Effects)
 				{
-					effect.EnableDefaultLighting();
+					effect.LightingEnabled = true;
+					effect.DirectionalLight0.Enabled = true;
+					effect.DirectionalLight0.Direction = Vector3.Backward;
+					effect.DirectionalLight0.DiffuseColor = new Vector3(1, 1, 1);
+
 					effect.TextureEnabled = true;
 					effect.Texture = Type.Texture;
 					effect.World = Matrix.CreateScale(0.05f) * Matrix.CreateFromYawPitchRoll(0, 0, Body.Rotation) * Matrix.CreateTranslation(Position.X, Position.Y, 0);

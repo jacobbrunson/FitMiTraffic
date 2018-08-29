@@ -7,37 +7,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using FitMiTraffic.Main.Graphics;
+
 namespace FitMiTraffic.Main.Environment
 {
-	public class SpeedLimit
+	public class SpeedLimit : RenderedModel
 	{
-
-		public Vector2 Position;
-
-		public SpeedLimit() { }
-
-		public void Render(SpriteBatch spriteBatch, GameTime gameTime, Matrix projection, Matrix view)
+		private const string ModelName = "SpeedSign";
+		public SpeedLimit(ContentManager content) : base(content, ModelName)
 		{
-			foreach (ModelMesh mesh in model.Meshes)
-			{
-				foreach (BasicEffect effect in mesh.Effects)
-				{
-					effect.EnableDefaultLighting();
-					effect.TextureEnabled = true;
-					effect.World = Matrix.CreateScale(3f) * Matrix.CreateFromYawPitchRoll(0, 0, -MathHelper.PiOver2) * Matrix.CreateTranslation(Position.X, Position.Y, 0);
-					effect.View = view;
-					effect.Projection = projection;
-					effect.Alpha = 1;
-				}
-				mesh.Draw();
-			}
-		}
-
-		private static Model model;
-
-		public static void LoadContent(ContentManager content)
-		{
-			model = content.Load<Model>("SpeedSign");
+			this.Rotation = new Vector3(0, 0, -MathHelper.PiOver2);
 		}
 	}
 }

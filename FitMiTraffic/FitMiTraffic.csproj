@@ -43,9 +43,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Main\Environment\BigSign.cs" />
+    <Compile Include="Main\Environment\EnvironmentManager.cs" />
     <Compile Include="Main\Environment\ExitSign.cs" />
-    <Compile Include="Main\Environment\MonoCube.cs" />
     <Compile Include="Main\Environment\SpeedLimit.cs" />
+    <Compile Include="Main\Graphics\RenderedModel.cs" />
     <Compile Include="Main\Gui\MessageQueue.cs" />
     <Compile Include="Main\Gui\MessagesUI.cs" />
     <Compile Include="Main\Gui\ScoreUI.cs" />

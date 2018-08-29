@@ -27,17 +27,13 @@ namespace FitMiTraffic.Main
 
 		private World world;
 		private Player player;
-		private Road road;
+		private EnvironmentManager environment;
 		private TrafficManager trafficManager;
 
 		private int score = 0;
 
-		public static bool DEBUG = true;
+		public static bool DEBUG = false;
 		public static DebugView DebugView;
-
-		public SpeedLimit x1;
-		public ExitSign x2;
-		public BigSign x3;
 
 		public TrafficGame()
         {
@@ -90,7 +86,7 @@ namespace FitMiTraffic.Main
 
 			InputManager.Initialize();
 
-			road = new Road();
+			environment = new EnvironmentManager(Content);
 			trafficManager = new TrafficManager(Content, world, 1000, Road.NumLanes, Road.LaneWidth);
 
 			messagesUI = new MessagesUI();
@@ -117,21 +113,6 @@ namespace FitMiTraffic.Main
 			cameraEffect = new BasicEffect(GraphicsDevice);
 			cameraEffect.TextureEnabled = true;
 
-			SpeedLimit.LoadContent(Content);
-			BigSign.LoadContent(Content);
-			ExitSign.LoadContent(Content);
-
-
-			x1 = new SpeedLimit();
-			x1.Position = new Vector2(-6f, 20f);
-
-			x2 = new ExitSign();
-			x2.Position = new Vector2(5.5f, 40f);
-
-			x3 = new BigSign();
-			x3.Position = new Vector2(-7.5f, 60f);
-
-
 			DebugView.LoadContent(GraphicsDevice, Content);
 		}
 
@@ -150,7 +131,7 @@ namespace FitMiTraffic.Main
 			world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
 			
 			cameraPosition = new Vector2(0, player.Position.Y + 5);
-			road.Update(player.Position.Y);
+			environment.Update(gameTime, player.Position.Y);
 			player.Update(gameTime, InputManager.LateralMovement);
 
 			if (!player.crashed)
@@ -183,7 +164,7 @@ namespace FitMiTraffic.Main
 
 			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, RasterizerState.CullNone, cameraEffect);
 
-			road.Render(spriteBatch);
+			environment.Render(spriteBatch, gameTime, cameraEffect.View, cameraEffect.Projection);
 			spriteBatch.End();
 
 
@@ -191,11 +172,6 @@ namespace FitMiTraffic.Main
 			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
 			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
-
-			x1.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
-			x2.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
-			x3.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
-
 
 
 			if (DEBUG)
