@@ -35,7 +35,9 @@ namespace FitMiTraffic.Main
 		public static bool DEBUG = true;
 		public static DebugView DebugView;
 
-		public MonoCube cube;
+		public SpeedLimit x1;
+		public ExitSign x2;
+		public BigSign x3;
 
 		public TrafficGame()
         {
@@ -115,9 +117,19 @@ namespace FitMiTraffic.Main
 			cameraEffect = new BasicEffect(GraphicsDevice);
 			cameraEffect.TextureEnabled = true;
 
-			MonoCube.LoadContent(Content);
-			cube = new MonoCube();
-			cube.Position = new Vector2(5.5f, 50);
+			SpeedLimit.LoadContent(Content);
+			BigSign.LoadContent(Content);
+			ExitSign.LoadContent(Content);
+
+
+			x1 = new SpeedLimit();
+			x1.Position = new Vector2(-6f, 20f);
+
+			x2 = new ExitSign();
+			x2.Position = new Vector2(5.5f, 40f);
+
+			x3 = new BigSign();
+			x3.Position = new Vector2(-7.5f, 60f);
 
 
 			DebugView.LoadContent(GraphicsDevice, Content);
@@ -158,7 +170,7 @@ namespace FitMiTraffic.Main
 
 			if (!DEBUG)
 			{
-				Vector3 cameraPosition3D = new Vector3(cameraPosition + Vector2.UnitY * -5, 10);
+				Vector3 cameraPosition3D = new Vector3(cameraPosition + Vector2.UnitY * -7, 9);
 				cameraEffect.View = Matrix.CreateLookAt(cameraPosition3D, new Vector3(cameraPosition, 0), Vector3.Up);
 				cameraEffect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver2, GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000f);
 			} else
@@ -179,9 +191,12 @@ namespace FitMiTraffic.Main
 			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
 			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
-			cube.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
 
-            
+			x1.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
+			x2.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
+			x3.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
+
+
 
 			if (DEBUG)
 			{
