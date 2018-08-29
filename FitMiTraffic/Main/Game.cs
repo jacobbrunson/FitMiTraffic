@@ -35,6 +35,8 @@ namespace FitMiTraffic.Main
 		public static bool DEBUG = true;
 		public static DebugView DebugView;
 
+		public MonoCube cube;
+
 		public TrafficGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -113,6 +115,11 @@ namespace FitMiTraffic.Main
 			cameraEffect = new BasicEffect(GraphicsDevice);
 			cameraEffect.TextureEnabled = true;
 
+			MonoCube.LoadContent(Content);
+			cube = new MonoCube();
+			cube.Position = new Vector2(5.5f, 50);
+
+
 			DebugView.LoadContent(GraphicsDevice, Content);
 		}
 
@@ -172,6 +179,7 @@ namespace FitMiTraffic.Main
 			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
 			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
+			cube.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
 
             
 

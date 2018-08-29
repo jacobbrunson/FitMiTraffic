@@ -42,6 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Main\Environment\MonoCube.cs" />
     <Compile Include="Main\Gui\MessageQueue.cs" />
     <Compile Include="Main\Gui\MessagesUI.cs" />
     <Compile Include="Main\Gui\ScoreUI.cs" />
