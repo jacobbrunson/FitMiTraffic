@@ -110,7 +110,7 @@ namespace FitMiTraffic.Main
 			MessagesUI.LoadContent(Content);
 			ScoreUI.LoadContent(Content);
 
-			player = new Player(CarType.TEST, world, 20);
+			player = new Player(CarType.TEST, world, 5);
 			player.Position = new Vector2(0, -10);
 			player.DodgeCompleteCallback = DodgeCompleted;
 
