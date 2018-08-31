@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using tainicom.Aether.Physics2D.Dynamics;
 
 namespace FitMiTraffic.Main.Environment
 {
@@ -17,12 +18,15 @@ namespace FitMiTraffic.Main.Environment
 		private Rail leftRail;
 		private Rail rightRail;
 
-		public RoadSegment(ContentManager content, float y)
+        private World world;
+
+		public RoadSegment(ContentManager content, World world, float y)
 		{
 			Y = y;
 			road = new RoadPiece(content, y);
-			leftRail = new Rail(content, -Road.Size/2, y);
-			rightRail = new Rail(content, Road.Size/2, y);
+			leftRail = new Rail(content, world, -Road.Size/2, y);
+			rightRail = new Rail(content, world, Road.Size/2, y);
+            this.world = world;
 		}
 
 		public void Render(GameTime gameTime, Matrix view, Matrix projection, Matrix lightViewProjection, Texture2D shadowMap, string technique)
@@ -31,6 +35,12 @@ namespace FitMiTraffic.Main.Environment
 			leftRail.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
 			rightRail.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
 		}
+
+        public void Destroy()
+        {
+            leftRail.Destroy();
+            rightRail.Destroy();
+        }
 
 	}
 }

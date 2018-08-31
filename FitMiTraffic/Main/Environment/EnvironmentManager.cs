@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using tainicom.Aether.Physics2D.Dynamics;
 
 namespace FitMiTraffic.Main.Environment
 {
@@ -18,11 +19,11 @@ namespace FitMiTraffic.Main.Environment
 
 		private ContentManager content;
 
-		public EnvironmentManager(ContentManager content)
+		public EnvironmentManager(ContentManager content, World world)
 		{
 			this.content = content;
 			Road.LoadContent(content);
-			road = new Road();
+			road = new Road(world);
 
 			RenderedModel model;
 

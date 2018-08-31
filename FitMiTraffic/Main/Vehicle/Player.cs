@@ -39,12 +39,16 @@ namespace FitMiTraffic.Main.Vehicle
 
 		Queue<Dodge> Dodges = new Queue<Dodge>();
 
+        private float initialSpeed;
+
 		public Player(ContentManager content, CarType type, World world, float initialSpeed) : base(content, type, world, initialSpeed)
 		{
+            this.initialSpeed = initialSpeed;
 			Body.OnCollision += Collision;
 			Body.Mass = 4000.0f;
 			Body.LinearDamping = 0.0f;
 			Body.LinearVelocity = new Vector2(0, initialSpeed);
+            Body.SetFriction(0);
 		}
 
 		public void Update(GameTime gameTime, float movement)
@@ -63,7 +67,7 @@ namespace FitMiTraffic.Main.Vehicle
 
 				float lateralSpeed = desiredSpeed * 0.5f + Body.LinearVelocity.X * 0.5f;
 
-				Body.LinearVelocity = new Vector2(lateralSpeed, Velocity.Y);
+				Body.LinearVelocity = new Vector2(lateralSpeed, initialSpeed);
 				Body.Rotation = -lateralSpeed * 0.05f;
 
 				Body b = AnticipateCollision(2.0f);
@@ -103,6 +107,12 @@ namespace FitMiTraffic.Main.Vehicle
 
 		bool Collision(Fixture a, Fixture b, Contact c)
 		{
+            if (b.Body.BodyType == BodyType.Static)
+            {
+                
+                return true;
+            }
+
 			crashed = true;
 			crashTime = previousTime;
 			//b.Body.ApplyLinearImpulse(new Vector2(-100, 20));

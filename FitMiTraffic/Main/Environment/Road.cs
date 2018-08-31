@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using FitMiTraffic.Main.Utility;
 using FitMiTraffic.Main.Vehicle;
+using tainicom.Aether.Physics2D.Dynamics;
 
 namespace FitMiTraffic.Main.Environment
 {
@@ -25,14 +26,14 @@ namespace FitMiTraffic.Main.Environment
 
 		private static ContentManager content;
 
-		Car car;
+        private World world;
 
-		public Road()
+		public Road(World world)
 		{
-			Console.WriteLine("HEY");
+            this.world = world;
 			for (int i = 0; i < 10; i++)
 			{
-				var piece = new RoadSegment(content, Size * (i - 1));
+				var piece = new RoadSegment(content, world, Size * (i - 1));
 				Segments.AddLast(piece);
 			}
 
@@ -60,8 +61,9 @@ namespace FitMiTraffic.Main.Environment
 		{
 			if (playerY - Segments.First.Value.Y > Size*2)
 			{
+                Segments.First.Value.Destroy();
 				Segments.RemoveFirst();
-				var piece = new RoadSegment(content, Segments.Last.Value.Y + Size);
+				var piece = new RoadSegment(content, world, Segments.Last.Value.Y + Size);
 				Segments.AddLast(piece);
 			}
 		}

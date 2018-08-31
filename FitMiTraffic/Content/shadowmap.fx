@@ -27,7 +27,7 @@ technique CreateShadowMap
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_5_0 CreateShadowMap_VertexShader();
-		PixelShader = compile ps_5_0 CreateShadowMap_PixelShader();
+		VertexShader = compile vs_4_0 CreateShadowMap_VertexShader();
+		PixelShader = compile ps_4_0 CreateShadowMap_PixelShader();
 	}
 }

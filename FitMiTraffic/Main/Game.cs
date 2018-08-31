@@ -49,8 +49,8 @@ namespace FitMiTraffic.Main
 
 		private void Graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
 		{
-			graphics.PreferMultiSampling = true;
-			e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;
+			//graphics.PreferMultiSampling = true;
+			//e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;
 		}
 		public TrafficGame()
         {
@@ -109,7 +109,7 @@ namespace FitMiTraffic.Main
 
 			InputManager.Initialize();
 
-			environment = new EnvironmentManager(Content);
+			environment = new EnvironmentManager(Content, world);
 			trafficManager = new TrafficManager(Content, world, 1000, Road.NumLanes, Road.LaneWidth);
 
 			messagesUI = new MessagesUI();
@@ -220,6 +220,7 @@ namespace FitMiTraffic.Main
 			GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
 			//cameraEffect.View = lightView;
 			//cameraEffect.Projection = lightProjection;
+
 			environment.Render(spriteBatch, gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
 			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
 			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
@@ -230,21 +231,23 @@ namespace FitMiTraffic.Main
 			//spriteBatch.Draw(shadowMapRenderTarget, new Rectangle(0, 0, 600, 800), Color.White);
 			spriteBatch.End();
 
-			//if (DEBUG)
-			//{
-			//	DebugView.RenderDebugData(cameraEffect.Projection, cameraEffect.View);
-			//}
+		
 
-			//spriteBatch.Begin();
+			spriteBatch.Begin();
 
 
-			//messagesUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-			//scoreUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+			messagesUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+			scoreUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
 
-			//spriteBatch.End();
+			spriteBatch.End();
 
-			base.Draw(gameTime);
+            if (DEBUG)
+            {
+                DebugView.RenderDebugData(cameraEffect.Projection, cameraEffect.View, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, 0.8f);
+            }
+
+            base.Draw(gameTime);
         }
     }
 }

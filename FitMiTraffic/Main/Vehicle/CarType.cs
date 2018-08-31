@@ -10,9 +10,9 @@ namespace FitMiTraffic.Main.Vehicle
 {
 	class CarType
 	{
-		public static readonly CarType TEST1 = new CarType("blue", 1.6f, 3.9f, 0, 0, 0.04f);
-		public static readonly CarType TEST2 = new CarType("green", 1.6f, 3.9f, 0, 0, 0.04f);
-		public static readonly CarType TEST3 = new CarType("pink", 1.6f, 3.9f, 0, 0, 0.04f);
+		public static readonly CarType TEST1 = new CarType("blue", 1.6f, 3f, 0, 0, 0.04f);
+		public static readonly CarType TEST2 = new CarType("green", 1.6f, 3f, 0, 0, 0.04f);
+		public static readonly CarType TEST3 = new CarType("pink", 1.6f, 3f, 0, 0, 0.04f);
 
 		public string Name;
 		public float Width;

@@ -281,7 +281,7 @@ namespace FitMiTraffic.Main.Vehicle
 		public void Render(SpriteBatch spriteBatch, GameTime gameTime, Matrix projection, Matrix view, Matrix lightViewProjection, Texture2D shadowMap, string technique)
 		{
 			model.Position = new Vector3(Position, 0);
-			model.Size = new Vector3(1.6f, 1.5f, 3);
+			model.Size = new Vector3(Type.Width, 1.5f, Type.Height);
 			model.Rotation = Matrix.CreateFromAxisAngle(Vector3.Left, -MathHelper.PiOver2) * Matrix.CreateFromAxisAngle(Vector3.Backward, Body.Rotation);// new Vector3(0, 0, Body.Rotation);
 
 			model.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
