@@ -46,9 +46,6 @@ namespace FitMiTraffic.Main
 
 		Matrix lightProjection;
 
-		RenderedModel test;
-		RenderedModel test2;
-
 		public TrafficGame()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -132,13 +129,6 @@ namespace FitMiTraffic.Main
 
 			shadowMapRenderTarget = new RenderTarget2D(GraphicsDevice, 2048, 2048, true, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.PlatformContents);
 
-			test = new RoadPiece(Content, 0);
-			test.Size = new Vector3(2, 2, 2);
-			test.Position = new Vector3(-1, 0, 5);
-
-			test2 = new RoadPiece(Content, 0);
-			test2.Size = new Vector3(1, 1, 1);
-			test2.Position = new Vector3(2, 0, 0);
 
 			DebugView.LoadContent(GraphicsDevice, Content);
 		}
@@ -170,7 +160,7 @@ namespace FitMiTraffic.Main
 			scoreUI.Update(gameTime, score);
 
 			//lightPosition = new Vector3(0, player.Position.Y, 10);
-			lightPosition = new Vector3(lightPosition.X, player.Position.Y + 20, lightPosition.Z);
+			lightPosition = new Vector3(lightPosition.X, player.Position.Y + 15, lightPosition.Z);
 			Console.WriteLine(lightPosition);
 
             base.Update(gameTime);
@@ -202,33 +192,29 @@ namespace FitMiTraffic.Main
 			//cameraEffect.Alpha = 1f;
 
 
-			lightProjection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver2, 1f, 5f, 100f);//Matrix.CreateOrthographic(600 / scale, 800 / scale, -1000, 1000);
+			lightProjection = Matrix.CreateOrthographic(30, 30, 0, 50);
 			lightView = Matrix.CreateLookAt(lightPosition,
 						lightPosition + lightDirection,
 						Vector3.Up);
 			Matrix lightViewProjection = lightView * lightProjection;
 			GraphicsDevice.SetRenderTarget(shadowMapRenderTarget);
 			GraphicsDevice.BlendState = BlendState.Opaque;
-			GraphicsDevice.DepthStencilState = DepthStencilState.None;
+			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 			GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
 			//GraphicsDevice.RasterizerState = RasterizerState.CullNone;
 			environment.Render(spriteBatch, gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
 			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
 			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
-			test.Render(gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
-			test2.Render(gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
 			graphics.GraphicsDevice.SetRenderTarget(null);
 
 			GraphicsDevice.BlendState = BlendState.Opaque;
 			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-			GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
+			GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, new Color(134, 198, 100), 1.0f, 0);
 			//cameraEffect.View = lightView;
 			//cameraEffect.Projection = lightProjection;
 			environment.Render(spriteBatch, gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
 			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
 			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
-			test.Render(gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
-			test2.Render(gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
 
 
 			GraphicsDevice.SetRenderTarget(null);

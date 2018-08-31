@@ -2,14 +2,14 @@
 float4x4 View;
 float4x4 Projection;
 
-float4 AmbientColor = float4(1, 1, 1, 1);
-float AmbientIntensity = 0.5f;
+float4 AmbientColor = float4(0.7, 0.7, 1, 1);
+float AmbientIntensity = 0.8f;
 
 float4x4 WorldInverseTranspose;
 
 float3 xLightPos;// = float3(-10, -10, -10);
 float3 DiffuseLightDirection;// = float3(1, 1, 1);
-float4 DiffuseColor = float4(1, 1, 1, 1);
+float4 DiffuseColor = float4(1, 0.8, 0.8, 1);
 float DiffuseIntensity = 1.0f;
 
 matrix  LightViewProj;
@@ -232,7 +232,7 @@ SScenePixelToFrame ShadowedScenePixelShader(SSceneVertexToPixel PSIn)
 	}
 
 	float4 baseColor = tex2D(textureSampler, PSIn.TexCoords);
-	Output.Color = baseColor * (diffuseLightingFactor + AmbientColor * AmbientIntensity);
+	Output.Color = baseColor * (DiffuseColor * diffuseLightingFactor + AmbientColor * AmbientIntensity);
 
 	return Output;
 }

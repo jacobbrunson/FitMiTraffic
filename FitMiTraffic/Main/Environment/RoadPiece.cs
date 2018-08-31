@@ -11,7 +11,7 @@ namespace FitMiTraffic.Main.Environment
 {
 	public class RoadPiece : RenderedModel
 	{
-		private const string ModelName = "road2";
+		private const string ModelName = "road";
 		public RoadPiece(ContentManager content, float y) : base(content, ModelName)
 		{
 			this.Position = new Vector3(0, y, 0);
