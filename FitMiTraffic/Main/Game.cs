@@ -40,7 +40,7 @@ namespace FitMiTraffic.Main
 		Vector2 cameraRot = Vector2.Zero;
 
 		RenderTarget2D shadowMapRenderTarget;
-		public static Vector3 lightPosition = new Vector3(10, 0, 10);
+		public static Vector3 lightPosition = new Vector3(20, 0, 20);
 		public static Vector3 lightDirection = new Vector3(-1f, -1, -1);
 		Matrix lightView;
 
@@ -128,7 +128,7 @@ namespace FitMiTraffic.Main
 			MessagesUI.LoadContent(Content);
 			ScoreUI.LoadContent(Content);
 
-			player = new Player(Content, CarType.TEST1, world, 20);
+			player = new Player(Content, CarType.TEST1, world, 15);
 			player.Position = new Vector2(0, -5);
 			player.DodgeCompleteCallback = DodgeCompleted;
 
@@ -200,7 +200,7 @@ namespace FitMiTraffic.Main
 			//cameraEffect.Alpha = 1f;
 
 
-			lightProjection = Matrix.CreateOrthographic(35, 35, 0, 50);
+			lightProjection = Matrix.CreateOrthographic(25, 50, 0, 50);
 			lightView = Matrix.CreateLookAt(lightPosition,
 						lightPosition + lightDirection,
 						Vector3.Up);

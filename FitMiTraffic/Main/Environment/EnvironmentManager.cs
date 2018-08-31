@@ -38,7 +38,7 @@ namespace FitMiTraffic.Main.Environment
 			model = new SpeedLimit(content) { Position = new Vector3(-6, 400, 0) };
 			//models.Add(model);
 
-			model = new BigSign(content) { Position = new Vector3(0, 10, 0) };
+			model = new BigSign(content) { Position = new Vector3(0, 100, 0) };
 			models.Add(model);
 
 			model = new ExitSign(content) { Position = new Vector3(5.5f, 50, 0) };
