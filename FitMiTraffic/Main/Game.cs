@@ -46,12 +46,20 @@ namespace FitMiTraffic.Main
 
 		Matrix lightProjection;
 
+
+		private void Graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+		{
+			graphics.PreferMultiSampling = true;
+			e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;
+		}
 		public TrafficGame()
         {
             graphics = new GraphicsDeviceManager(this);
 			graphics.PreferredBackBufferWidth = 600;
 			graphics.PreferredBackBufferHeight = 800;
 			graphics.GraphicsProfile = GraphicsProfile.HiDef;
+			graphics.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
+			graphics.ApplyChanges();
 
 			Content.RootDirectory = "Content";
         }
