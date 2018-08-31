@@ -2,7 +2,7 @@
 float4x4 View;
 float4x4 Projection;
 
-float4 AmbientColor = float4(0.7, 0.7, 1, 1);
+float4 AmbientColor = float4(0.9, 0.9, 1, 1);
 float AmbientIntensity = 0.8f;
 
 float4x4 WorldInverseTranspose;
