@@ -16,7 +16,7 @@ namespace FitMiTraffic.Main.Environment
 
 		public ExitSign(ContentManager content) : base(content, ModelName)
 		{
-			this.Rotation = new Vector3(0, 0, -MathHelper.PiOver2);
+			//this.Rotation = new Vector3(0, 0, -MathHelper.PiOver2);
 		}
 	}
 }

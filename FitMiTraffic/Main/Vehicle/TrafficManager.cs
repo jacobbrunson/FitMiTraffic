@@ -79,7 +79,7 @@ namespace FitMiTraffic.Main.Vehicle
 				if (foundSpawnPos) {
 					float speed = (float)random.NextDouble() * 5.0f + (NumLanes - lane + 1) * 2.0f;
 
-					Car car = new Car(type, World, speed);
+					Car car = new Car(Content, type, World, speed);
 					car.Position = new Vector2(posX, posY);
 					car.Lane = lane;
 					car.DesiredLane = lane;
@@ -107,11 +107,19 @@ namespace FitMiTraffic.Main.Vehicle
 		}
 
 
-		public void RenderTraffic(SpriteBatch spriteBatch, GameTime gameTime, Matrix projection, Matrix view)
+		public void RenderTraffic(SpriteBatch spriteBatch, GameTime gameTime, Matrix projection, Matrix view, Matrix lightViewProjection, Texture2D shadowMap, string technique)
 		{
 			foreach (Car car in cars)
 			{
-				car.Render(spriteBatch, gameTime, projection, view);
+				car.Render(spriteBatch, gameTime, projection, view, lightViewProjection, shadowMap, technique);
+			}
+		}
+
+		public void RenderShadowMap(GraphicsDevice graphics, Matrix lightViewProjection)
+		{
+			foreach (Car car in cars)
+			{
+				car.model.RenderShadowMap(graphics, lightViewProjection);
 			}
 		}
 

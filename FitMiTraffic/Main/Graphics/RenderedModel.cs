@@ -12,14 +12,52 @@ namespace FitMiTraffic.Main.Graphics
 	public class RenderedModel
 	{
 		protected Model Model;
+		protected Texture2D Texture;
+
+		private Effect effect;
+
+
+		private Effect shadowEffect;
 
 		public Vector3 Position;
-		public Vector3 Rotation;
+		public Vector3 Offset;
+		public Matrix Rotation = Matrix.Identity;
+		public Vector3 Size = Vector3.One;
 
-		public RenderedModel(ContentManager content, string modelName)
+		private Vector3 meshSize;
+
+		private static Dictionary<string, string> names = new Dictionary<string, string>();
+
+
+		private BoundingBox GetBounds()
 		{
-			Model = content.Load<Model>(modelName);
+			Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+			Vector3 max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
 
+			foreach (ModelMesh mesh in this.Model.Meshes)
+			{
+				foreach (ModelMeshPart meshPart in mesh.MeshParts)
+				{
+					int vertexStride = meshPart.VertexBuffer.VertexDeclaration.VertexStride;
+					int vertexBufferSize = meshPart.NumVertices * vertexStride;
+
+					int vertexDataSize = vertexBufferSize / sizeof(float);
+					float[] vertexData = new float[vertexDataSize];
+					meshPart.VertexBuffer.GetData<float>(vertexData);
+
+					for (int i = 0; i < vertexDataSize; i += vertexStride / sizeof(float))
+					{
+						Vector3 vertex = new Vector3(vertexData[i], vertexData[i + 1], vertexData[i + 2]);
+						min = Vector3.Min(min, vertex);
+						max = Vector3.Max(max, vertex);
+					}
+				}
+			}
+
+			return new BoundingBox(min, max);
+		}
+		private void FlattenNormals()
+		{
 			//This stuff re-calculates surface normals to give a low-poly flat shading effect
 			foreach (ModelMesh mesh in Model.Meshes)
 			{
@@ -53,24 +91,108 @@ namespace FitMiTraffic.Main.Graphics
 			}
 		}
 
-		public void Render(GameTime gameTime, Matrix view, Matrix projection)
+		public RenderedModel(ContentManager content, string modelName, string textureName=null)
 		{
+			Model = content.Load<Model>(modelName);
+			effect = content.Load<Effect>("effect");
+			shadowEffect = content.Load<Effect>("shadowmap");
+
+			if (textureName != null)
+			{
+				Texture = content.Load<Texture2D>(textureName);
+			} else
+			{
+				if (names.ContainsKey(modelName))
+				{
+					Texture = content.Load<Texture2D>(names[modelName]);
+				} else
+				{
+					Texture = ((BasicEffect)Model.Meshes[0].Effects[0]).Texture;
+					names.Add(modelName, Texture.Name);
+				}
+			}
+
+			FlattenNormals();
+
+			var bounds = GetBounds();
+			meshSize = bounds.Max - bounds.Min;
+		}
+
+		public void RenderShadowMap(GraphicsDevice graphics, Matrix lightViewProjection)
+		{
+			Matrix world = Matrix.CreateScale(Size / meshSize) * Rotation * Matrix.CreateTranslation(Position + Offset);
+			for (int index = 0; index < Model.Meshes.Count; index++)
+			{
+				ModelMesh mesh = Model.Meshes[index];
+				for (int i = 0; i < mesh.MeshParts.Count; i++)
+				{
+					
+					ModelMeshPart meshpart = mesh.MeshParts[i];
+					shadowEffect.Parameters["World"].SetValue(world);
+					shadowEffect.Parameters["LightViewProj"].SetValue(world * lightViewProjection);
+
+					shadowEffect.CurrentTechnique.Passes[0].Apply();
+					graphics.SetVertexBuffer(meshpart.VertexBuffer);
+					graphics.Indices = meshpart.IndexBuffer;
+					//shadowEffect.SetVertexBuffer(meshpart.VertexBuffer);
+					//shadowEffect.Indices = (meshpart.IndexBuffer);
+					int primitiveCount = meshpart.PrimitiveCount;
+					int vertexOffset = meshpart.VertexOffset;
+					int vCount = meshpart.NumVertices;
+					int startIndex = meshpart.StartIndex;
+					
+					graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex,
+						primitiveCount);
+				}
+			}
+		}
+
+		public void Render(GameTime gameTime, Matrix view, Matrix projection, Matrix lightViewProjection, Texture2D shadowMap, string technique)
+		{
+			Matrix world = Matrix.CreateScale(Size / meshSize) * Rotation * Matrix.CreateTranslation(Position + Offset);
+
 			foreach (ModelMesh mesh in Model.Meshes)
 			{
-				foreach (BasicEffect effect in mesh.Effects)
+				foreach (ModelMeshPart part in mesh.MeshParts)
+				{
+					part.Effect = effect;
+
+					effect.CurrentTechnique = effect.Techniques[technique];
+					effect.Parameters["World"].SetValue(world); //world * mesh.ParentBone.Transform
+					effect.Parameters["View"].SetValue(view);
+					effect.Parameters["Projection"].SetValue(projection);
+					//effect.Parameters["LightViewProj"].SetValue(world * lightViewProjection);
+					effect.Parameters["ShadowMap"].SetValue(shadowMap);
+					effect.Parameters["xLightsWorldViewProjection"].SetValue(world * lightViewProjection);
+
+					Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(world)); // mesh.ParentBone.Transform * world
+					effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);
+
+					effect.Parameters["ModelTexture"].SetValue(Texture);
+
+					effect.Parameters["xLightPos"].SetValue(TrafficGame.lightPosition);
+					effect.Parameters["DiffuseLightDirection"].SetValue(TrafficGame.lightDirection);
+				}
+				/*foreach (BasicEffect effect in mesh.Effects)
 				{
 					//effect.EnableDefaultLighting();
 					effect.LightingEnabled = true;
-					effect.DirectionalLight0.Enabled = true;
-					effect.DirectionalLight0.Direction = Vector3.Down;
-					effect.DirectionalLight0.DiffuseColor = new Vector3(1, 1, 1);
+					effect.AmbientLightColor = new Vector3(1, 1, 1);
+
+					//effect.DirectionalLight0.Enabled = true;
+					//effect.DirectionalLight0.Direction = Vector3.Backward;
+					//effect.DirectionalLight0.DiffuseColor = new Vector3(255, 1, 1);
 
 					effect.TextureEnabled = true;
-					effect.World = Matrix.CreateScale(2) * Matrix.CreateFromYawPitchRoll(Rotation.X, Rotation.Y, Rotation.Z) * Matrix.CreateTranslation(Position);
+					if (Texture != null)
+					{
+						effect.Texture = Texture;
+					}
+					effect.World = world;
 					effect.View = view;
 					effect.Projection = projection;
 					effect.Alpha = 1;
-				}
+				}*/
 				mesh.Draw();
 			}
 		}

@@ -13,23 +13,27 @@ namespace FitMiTraffic.Main.Environment
 {
 	class Road
 	{
-		LinkedList<float> Segments = new LinkedList<float>();
+		LinkedList<RoadSegment> Segments = new LinkedList<RoadSegment>();
 
 		public const int NumLanes = 4;
 		public static float LaneWidth = 2.45f;
-		private static float Size = NumLanes * LaneWidth;
+		public static float Size = NumLanes * LaneWidth;
 
 		public static Vector2 Scale;
-		private static Texture2D Texture;
+		//private static Texture2D Texture;
 		private static Vector2 TextureSize;
+
+		private static ContentManager content;
 
 		Car car;
 
 		public Road()
 		{
+			Console.WriteLine("HEY");
 			for (int i = 0; i < 10; i++)
 			{
-				Segments.AddLast(Size * (i-1));
+				var piece = new RoadSegment(content, Size * (i - 1));
+				Segments.AddLast(piece);
 			}
 
 		}
@@ -54,26 +58,27 @@ namespace FitMiTraffic.Main.Environment
 
 		public void Update(float playerY)
 		{
-			if (playerY - Segments.First.Value > Size*2)
+			if (playerY - Segments.First.Value.Y > Size*2)
 			{
 				Segments.RemoveFirst();
-				Segments.AddLast(Segments.Last.Value + Size);
+				var piece = new RoadSegment(content, Segments.Last.Value.Y + Size);
+				Segments.AddLast(piece);
 			}
 		}
 
-		public void Render(SpriteBatch spriteBatch)
+		public void Render(GameTime gameTime, Matrix view, Matrix projection, Matrix lightViewProjection, Texture2D shadowMap, string technique)
 		{
-			foreach (float p in Segments)
+			foreach (RoadSegment p in Segments)
 			{
-				spriteBatch.Draw(Texture, new Vector2(0, p), null, Color.White, 0,
-					TextureSize / 2, Vector2.One * Size / TextureSize, SpriteEffects.None, 0.0f);
+				p.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
 			}
 		}
 
 		public static void LoadContent(ContentManager content)
 		{
-			Texture = content.Load<Texture2D>("road");
-			TextureSize = new Vector2(Texture.Width, Texture.Height);
+			Road.content = content;
+			//Texture = content.Load<Texture2D>("road");
+			//TextureSize = new Vector2(Texture.Width, Texture.Height);
 			Scale = Vector2.One * Size / TextureSize;
 		}
 

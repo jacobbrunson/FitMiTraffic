@@ -8,6 +8,8 @@ using FitMiTraffic.Main.Vehicle;
 using FitMiTraffic.Main.Environment;
 using FitMiTraffic.Main.Input;
 using FitMiTraffic.Main.Gui;
+using FitMiTraffic.Main.Utility;
+using FitMiTraffic.Main.Graphics;
 
 namespace FitMiTraffic.Main
 {
@@ -35,13 +37,26 @@ namespace FitMiTraffic.Main
 		public static bool DEBUG = false;
 		public static DebugView DebugView;
 
+		Vector2 cameraRot = Vector2.Zero;
+
+		RenderTarget2D shadowMapRenderTarget;
+		public static Vector3 lightPosition = new Vector3(10, 0, 10);
+		public static Vector3 lightDirection = new Vector3(-1f, -1, -1);
+		Matrix lightView;
+
+		Matrix lightProjection;
+
+		RenderedModel test;
+		RenderedModel test2;
+
 		public TrafficGame()
         {
             graphics = new GraphicsDeviceManager(this);
 			graphics.PreferredBackBufferWidth = 600;
 			graphics.PreferredBackBufferHeight = 800;
+			graphics.GraphicsProfile = GraphicsProfile.HiDef;
 
-            Content.RootDirectory = "Content";
+			Content.RootDirectory = "Content";
         }
 
 		private void DodgeCompleted()
@@ -63,6 +78,7 @@ namespace FitMiTraffic.Main
 			if (InputManager.ToggleDebug)
 			{
 				DEBUG = !DEBUG;
+				cameraRot = Vector2.Zero;
 			}
 
 			if (InputManager.ZoomOut)
@@ -74,6 +90,8 @@ namespace FitMiTraffic.Main
 			{
 				scale *= 1.5f;
 			}
+
+			cameraRot += InputManager.MoveCameraAmount / 30;
 		}
 
         protected override void Initialize()
@@ -92,7 +110,6 @@ namespace FitMiTraffic.Main
 			messagesUI = new MessagesUI();
 			scoreUI = new ScoreUI();
 
-
 			base.Initialize();
         }
 
@@ -106,12 +123,22 @@ namespace FitMiTraffic.Main
 			MessagesUI.LoadContent(Content);
 			ScoreUI.LoadContent(Content);
 
-			player = new Player(CarType.TEST, world, 5);
-			player.Position = new Vector2(0, -10);
+			player = new Player(Content, CarType.TEST1, world, 20);
+			player.Position = new Vector2(0, -5);
 			player.DodgeCompleteCallback = DodgeCompleted;
 
 			cameraEffect = new BasicEffect(GraphicsDevice);
 			cameraEffect.TextureEnabled = true;
+
+			shadowMapRenderTarget = new RenderTarget2D(GraphicsDevice, 2048, 2048, true, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.PlatformContents);
+
+			test = new RoadPiece(Content, 0);
+			test.Size = new Vector3(2, 2, 2);
+			test.Position = new Vector3(-1, 0, 5);
+
+			test2 = new RoadPiece(Content, 0);
+			test2.Size = new Vector3(1, 1, 1);
+			test2.Position = new Vector3(2, 0, 0);
 
 			DebugView.LoadContent(GraphicsDevice, Content);
 		}
@@ -142,51 +169,86 @@ namespace FitMiTraffic.Main
 			messagesUI.Update(gameTime);
 			scoreUI.Update(gameTime, score);
 
+			//lightPosition = new Vector3(0, player.Position.Y, 10);
+			lightPosition = new Vector3(lightPosition.X, player.Position.Y + 20, lightPosition.Z);
+			Console.WriteLine(lightPosition);
+
             base.Update(gameTime);
         }
 
-        protected override void Draw(GameTime gameTime)
+		protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.DarkOliveGreen);
 
+			Vector3 cameraTarget = new Vector3(0, player.Position.Y + 5, 0);
+			Vector3 cameraPosition;
 			if (!DEBUG)
 			{
-				Vector3 cameraPosition3D = new Vector3(cameraPosition + Vector2.UnitY * -7, 9);
-				cameraEffect.View = Matrix.CreateLookAt(cameraPosition3D, new Vector3(cameraPosition, 0), Vector3.Up);
-				cameraEffect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver2, GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000f);
+				//Vector3 cameraPosition3D = new Vector3(cameraPosition + Vector2.UnitY * -10, 0.5f);
+
+				//cameraEffect.View = Matrix.Identity;
+				cameraPosition = cameraTarget + new Vector3(0, -5, 12);
+				cameraEffect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver2 * 0.8f, GraphicsDevice.Viewport.AspectRatio, 0.1f, 100f);
 			} else
 			{
-				Vector3 cameraPosition3D = new Vector3(cameraPosition, 10);
-				cameraEffect.View = Matrix.CreateLookAt(cameraPosition3D, new Vector3(cameraPosition, 0), Vector3.Up);
+				//Vector3 cameraPosition3D = new Vector3(cameraPosition, 10);
+				//cameraEffect.View = Matrix.CreateLookAt(cameraPosition3D, new Vector3(cameraPosition, 0), Vector3.Up);
+				cameraPosition = cameraTarget + new Vector3(0, 0, 10);
 				cameraEffect.Projection = Matrix.CreateOrthographic(GraphicsDevice.Viewport.Width / scale, GraphicsDevice.Viewport.Height / scale, -1000f, 1000f);
 			}
-			cameraEffect.Alpha = 1f;
+			
+			cameraPosition = Vector3.Transform(cameraPosition - cameraTarget, Matrix.CreateFromYawPitchRoll(cameraRot.X, cameraRot.Y, 0)) + cameraTarget;
+			cameraEffect.View = Matrix.CreateLookAt(cameraPosition, cameraTarget, Vector3.Up);
+			//cameraEffect.Alpha = 1f;
 
-			spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, RasterizerState.CullNone, cameraEffect);
 
-			environment.Render(spriteBatch, gameTime, cameraEffect.View, cameraEffect.Projection);
-			spriteBatch.End();
-
+			lightProjection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver2, 1f, 5f, 100f);//Matrix.CreateOrthographic(600 / scale, 800 / scale, -1000, 1000);
+			lightView = Matrix.CreateLookAt(lightPosition,
+						lightPosition + lightDirection,
+						Vector3.Up);
+			Matrix lightViewProjection = lightView * lightProjection;
+			GraphicsDevice.SetRenderTarget(shadowMapRenderTarget);
+			GraphicsDevice.BlendState = BlendState.Opaque;
+			GraphicsDevice.DepthStencilState = DepthStencilState.None;
+			GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
+			//GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+			environment.Render(spriteBatch, gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
+			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
+			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
+			test.Render(gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
+			test2.Render(gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
+			graphics.GraphicsDevice.SetRenderTarget(null);
 
 			GraphicsDevice.BlendState = BlendState.Opaque;
 			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
-			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View);
+			GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
+			//cameraEffect.View = lightView;
+			//cameraEffect.Projection = lightProjection;
+			environment.Render(spriteBatch, gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
+			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
+			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
+			test.Render(gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
+			test2.Render(gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
 
 
-			if (DEBUG)
-			{
-				DebugView.RenderDebugData(cameraEffect.Projection, cameraEffect.View);
-			}
-
-			spriteBatch.Begin();
-
-
-			messagesUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-			scoreUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-
-
+			GraphicsDevice.SetRenderTarget(null);
+			spriteBatch.Begin(0, BlendState.Opaque, SamplerState.AnisotropicClamp);
+			//spriteBatch.Draw(shadowMapRenderTarget, new Rectangle(0, 0, 600, 800), Color.White);
 			spriteBatch.End();
+
+			//if (DEBUG)
+			//{
+			//	DebugView.RenderDebugData(cameraEffect.Projection, cameraEffect.View);
+			//}
+
+			//spriteBatch.Begin();
+
+
+			//messagesUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+			//scoreUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+
+
+			//spriteBatch.End();
 
 			base.Draw(gameTime);
         }

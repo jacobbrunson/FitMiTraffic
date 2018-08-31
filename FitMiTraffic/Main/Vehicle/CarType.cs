@@ -10,7 +10,9 @@ namespace FitMiTraffic.Main.Vehicle
 {
 	class CarType
 	{
-		public static readonly CarType TEST = new CarType("test", 1.6f, 3.9f, 0, 0, 0.04f);
+		public static readonly CarType TEST1 = new CarType("blue", 1.6f, 3.9f, 0, 0, 0.04f);
+		public static readonly CarType TEST2 = new CarType("green", 1.6f, 3.9f, 0, 0, 0.04f);
+		public static readonly CarType TEST3 = new CarType("pink", 1.6f, 3.9f, 0, 0, 0.04f);
 
 		public string Name;
 		public float Width;
@@ -20,6 +22,8 @@ namespace FitMiTraffic.Main.Vehicle
 		public Model Model;
 		public Texture2D Texture;
 		public float Scale;
+		public string ModelName;
+		public string TextureName;
 
 
 		public CarType(string name, float width, float height, float radiusTop, float radiusBottom, float modelScale)
@@ -36,7 +40,7 @@ namespace FitMiTraffic.Main.Vehicle
 		{
 			get
 			{
-				return CarType.TEST;
+				//return CarType.TEST;
 				Random random = new Random();
 				int i = random.Next(1, CarType.ALL.Length);
 
@@ -50,7 +54,9 @@ namespace FitMiTraffic.Main.Vehicle
 			{
 				return new CarType[]
 				{
-					TEST
+					TEST1,
+					TEST2,
+					TEST3
 				};
 			}
 		}
@@ -59,8 +65,10 @@ namespace FitMiTraffic.Main.Vehicle
 		{
 			foreach (CarType ct in CarType.ALL)
 			{
-				ct.Texture = content.Load<Texture2D>("cars/tex/" + ct.Name);
-				ct.Model = content.Load<Model>("cars/" + ct.Name);
+				ct.TextureName = "cars/tex/" + ct.Name;
+				ct.ModelName = "cars/" + ct.Name;
+				ct.Texture = content.Load<Texture2D>(ct.TextureName);
+				ct.Model = content.Load<Model>(ct.ModelName);
 			}
 		}
 	}

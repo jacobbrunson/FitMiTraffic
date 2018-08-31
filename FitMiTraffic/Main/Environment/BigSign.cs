@@ -17,7 +17,7 @@ namespace FitMiTraffic.Main.Environment
 
 		public BigSign(ContentManager content) : base(content, ModelName)
 		{
-			this.Rotation = new Vector3(0, 0, 0);
+			//this.Rotation = Matrix.Identity
 		}
 	}
 }

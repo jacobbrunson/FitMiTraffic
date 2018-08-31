@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using tainicom.Aether.Physics2D.Collision;
@@ -38,7 +39,7 @@ namespace FitMiTraffic.Main.Vehicle
 
 		Queue<Dodge> Dodges = new Queue<Dodge>();
 
-		public Player(CarType type, World world, float initialSpeed) : base(type, world, initialSpeed)
+		public Player(ContentManager content, CarType type, World world, float initialSpeed) : base(content, type, world, initialSpeed)
 		{
 			Body.OnCollision += Collision;
 			Body.Mass = 4000.0f;

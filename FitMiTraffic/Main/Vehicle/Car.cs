@@ -11,6 +11,7 @@ using tainicom.Aether.Physics2D.Common;
 using Microsoft.Xna.Framework.Content;
 using FitMiTraffic.Main.Environment;
 using FitMiTraffic.Main.Utility;
+using FitMiTraffic.Main.Graphics;
 
 namespace FitMiTraffic.Main.Vehicle
 {
@@ -43,6 +44,8 @@ namespace FitMiTraffic.Main.Vehicle
 		public int DesiredLane = 0;
 		private int _Lane;
 		private int PreviousLane = -1;
+
+		public RenderedModel model;
 
 		public int Lane
 		{
@@ -80,12 +83,14 @@ namespace FitMiTraffic.Main.Vehicle
 		private Vector2 textureSizePx;
 		public Vector2 BodySize;
 
-		public Car(CarType type, World world, float initialSpeed)
+		public Car(ContentManager content, CarType type, World world, float initialSpeed)
 		{
 			this.World = world;
 			Type = type;
 			DesiredSpeed = initialSpeed;
 			InitialSpeed = initialSpeed;
+
+			model = new RenderedModel(content, type.ModelName, type.TextureName);
 
 			var textureSize = new Vector2(type.Width, type.Height);
 			textureSizePx = new Vector2(type.Texture.Width, type.Texture.Height);
@@ -273,39 +278,15 @@ namespace FitMiTraffic.Main.Vehicle
 			Body.Rotation = Body.Rotation * 0.5f + desiredAngle * 0.5f;
 		}
 
-		public void Render(SpriteBatch spriteBatch, GameTime gameTime, Matrix projection, Matrix view)
+		public void Render(SpriteBatch spriteBatch, GameTime gameTime, Matrix projection, Matrix view, Matrix lightViewProjection, Texture2D shadowMap, string technique)
 		{
+			model.Position = new Vector3(Position, 0);
+			model.Size = new Vector3(1.6f, 1.5f, 3);
+			model.Rotation = Matrix.CreateFromAxisAngle(Vector3.Left, -MathHelper.PiOver2) * Matrix.CreateFromAxisAngle(Vector3.Backward, Body.Rotation);// new Vector3(0, 0, Body.Rotation);
 
-			/*if (State == CarState.Driving || (int)gameTime.TotalGameTime.TotalMilliseconds % 1000 <= 500)
-				spriteBatch.Draw(Type.Texture, Body.Position, null, Color.White, Body.Rotation,
-				textureSizePx / 2, scale, SpriteEffects.FlipVertically, 0.0f);
-			else
-				spriteBatch.Draw(Type.Texture, Body.Position, null, Color.White, Body.Rotation,
-				textureSizePx / 2, scale * 0.75f, SpriteEffects.FlipVertically, 0.0f);*/
+			model.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
 
-			
-			foreach (ModelMesh mesh in model.Meshes)
-			{
-				foreach (BasicEffect effect in mesh.Effects)
-				{
-					effect.LightingEnabled = true;
-					effect.DirectionalLight0.Enabled = true;
-					effect.DirectionalLight0.Direction = Vector3.Backward;
-					effect.DirectionalLight0.DiffuseColor = new Vector3(1, 1, 1);
-
-					effect.TextureEnabled = true;
-					effect.Texture = Type.Texture;
-					effect.World = Matrix.CreateScale(0.05f) * Matrix.CreateFromYawPitchRoll(0, 0, Body.Rotation) * Matrix.CreateTranslation(Position.X, Position.Y, 0);
-					effect.View = view;
-					effect.Projection = projection;
-					effect.Alpha = 1;
-				}
-				mesh.Draw();
-			}
-
-
-
-			foreach (CastedRay ray in Rays)
+			/*foreach (CastedRay ray in Rays)
 			{
 				TrafficGame.DebugView.BeginCustomDraw(projection, view);
 
@@ -320,48 +301,16 @@ namespace FitMiTraffic.Main.Vehicle
 					TrafficGame.DebugView.DrawSegment(ray.P2, ray.P1, new Color(0.8f, 0.8f, 0.8f));
 				}
 				TrafficGame.DebugView.EndCustomDraw();
-			}
+			}*/
 
 			Rays.Clear();
 		}
 
-		private static Model model;
 
 		public static void LoadContent(ContentManager content)
 		{
 			CarType.LoadContent(content);
-			model = content.Load<Model>("low_poly_cars_set/test");
-
-			foreach (ModelMesh mesh in model.Meshes)
-			{
-				foreach (ModelMeshPart part in mesh.MeshParts)
-				{
-					VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[part.VertexBuffer.VertexCount];
-					part.VertexBuffer.GetData<VertexPositionNormalTexture>(vertices);
-
-					short[] indices = new short[part.IndexBuffer.IndexCount];
-					part.IndexBuffer.GetData<short>(indices);
-
-					for (int i = 0; i < indices.Length; i += 3)
-					{
-						Vector3 p1 = vertices[indices[i]].Position;
-						Vector3 p2 = vertices[indices[i + 1]].Position;
-						Vector3 p3 = vertices[indices[i + 2]].Position;
-
-						Vector3 v1 = p2 - p1;
-						Vector3 v2 = p3 - p1;
-						Vector3 normal = Vector3.Cross(v1, v2);
-
-						normal.Normalize();
-
-						vertices[indices[i]].Normal = normal;
-						vertices[indices[i + 1]].Normal = normal;
-						vertices[indices[i + 2]].Normal = normal;
-					}
-
-					part.VertexBuffer.SetData<VertexPositionNormalTexture>(vertices);
-				}
-			}
+			//model = new RenderedModel(content, c)
 		}
 	}
 }

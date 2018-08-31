@@ -45,6 +45,9 @@
     <Compile Include="Main\Environment\BigSign.cs" />
     <Compile Include="Main\Environment\EnvironmentManager.cs" />
     <Compile Include="Main\Environment\ExitSign.cs" />
+    <Compile Include="Main\Environment\Rail.cs" />
+    <Compile Include="Main\Environment\RoadPiece.cs" />
+    <Compile Include="Main\Environment\RoadSegment.cs" />
     <Compile Include="Main\Environment\SpeedLimit.cs" />
     <Compile Include="Main\Graphics\RenderedModel.cs" />
     <Compile Include="Main\Gui\MessageQueue.cs" />
@@ -81,6 +84,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\effect.fx" />
+    <Content Include="Content\shadowmap.fx" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

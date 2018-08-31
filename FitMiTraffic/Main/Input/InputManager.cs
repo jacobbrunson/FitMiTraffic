@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 //using FitMi_Research_Puck;
 using Microsoft.Xna.Framework.Input;
 using FitMiTraffic.Main.Utility;
+using Microsoft.Xna.Framework;
 
 namespace FitMiTraffic.Main.Input
 {
@@ -13,8 +14,11 @@ namespace FitMiTraffic.Main.Input
 	static class InputManager
 	{
 
-		private static KeyboardState PreviousState;
-		private static KeyboardState CurrentState;
+		private static KeyboardState PreviousKeyState;
+		private static KeyboardState CurrentKeyState;
+
+		private static MouseState PreviousMouseState;
+		private static MouseState CurrentMouseState;
 
 		//private static HIDPuckDongle PuckManager;
 		/*private static PuckPacket Puck
@@ -37,13 +41,13 @@ namespace FitMiTraffic.Main.Input
 				}
 				else
 				{
-					if (CurrentState.IsKeyDown(Keys.A))
+					if (CurrentKeyState.IsKeyDown(Keys.A))
 					{
-						return -0.5f;
+						return -0.8f;
 					}
-					else if (CurrentState.IsKeyDown(Keys.D))
+					else if (CurrentKeyState.IsKeyDown(Keys.D))
 					{
-						return 0.5f;
+						return 0.8f;
 					}
 				}
 
@@ -55,7 +59,7 @@ namespace FitMiTraffic.Main.Input
 		{
 			get
 			{
-				return PreviousState.IsKeyUp(Keys.OemOpenBrackets) && CurrentState.IsKeyDown(Keys.OemOpenBrackets);
+				return PreviousKeyState.IsKeyUp(Keys.OemOpenBrackets) && CurrentKeyState.IsKeyDown(Keys.OemOpenBrackets);
 			}
 		}
 
@@ -63,7 +67,21 @@ namespace FitMiTraffic.Main.Input
 		{
 			get
 			{
-				return PreviousState.IsKeyUp(Keys.OemCloseBrackets) && CurrentState.IsKeyDown(Keys.OemCloseBrackets);
+				return PreviousKeyState.IsKeyUp(Keys.OemCloseBrackets) && CurrentKeyState.IsKeyDown(Keys.OemCloseBrackets);
+			}
+		}
+
+		public static Vector2 MoveCameraAmount
+		{
+			get
+			{
+				if (Mouse.GetState().MiddleButton == ButtonState.Released)
+				{
+					return Vector2.Zero;
+				}
+				Vector2 dir = new Vector2(PreviousMouseState.X - CurrentMouseState.X, PreviousMouseState.Y - CurrentMouseState.Y);
+
+				return dir;
 			}
 		}
 
@@ -71,7 +89,7 @@ namespace FitMiTraffic.Main.Input
 		{
 			get
 			{
-				return PreviousState.IsKeyUp(Keys.Z) && CurrentState.IsKeyDown(Keys.Z);
+				return PreviousKeyState.IsKeyUp(Keys.Z) && CurrentKeyState.IsKeyDown(Keys.Z);
 			}
 		}
 
@@ -79,7 +97,7 @@ namespace FitMiTraffic.Main.Input
 		{
 			get
 			{
-				return CurrentState.IsKeyDown(Keys.Escape);
+				return CurrentKeyState.IsKeyDown(Keys.Escape);
 			}
 		}
 
@@ -95,8 +113,12 @@ namespace FitMiTraffic.Main.Input
 
 		public static void Update()
 		{
-			PreviousState = CurrentState;
-			CurrentState = Keyboard.GetState();
+			PreviousKeyState = CurrentKeyState;
+			CurrentKeyState = Keyboard.GetState();
+
+			PreviousMouseState = CurrentMouseState;
+			CurrentMouseState = Mouse.GetState();
+
 			//PuckManager.CheckForNewPuckData();
 		}
 	}
