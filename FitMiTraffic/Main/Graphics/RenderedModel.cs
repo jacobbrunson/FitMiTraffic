@@ -172,6 +172,8 @@ namespace FitMiTraffic.Main.Graphics
 
 					effect.Parameters["xLightPos"].SetValue(TrafficGame.lightPosition);
 					effect.Parameters["DiffuseLightDirection"].SetValue(TrafficGame.lightDirection);
+
+					effect.Parameters["resolution"].SetValue(new Vector2(600, 800));
 				}
 				/*foreach (BasicEffect effect in mesh.Effects)
 				{

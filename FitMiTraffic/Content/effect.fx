@@ -12,6 +12,8 @@ float3 DiffuseLightDirection;// = float3(1, 1, 1);
 float4 DiffuseColor = float4(1, 0.8, 0.8, 1);
 float DiffuseIntensity = 1.0f;
 
+float2 resolution;
+
 matrix  LightViewProj;
 float ShadowMapSize = float2(2048, 2048);
 
@@ -231,8 +233,16 @@ SScenePixelToFrame ShadowedScenePixelShader(SSceneVertexToPixel PSIn)
 		}
 	}
 
+	float2 uv = (PSIn.Position / resolution);
+	uv *= 1.0f - uv.yx;
+
+	float len = length(uv);
+	float vignette = pow(uv.x * uv.y * 15.0f, 0.1f);
+
+	//vignette = 1;
+
 	float4 baseColor = tex2D(textureSampler, PSIn.TexCoords);
-	Output.Color = baseColor * (DiffuseColor * diffuseLightingFactor + AmbientColor * AmbientIntensity);
+	Output.Color = baseColor * (DiffuseColor * diffuseLightingFactor + AmbientColor * AmbientIntensity) * vignette;
 
 	return Output;
 }

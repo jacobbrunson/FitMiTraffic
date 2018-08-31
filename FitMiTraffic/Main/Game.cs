@@ -200,7 +200,7 @@ namespace FitMiTraffic.Main
 			//cameraEffect.Alpha = 1f;
 
 
-			lightProjection = Matrix.CreateOrthographic(30, 30, 0, 50);
+			lightProjection = Matrix.CreateOrthographic(35, 35, 0, 50);
 			lightView = Matrix.CreateLookAt(lightPosition,
 						lightPosition + lightDirection,
 						Vector3.Up);
@@ -217,7 +217,7 @@ namespace FitMiTraffic.Main
 
 			GraphicsDevice.BlendState = BlendState.Opaque;
 			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-			GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, new Color(134, 198, 100), 1.0f, 0);
+			GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
 			//cameraEffect.View = lightView;
 			//cameraEffect.Projection = lightProjection;
 			environment.Render(spriteBatch, gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");

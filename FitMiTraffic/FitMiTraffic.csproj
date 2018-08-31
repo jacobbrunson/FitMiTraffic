@@ -45,6 +45,7 @@
     <Compile Include="Main\Environment\BigSign.cs" />
     <Compile Include="Main\Environment\EnvironmentManager.cs" />
     <Compile Include="Main\Environment\ExitSign.cs" />
+    <Compile Include="Main\Environment\Ground.cs" />
     <Compile Include="Main\Environment\Rail.cs" />
     <Compile Include="Main\Environment\RoadPiece.cs" />
     <Compile Include="Main\Environment\RoadSegment.cs" />

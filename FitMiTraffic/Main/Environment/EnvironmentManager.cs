@@ -13,6 +13,7 @@ namespace FitMiTraffic.Main.Environment
 	class EnvironmentManager
 	{
 		private Road road;
+		private Ground ground;
 		private List<RenderedModel> models = new List<RenderedModel>();
 
 		private ContentManager content;
@@ -24,6 +25,9 @@ namespace FitMiTraffic.Main.Environment
 			road = new Road();
 
 			RenderedModel model;
+
+			ground = new Ground(content);
+			models.Add(ground);
 
 			model = new SpeedLimit(content) { Position = new Vector3(-6, 10, 0) };
 			//models.Add(model);
@@ -49,6 +53,7 @@ namespace FitMiTraffic.Main.Environment
 		public void Update(GameTime gameTime, float playerY)
 		{
 			road.Update(playerY);
+			ground.Position = new Vector3(0, playerY, 0);
 		}
 
 		public void Render(SpriteBatch spriteBatch, GameTime gameTime, Matrix view, Matrix projection, Matrix lightViewProjection, Texture2D shadowMap, string technique)
