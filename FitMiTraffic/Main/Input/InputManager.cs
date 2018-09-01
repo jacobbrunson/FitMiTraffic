@@ -85,6 +85,14 @@ namespace FitMiTraffic.Main.Input
 			}
 		}
 
+		public static bool Restart
+		{
+			get
+			{
+				return PreviousKeyState.IsKeyUp(Keys.R) && CurrentKeyState.IsKeyDown(Keys.R);
+			}
+		}
+
 		public static bool ToggleDebug
 		{
 			get
@@ -103,10 +111,17 @@ namespace FitMiTraffic.Main.Input
 
 		public static bool Initialize()
 		{
-			PuckManager = new HIDPuckDongle();
-			PuckManager.Open();
-			PuckManager.SendCommand(0, HidPuckCommands.SENDVEL, 0x00, 0x01);
-			PuckManager.SendCommand(1, HidPuckCommands.SENDVEL, 0x00, 0x01);
+			try
+			{
+				PuckManager = new HIDPuckDongle();
+				PuckManager.Open();
+				PuckManager.SendCommand(0, HidPuckCommands.SENDVEL, 0x00, 0x01);
+				PuckManager.SendCommand(1, HidPuckCommands.SENDVEL, 0x00, 0x01);
+			} catch (Exception e)
+			{
+				Console.WriteLine("Failed to initialize puck");
+				return false;
+			}
 
 			return true;
 		}

@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using tainicom.Aether.Physics2D.Dynamics;
+using FitMiTraffic.Main.Utility;
+using static FitMiTraffic.Main.TrafficGame;
 
 namespace FitMiTraffic.Main.Vehicle
 {
@@ -23,7 +25,9 @@ namespace FitMiTraffic.Main.Vehicle
 		public float LaneWidth;
 
 		private float LastOnRamp = -1;
-		private float LastOnRampSeconds; 
+		private float LastOnRampSeconds;
+
+		private Random random;
 
 		public TrafficManager(ContentManager content, World world, int interval, int numLanes, float laneWidth)
 		{
@@ -34,11 +38,39 @@ namespace FitMiTraffic.Main.Vehicle
 			LaneWidth = laneWidth;
 
 			LastSpawnMillis = -Interval;
+
+			random = new Random();
 		}
 
-		public void Update(GameTime gameTime, float playerY)
+		public void RenderDebug(Matrix view, Matrix projection)
 		{
-			Random random = new Random();
+			foreach (Car car in cars)
+			{
+				foreach (CastedRay ray in car.Rays)
+				{
+					TrafficGame.DebugView.BeginCustomDraw(projection, view);
+
+					if (ray.Hit)
+					{
+						TrafficGame.DebugView.DrawPoint(ray.P1, .25f, new Color(0.9f, 0.4f, 0.4f));
+						TrafficGame.DebugView.DrawSegment(ray.P2, ray.P1, new Color(0.8f, 0.4f, 0.4f));
+					}
+					else
+					{
+						TrafficGame.DebugView.DrawPoint(ray.P1, .25f, new Color(0.4f, 0.9f, 0.4f));
+						TrafficGame.DebugView.DrawSegment(ray.P2, ray.P1, new Color(0.8f, 0.8f, 0.8f));
+					}
+					TrafficGame.DebugView.EndCustomDraw();
+				}
+
+				car.Rays.Clear();
+			}
+		}
+
+		public void Update(GameTime gameTime, Player player, GameState state)
+		{
+			float playerY = player.Position.Y;
+			
 
 			if (gameTime.TotalGameTime.TotalMilliseconds - LastSpawnMillis >= Interval)
 			{
@@ -63,7 +95,14 @@ namespace FitMiTraffic.Main.Vehicle
 					var laneOffset = (float)random.NextDouble() * wiggleRoom - wiggleRoom / 2;
 
 					posX = lanePos + laneOffset;
-					posY = playerY + (float)random.NextDouble() * 20 + 15;
+
+					if (player.Velocity.Y < 10 || state == GameState.STARTING)
+					{
+						posY = playerY - (float)(random.NextDouble()) * 20 - 10;
+					} else
+					{
+						posY = playerY + (float)(random.NextDouble()) * 20 * player.Velocity.Y.Map(10, 30, 0, 1) + 30;
+					}
 
 					foundSpawnPos = true;
 					foreach (Car c in cars)
@@ -77,7 +116,7 @@ namespace FitMiTraffic.Main.Vehicle
 				} while (!foundSpawnPos && spawnAttempts < 5);
 
 				if (foundSpawnPos) {
-					float speed = (float)random.NextDouble() * 5.0f + (NumLanes - lane + 1) * 2.0f;
+					float speed = (float)random.NextDouble() * 5.0f + (NumLanes - lane + 1) * 1.5f + 3.0f;
 
 					Car car = new Car(Content, type, World, speed);
 					car.Position = new Vector2(posX, posY);
@@ -91,7 +130,7 @@ namespace FitMiTraffic.Main.Vehicle
 			//Despawn cars we left in the dust
 			for (int i = cars.Count-1; i >= 0; i--)
 			{
-				if (cars[i].Body.Position.Y < playerY - 10)
+				if (cars[i].Body.Position.Y < playerY - 30 || cars[i].Body.Position.Y > playerY + 50)
 				{
 					World.Remove(cars[i].Body);
 					cars.Remove(cars[i]);

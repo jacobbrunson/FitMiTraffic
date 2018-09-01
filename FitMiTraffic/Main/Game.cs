@@ -46,6 +46,13 @@ namespace FitMiTraffic.Main
 
 		Matrix lightProjection;
 
+		GameState state = GameState.STARTING;
+		double startingTime;
+
+		public enum GameState
+		{
+			STARTING, RUNNING, RECENTERING
+		}
 
 		private void Graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
 		{
@@ -71,7 +78,7 @@ namespace FitMiTraffic.Main
 			score += DodgePoints;
 		}
 
-		private void HandleInput()
+		private void HandleInput(GameTime gameTime)
 		{
 			InputManager.Update();
 
@@ -94,6 +101,12 @@ namespace FitMiTraffic.Main
 			if (InputManager.ZoomIn)
 			{
 				scale *= 1.5f;
+			}
+
+			if (InputManager.Restart)
+			{
+				player.Recenter(gameTime);
+				state = GameState.RECENTERING;
 			}
 
 			cameraRot += InputManager.MoveCameraAmount / 30;
@@ -128,7 +141,7 @@ namespace FitMiTraffic.Main
 			MessagesUI.LoadContent(Content);
 			ScoreUI.LoadContent(Content);
 
-			player = new Player(Content, CarType.TEST1, world, 15);
+			player = new Player(Content, CarType.TEST1, world, 5);
 			player.Position = new Vector2(0, -5);
 			player.DodgeCompleteCallback = DodgeCompleted;
 
@@ -149,27 +162,43 @@ namespace FitMiTraffic.Main
 
         protected override void Update(GameTime gameTime)
         {
-			HandleInput();
-
-			trafficManager.Update(gameTime, player.Position.Y);
-
+			HandleInput(gameTime);
 			world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
-			
 			cameraPosition = new Vector2(0, player.Position.Y + 5);
+
+			if (state == GameState.RUNNING)
+			{
+				if (!player.crashed)
+				{
+					score += (int)(player.Velocity.Y * 1);
+				}
+			} else if (state == GameState.STARTING)
+			{
+				if (gameTime.TotalGameTime.TotalSeconds - startingTime > 3)
+				{
+					state = GameState.RUNNING;
+					Console.WriteLine("yeaaa");
+					player.Velocity = new Vector2(player.Velocity.X, 20);
+				}
+			} else if (state == GameState.RECENTERING)
+			{
+				if (!player.IsRecentering())
+				{
+					state = GameState.STARTING;
+					startingTime = gameTime.TotalGameTime.TotalSeconds;
+				}
+			}
+
+			trafficManager.Update(gameTime, player, state);
 			environment.Update(gameTime, player.Position.Y);
 			player.Update(gameTime, InputManager.LateralMovement);
 
-			if (!player.crashed)
-			{
-				score += (int)(player.Velocity.Y * 1);
-			}
+
 
 			messagesUI.Update(gameTime);
 			scoreUI.Update(gameTime, score);
 
-			//lightPosition = new Vector3(0, player.Position.Y, 10);
 			lightPosition = new Vector3(lightPosition.X, player.Position.Y + 15, lightPosition.Z);
-			Console.WriteLine(lightPosition);
 
             base.Update(gameTime);
         }
@@ -244,7 +273,8 @@ namespace FitMiTraffic.Main
 
             if (DEBUG)
             {
-                DebugView.RenderDebugData(cameraEffect.Projection, cameraEffect.View, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, 0.8f);
+				DebugView.RenderDebugData(cameraEffect.Projection, cameraEffect.View, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, 0.8f);
+				
             }
 
             base.Draw(gameTime);

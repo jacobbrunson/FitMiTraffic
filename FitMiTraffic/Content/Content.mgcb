@@ -624,3 +624,9 @@
 /processorParam:TextureFormat=Color
 /build:GroundTex.png
 
+#begin loop_0.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:loop_0.wav
+

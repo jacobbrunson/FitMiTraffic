@@ -57,7 +57,7 @@ namespace FitMiTraffic.Main.Vehicle
 			}
 		}
 
-		private List<CastedRay> Rays = new List<CastedRay>();
+		public List<CastedRay> Rays = new List<CastedRay>();
 
 		public CarState State = CarState.Driving;
 
@@ -144,10 +144,27 @@ namespace FitMiTraffic.Main.Vehicle
 
 		public Body AnticipateCollision(float maxDistance)
 		{
-			Vector2 p1 = new Vector2(Position.X, Position.Y + BodySize.Y / 2);
-			Vector2 p2 = p1 + Vector2.UnitY * maxDistance;
+			int numRays = 4;
 
-			return RayCast(p1, p2);
+			Body[] bodies = new Body[numRays];
+
+			for (int i = 0; i < numRays; i++)
+			{
+				Vector2 p1 = new Vector2(Position.X + i.Map(0, 3, -Type.Width / 2, Type.Width / 2), Position.Y + BodySize.Y / 2);
+				Vector2 p2 = p1 + Vector2.UnitY * maxDistance;
+
+				bodies[i] = RayCast(p1, p2);
+			}
+
+			for (int i = 0; i < numRays; i++)
+			{
+				if (bodies[i] != null)
+				{
+					return bodies[i];
+				}
+			}
+
+			return null;
 		}
 
 		public bool IsSafeToMerge(Vector2 direction, float buffer=1)
@@ -246,7 +263,11 @@ namespace FitMiTraffic.Main.Vehicle
 
 			if (b != null)
 			{
-				Velocity = new Vector2(Velocity.X, Math.Min(Velocity.Y, b.LinearVelocity.Y - 1));
+				Velocity = new Vector2(Velocity.X, Math.Max(0, Math.Min(Velocity.Y, b.LinearVelocity.Y - 1)));
+				if (Velocity.Y <= 0.1f)
+				{
+					Velocity = new Vector2(Velocity.X, 0);
+				}
 			}
 			else
 			{
@@ -285,25 +306,6 @@ namespace FitMiTraffic.Main.Vehicle
 			model.Rotation = Matrix.CreateFromAxisAngle(Vector3.Left, -MathHelper.PiOver2) * Matrix.CreateFromAxisAngle(Vector3.Backward, Body.Rotation);// new Vector3(0, 0, Body.Rotation);
 
 			model.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
-
-			/*foreach (CastedRay ray in Rays)
-			{
-				TrafficGame.DebugView.BeginCustomDraw(projection, view);
-
-				if (ray.Hit)
-				{
-					TrafficGame.DebugView.DrawPoint(ray.P1, .25f, new Color(0.9f, 0.4f, 0.4f));
-					TrafficGame.DebugView.DrawSegment(ray.P2, ray.P1, new Color(0.8f, 0.4f, 0.4f));
-				}
-				else
-				{
-					TrafficGame.DebugView.DrawPoint(ray.P1, .25f, new Color(0.4f, 0.9f, 0.4f));
-					TrafficGame.DebugView.DrawSegment(ray.P2, ray.P1, new Color(0.8f, 0.8f, 0.8f));
-				}
-				TrafficGame.DebugView.EndCustomDraw();
-			}*/
-
-			Rays.Clear();
 		}
 
 

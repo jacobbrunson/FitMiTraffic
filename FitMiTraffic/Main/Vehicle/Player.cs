@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using tainicom.Aether.Physics2D.Collision;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Dynamics.Contacts;
+using FitMiTraffic.Main.Utility;
 
 namespace FitMiTraffic.Main.Vehicle
 {
@@ -30,6 +32,8 @@ namespace FitMiTraffic.Main.Vehicle
 		public bool crashed = false;
 		float crashTime;
 
+		double recenterTime = -1;
+
 		float previousTime;
 
 		Body ApproachingBody;
@@ -41,6 +45,18 @@ namespace FitMiTraffic.Main.Vehicle
 
         private float initialSpeed;
 
+		SoundEffectInstance sound;
+
+		public Vector2 Velocity
+		{
+			get { return Body.LinearVelocity; }
+			set
+			{
+				Body.LinearVelocity = new Vector2(value.X, Body.LinearVelocity.Y);
+				initialSpeed = value.Y;
+			}
+		}
+
 		public Player(ContentManager content, CarType type, World world, float initialSpeed) : base(content, type, world, initialSpeed)
 		{
             this.initialSpeed = initialSpeed;
@@ -49,6 +65,12 @@ namespace FitMiTraffic.Main.Vehicle
 			Body.LinearDamping = 0.0f;
 			Body.LinearVelocity = new Vector2(0, initialSpeed);
             Body.SetFriction(0);
+
+			var s = content.Load<SoundEffect>("loop_0");
+			sound = s.CreateInstance();
+			sound.IsLooped = true;
+			//sound.Play();
+
 		}
 
 		public void Update(GameTime gameTime, float movement)
@@ -59,6 +81,39 @@ namespace FitMiTraffic.Main.Vehicle
 				float damping = dt * dt * 4;
 				Body.LinearDamping = damping;
 				Body.AngularDamping = damping;
+
+				if (recenterTime > 0)
+				{
+					Body.LinearDamping = 0;
+					Body.AngularDamping = 0;
+
+					
+					float speed = 0;
+					float targetAngle;
+					if (Math.Abs(Body.Position.X) > 1f)
+					{
+						speed = Math.Abs(Body.Position.X);
+						targetAngle = MathHelper.PiOver2 * (Position.X < 0 ? -1 : 1);
+
+						if (Math.Abs(Body.Position.X) > 2f && Math.Abs(Body.Rotation - targetAngle) > MathHelper.PiOver2)
+						{
+							speed = -1;
+							targetAngle *= -1;
+						}
+					} else
+					{
+						speed = Math.Abs(Body.Rotation).Map(MathHelper.PiOver2, 0, 0, 5);
+						targetAngle = 0;
+					}
+					Body.Rotation = Body.Rotation * 0.95f + targetAngle * 0.05f;
+					Body.LinearVelocity = new Vector2((float)-Math.Sin(Body.Rotation) * speed, (float)Math.Cos(Body.Rotation) * speed);
+					
+					if (targetAngle == 0 && Math.Abs(Body.Rotation) < 0.1f)
+					{
+						crashed = false;
+						recenterTime = -1;
+					}
+				}
 			} else
 			{
 				float maxLateralSpeed = 6.5f;
@@ -67,7 +122,7 @@ namespace FitMiTraffic.Main.Vehicle
 
 				float lateralSpeed = desiredSpeed * 0.5f + Body.LinearVelocity.X * 0.5f;
 
-				Body.LinearVelocity = new Vector2(lateralSpeed, initialSpeed);
+				Body.LinearVelocity = new Vector2(lateralSpeed, Body.LinearVelocity.Y * 0.98f + initialSpeed * 0.02f);
 				Body.Rotation = -lateralSpeed * 0.05f;
 
 				Body b = AnticipateCollision(2.0f);
@@ -98,6 +153,16 @@ namespace FitMiTraffic.Main.Vehicle
 			}
 
 			previousTime = (float)gameTime.TotalGameTime.TotalSeconds;
+		}
+
+		public void Recenter(GameTime gameTime)
+		{
+			recenterTime = gameTime.TotalGameTime.TotalSeconds;
+		}
+
+		public Boolean IsRecentering()
+		{
+			return recenterTime > 0;
 		}
 
 		public static void LoadContent()
