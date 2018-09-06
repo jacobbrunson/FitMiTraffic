@@ -67,6 +67,16 @@ namespace FitMiTraffic.Main.Vehicle
 			}
 		}
 
+		public void Reset()
+		{
+			foreach (Car car in cars)
+			{
+				World.Remove(car.Body);
+			}
+
+			cars.Clear();
+		}
+
 		public void Update(GameTime gameTime, Player player, GameState state)
 		{
 			float playerY = player.Position.Y;

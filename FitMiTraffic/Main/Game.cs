@@ -16,7 +16,7 @@ namespace FitMiTraffic.Main
     public class TrafficGame : Game
     {
 
-		private const int DodgePoints = 1000;
+		private const int DodgePoints = 10000;
 
 		private GraphicsDeviceManager graphics;
 		private SpriteBatch spriteBatch;
@@ -26,6 +26,7 @@ namespace FitMiTraffic.Main
 
 		private MessagesUI messagesUI;
 		private ScoreUI scoreUI;
+		private GameOverUI gameOverUI;
 
 		private World world;
 		private Player player;
@@ -47,7 +48,10 @@ namespace FitMiTraffic.Main
 		Matrix lightProjection;
 
 		GameState state = GameState.STARTING;
-		double startingTime;
+		double stateChangeTime;
+		float zoom = 1f;
+
+		PostProcessor postProcessor;
 
 		public enum GameState
 		{
@@ -107,6 +111,7 @@ namespace FitMiTraffic.Main
 			{
 				player.Recenter(gameTime);
 				state = GameState.RECENTERING;
+				stateChangeTime = gameTime.TotalGameTime.TotalSeconds;
 			}
 
 			cameraRot += InputManager.MoveCameraAmount / 30;
@@ -127,6 +132,7 @@ namespace FitMiTraffic.Main
 
 			messagesUI = new MessagesUI();
 			scoreUI = new ScoreUI();
+			gameOverUI = new GameOverUI();
 
 			base.Initialize();
         }
@@ -140,6 +146,7 @@ namespace FitMiTraffic.Main
 
 			MessagesUI.LoadContent(Content);
 			ScoreUI.LoadContent(Content);
+			GameOverUI.LoadContent(Content);
 
 			player = new Player(Content, CarType.TEST1, world, 5);
 			player.Position = new Vector2(0, -5);
@@ -150,6 +157,9 @@ namespace FitMiTraffic.Main
 
 			shadowMapRenderTarget = new RenderTarget2D(GraphicsDevice, 2048, 2048, true, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.PlatformContents);
 
+
+			Effect e = Content.Load<Effect>("desaturate");
+			postProcessor = new PostProcessor(GraphicsDevice, spriteBatch, e);
 
 			DebugView.LoadContent(GraphicsDevice, Content);
 		}
@@ -163,29 +173,38 @@ namespace FitMiTraffic.Main
         protected override void Update(GameTime gameTime)
         {
 			HandleInput(gameTime);
-			world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
+			if (!player.crashed)
+				world.Step((float)gameTime.ElapsedGameTime.TotalSeconds);
+			else
+				world.Step((float)gameTime.ElapsedGameTime.TotalSeconds/4);
 			cameraPosition = new Vector2(0, player.Position.Y + 5);
 
 			if (state == GameState.RUNNING)
 			{
 				if (!player.crashed)
 				{
-					score += (int)(player.Velocity.Y * 1);
+					score += (int)(player.Velocity.Y * 0.5f);
 				}
 			} else if (state == GameState.STARTING)
 			{
-				if (gameTime.TotalGameTime.TotalSeconds - startingTime > 3)
+				zoom = Math.Min(1, zoom + 0.05f);
+				if (gameTime.TotalGameTime.TotalSeconds - stateChangeTime > 3)
 				{
 					state = GameState.RUNNING;
-					Console.WriteLine("yeaaa");
+					stateChangeTime = gameTime.TotalGameTime.TotalSeconds;
 					player.Velocity = new Vector2(player.Velocity.X, 20);
 				}
 			} else if (state == GameState.RECENTERING)
 			{
-				if (!player.IsRecentering())
+				zoom = Math.Max(0, zoom-0.05f);
+				if (gameTime.TotalGameTime.TotalSeconds - stateChangeTime > 1)
 				{
 					state = GameState.STARTING;
-					startingTime = gameTime.TotalGameTime.TotalSeconds;
+					stateChangeTime = gameTime.TotalGameTime.TotalSeconds;
+					environment.Reset();
+					trafficManager.Reset();
+					player.Reset();
+					score = 0;
 				}
 			}
 
@@ -207,14 +226,14 @@ namespace FitMiTraffic.Main
         {
             GraphicsDevice.Clear(Color.DarkOliveGreen);
 
-			Vector3 cameraTarget = new Vector3(0, player.Position.Y + 5, 0);
+			Vector3 cameraTarget = new Vector3(0 * zoom + player.Position.X * (1 - zoom), player.Position.Y + 5 * zoom, 0);
 			Vector3 cameraPosition;
 			if (!DEBUG)
 			{
 				//Vector3 cameraPosition3D = new Vector3(cameraPosition + Vector2.UnitY * -10, 0.5f);
 
 				//cameraEffect.View = Matrix.Identity;
-				cameraPosition = cameraTarget + new Vector3(0, -5, 12);
+				cameraPosition = cameraTarget + new Vector3(0, -5 * zoom, 12 * zoom);
 				cameraEffect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver2 * 0.8f, GraphicsDevice.Viewport.AspectRatio, 0.1f, 100f);
 			} else
 			{
@@ -244,22 +263,25 @@ namespace FitMiTraffic.Main
 			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
 			graphics.GraphicsDevice.SetRenderTarget(null);
 
-			GraphicsDevice.BlendState = BlendState.Opaque;
-			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-			GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
-			//cameraEffect.View = lightView;
-			//cameraEffect.Projection = lightProjection;
 
+
+			postProcessor.Begin();
+
+			GraphicsDevice.BlendState = BlendState.Opaque;
+			//GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+			//GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
 			environment.Render(spriteBatch, gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
 			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
 			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
 
+			postProcessor.End(player.crashed);
 
 			GraphicsDevice.SetRenderTarget(null);
 			spriteBatch.Begin(0, BlendState.Opaque, SamplerState.AnisotropicClamp);
 			//spriteBatch.Draw(shadowMapRenderTarget, new Rectangle(0, 0, 600, 800), Color.White);
 			spriteBatch.End();
 
+	
 		
 
 			spriteBatch.Begin();
@@ -267,6 +289,11 @@ namespace FitMiTraffic.Main
 
 			messagesUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 			scoreUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+
+			if (player.crashed && state != GameState.RECENTERING)
+			{
+				gameOverUI.Render(spriteBatch, gameTime, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+			}
 
 
 			spriteBatch.End();

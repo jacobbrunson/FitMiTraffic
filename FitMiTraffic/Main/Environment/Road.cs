@@ -31,12 +31,17 @@ namespace FitMiTraffic.Main.Environment
 		public Road(World world)
 		{
             this.world = world;
+			Reset();
+		}
+
+		public void Reset()
+		{
+			Segments.Clear();
 			for (int i = 0; i < 10; i++)
 			{
 				var piece = new RoadSegment(content, world, Size * (i - 1));
 				Segments.AddLast(piece);
 			}
-
 		}
 
 		public static int GetLane(float x, float tolerance=0.1f)
@@ -59,6 +64,7 @@ namespace FitMiTraffic.Main.Environment
 
 		public void Update(float playerY)
 		{
+			Console.WriteLine(Segments.First.Value.Y);
 			if (playerY - Segments.First.Value.Y > Size*2)
 			{
                 Segments.First.Value.Destroy();

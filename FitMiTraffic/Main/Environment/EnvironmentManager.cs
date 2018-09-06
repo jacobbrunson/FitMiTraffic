@@ -46,6 +46,11 @@ namespace FitMiTraffic.Main.Environment
 			//models.Add(model);
 		}
 
+		public void Reset()
+		{
+			road.Reset();
+		}
+
 		public void Add(RenderedModel model)
 		{
 			models.Add(model);

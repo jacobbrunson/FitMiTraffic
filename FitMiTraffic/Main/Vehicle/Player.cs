@@ -33,6 +33,7 @@ namespace FitMiTraffic.Main.Vehicle
 		float crashTime;
 
 		double recenterTime = -1;
+		int recenterDir = 1;
 
 		float previousTime;
 
@@ -62,15 +63,23 @@ namespace FitMiTraffic.Main.Vehicle
             this.initialSpeed = initialSpeed;
 			Body.OnCollision += Collision;
 			Body.Mass = 4000.0f;
-			Body.LinearDamping = 0.0f;
-			Body.LinearVelocity = new Vector2(0, initialSpeed);
-            Body.SetFriction(0);
+			Reset();
 
-			var s = content.Load<SoundEffect>("loop_0");
-			sound = s.CreateInstance();
-			sound.IsLooped = true;
+			//var s = content.Load<SoundEffect>("loop_0");
+			//sound = s.CreateInstance();
+			//sound.IsLooped = true;
 			//sound.Play();
 
+		}
+
+		public void Reset()
+		{
+			crashed = false;
+			Position = Vector2.Zero;
+			Body.Rotation = 0;
+			Body.LinearDamping = 0.0f;
+			Body.LinearVelocity = new Vector2(0, initialSpeed);
+			Body.SetFriction(0);
 		}
 
 		public void Update(GameTime gameTime, float movement)
@@ -81,39 +90,6 @@ namespace FitMiTraffic.Main.Vehicle
 				float damping = dt * dt * 4;
 				Body.LinearDamping = damping;
 				Body.AngularDamping = damping;
-
-				if (recenterTime > 0)
-				{
-					Body.LinearDamping = 0;
-					Body.AngularDamping = 0;
-
-					
-					float speed = 0;
-					float targetAngle;
-					if (Math.Abs(Body.Position.X) > 1f)
-					{
-						speed = Math.Abs(Body.Position.X);
-						targetAngle = MathHelper.PiOver2 * (Position.X < 0 ? -1 : 1);
-
-						if (Math.Abs(Body.Position.X) > 2f && Math.Abs(Body.Rotation - targetAngle) > MathHelper.PiOver2)
-						{
-							speed = -1;
-							targetAngle *= -1;
-						}
-					} else
-					{
-						speed = Math.Abs(Body.Rotation).Map(MathHelper.PiOver2, 0, 0, 5);
-						targetAngle = 0;
-					}
-					Body.Rotation = Body.Rotation * 0.95f + targetAngle * 0.05f;
-					Body.LinearVelocity = new Vector2((float)-Math.Sin(Body.Rotation) * speed, (float)Math.Cos(Body.Rotation) * speed);
-					
-					if (targetAngle == 0 && Math.Abs(Body.Rotation) < 0.1f)
-					{
-						crashed = false;
-						recenterTime = -1;
-					}
-				}
 			} else
 			{
 				float maxLateralSpeed = 6.5f;
@@ -158,6 +134,14 @@ namespace FitMiTraffic.Main.Vehicle
 		public void Recenter(GameTime gameTime)
 		{
 			recenterTime = gameTime.TotalGameTime.TotalSeconds;
+			if (Position.X > 0 && Body.Rotation < 0 && Body.Rotation > -MathHelper.PiOver2 || Position.X <= 0 && Body.Rotation > 0 && Body.Rotation < MathHelper.PiOver2)
+			{
+				recenterDir = -1;
+			}
+			else
+			{
+				recenterDir = 1;
+			}
 		}
 
 		public Boolean IsRecentering()

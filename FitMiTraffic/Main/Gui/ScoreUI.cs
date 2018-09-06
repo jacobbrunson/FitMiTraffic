@@ -34,19 +34,21 @@ namespace FitMiTraffic.Main.Gui
 
 		public void Render(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight)
 		{
-			Vector2 scorePos = new Vector2(viewportWidth - 200, viewportHeight - 50);
-			spriteBatch.DrawString(Font, "Score: " + Score, scorePos, Color.Blue, 0, Vector2.Zero, 2, SpriteEffects.None, 0);
+			string s = Score.ToString();
+			Vector2 d = Font.MeasureString(s);
+			Vector2 scorePos = new Vector2(20, 20);
+			spriteBatch.DrawString(Font, s, scorePos, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
 			foreach (Message m in points)
 			{
 				Color color = new Color(1f, 0.2f, 0.2f);
-				spriteBatch.DrawString(Font, m.Text, scorePos + m.Offset, color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0);
+				spriteBatch.DrawString(Font, m.Text, scorePos + m.Offset, color, 0, Vector2.Zero, 0.25f, SpriteEffects.None, 0);
 			}
 		}
 
 		public static void LoadContent(ContentManager content)
 		{
-			Font = content.Load<SpriteFont>("font");
+			Font = content.Load<SpriteFont>("GameFont");
 		}
 
 	}
