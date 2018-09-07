@@ -64,7 +64,6 @@ namespace FitMiTraffic.Main.Environment
 
 		public void Update(float playerY)
 		{
-			Console.WriteLine(Segments.First.Value.Y);
 			if (playerY - Segments.First.Value.Y > Size*2)
 			{
                 Segments.First.Value.Destroy();

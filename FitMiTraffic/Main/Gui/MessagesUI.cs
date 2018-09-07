@@ -16,9 +16,11 @@ namespace FitMiTraffic.Main.Gui
 
 		private MessageQueue messages = new MessageQueue();
 
-		public void WriteMessage(String message)
+		public void WriteMessage(String message, int x)
 		{
-			messages.Enqueue(new Message(message));
+			var m = new Message(message);
+			m.Offset = new Vector2(x, 0);
+			messages.Enqueue(m);
 		}
 
 		public void Update(GameTime gameTime)
@@ -32,14 +34,15 @@ namespace FitMiTraffic.Main.Gui
 			foreach (Message m in messages)
 			{
 				i += 1;
-				Color color = Color.Red;
-				spriteBatch.DrawString(Font, m.Text, new Vector2(50, viewportHeight - 50 * i), color, 0, Vector2.Zero, 3f, SpriteEffects.None, 0);
+				Color color = Color.Yellow;
+				Vector2 d = Font.MeasureString(m.Text);
+				spriteBatch.DrawString(Font, m.Text, new Vector2(250, 700) + m.Offset, color, 0, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
 			}
 		}
 
 		public static void LoadContent(ContentManager content)
 		{
-			Font = content.Load<SpriteFont>("font");
+			Font = content.Load<SpriteFont>("GameFont");
 		}
 	}
 }

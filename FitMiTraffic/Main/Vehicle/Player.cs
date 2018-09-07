@@ -39,7 +39,7 @@ namespace FitMiTraffic.Main.Vehicle
 
 		Body ApproachingBody;
 
-		public delegate void DodgeCompleteDelegate();
+		public delegate void DodgeCompleteDelegate(Body b);
 		public DodgeCompleteDelegate DodgeCompleteCallback;
 
 		Queue<Dodge> Dodges = new Queue<Dodge>();
@@ -101,7 +101,7 @@ namespace FitMiTraffic.Main.Vehicle
 				Body.LinearVelocity = new Vector2(lateralSpeed, Body.LinearVelocity.Y * 0.98f + initialSpeed * 0.02f);
 				Body.Rotation = -lateralSpeed * 0.05f;
 
-				Body b = AnticipateCollision(2.0f);
+				Body b = AnticipateCollision(4.0f);
 
 				if (ApproachingBody != null && !ApproachingBody.Equals(b))
 				{
@@ -122,7 +122,7 @@ namespace FitMiTraffic.Main.Vehicle
 					d.Body.FixtureList[0].GetAABB(out aabb, 0);
 					if (d.Body.Position.Y - aabb.Height / 2 < Position.Y)
 					{
-						DodgeCompleteCallback();
+						DodgeCompleteCallback(d.Body);
 						Dodges.Dequeue();
 					}
 				}

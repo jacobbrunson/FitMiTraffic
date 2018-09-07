@@ -47,7 +47,7 @@ namespace FitMiTraffic.Main
 
 		Matrix lightProjection;
 
-		GameState state = GameState.STARTING;
+		GameState state = GameState.RUNNING;
 		double stateChangeTime;
 		float zoom = 1f;
 
@@ -75,9 +75,10 @@ namespace FitMiTraffic.Main
 			Content.RootDirectory = "Content";
         }
 
-		private void DodgeCompleted()
+		private void DodgeCompleted(Body b)
 		{
-			messagesUI.WriteMessage("NICE DODGE!");
+			Console.WriteLine(b.Position.X);
+			messagesUI.WriteMessage("+1000", (int) b.Position.X * 60); //TODO: 60 should really not be a magic constant
 			scoreUI.ShowPoints(DodgePoints);
 			score += DodgePoints;
 		}
@@ -148,7 +149,7 @@ namespace FitMiTraffic.Main
 			ScoreUI.LoadContent(Content);
 			GameOverUI.LoadContent(Content);
 
-			player = new Player(Content, CarType.TEST1, world, 5);
+			player = new Player(Content, CarType.TEST1, world, 20);
 			player.Position = new Vector2(0, -5);
 			player.DodgeCompleteCallback = DodgeCompleted;
 
