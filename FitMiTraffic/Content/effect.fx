@@ -183,7 +183,17 @@ struct SSceneVertexToPixel
 	float2 TexCoords            : TEXCOORD1;
 	float3 Normal                : TEXCOORD2;
 	float4 Position3D            : TEXCOORD3;
+};
 
+
+struct STerrainVertexToPixel
+{
+	float4 Position             : POSITION;
+	float4 Pos2DAsSeenByLight    : TEXCOORD0;
+
+	float3 Normal                : TEXCOORD2;
+	float4 Position3D            : TEXCOORD3;
+	float4 Color : COLOR0;
 };
 
 struct SScenePixelToFrame
@@ -208,6 +218,22 @@ SSceneVertexToPixel ShadowedSceneVertexShader(float4 inPos : POSITION, float2 in
 	Output.Normal = normalize(mul(inNormal, (float3x3)World));
 	Output.Position3D = mul(inPos, World);
 	Output.TexCoords = inTexCoords;
+
+	return Output;
+}
+
+
+STerrainVertexToPixel ShadowedTerrainVertexShader(float4 inPos : POSITION0, float4 inColor : COLOR0, float3 inNormal : NORMAL0)
+{
+	STerrainVertexToPixel Output = (STerrainVertexToPixel)0;
+
+	float4 worldPosition = mul(inPos, World);
+	float4 viewPosition = mul(worldPosition, View);
+	Output.Position = mul(viewPosition, Projection);
+	Output.Pos2DAsSeenByLight = mul(inPos, xLightsWorldViewProjection);
+	Output.Normal = mul(inNormal, WorldInverseTranspose);
+	Output.Position3D = mul(inPos, World);
+	Output.Color = inColor;
 
 	return Output;
 }
@@ -247,6 +273,40 @@ SScenePixelToFrame ShadowedScenePixelShader(SSceneVertexToPixel PSIn)
 	return Output;
 }
 
+SScenePixelToFrame ShadowedTerrainPixelShader(STerrainVertexToPixel PSIn)
+{
+	SScenePixelToFrame Output = (SScenePixelToFrame)0;
+
+	float2 ProjectedTexCoords;
+	ProjectedTexCoords[0] = PSIn.Pos2DAsSeenByLight.x / PSIn.Pos2DAsSeenByLight.w / 2.0f + 0.5f;
+	ProjectedTexCoords[1] = -PSIn.Pos2DAsSeenByLight.y / PSIn.Pos2DAsSeenByLight.w / 2.0f + 0.5f;
+
+	float diffuseLightingFactor = 0;
+	if ((saturate(ProjectedTexCoords).x == ProjectedTexCoords.x) && (saturate(ProjectedTexCoords).y == ProjectedTexCoords.y))
+	{
+		float depthStoredInShadowMap = tex2D(ShadowMapSampler, ProjectedTexCoords).r;
+		float realDistance = PSIn.Pos2DAsSeenByLight.z / PSIn.Pos2DAsSeenByLight.w;
+		if ((realDistance - 1.0f / 100.0f) <= depthStoredInShadowMap)
+		{
+			diffuseLightingFactor = DotProduct(xLightPos, PSIn.Position3D, PSIn.Normal);
+			diffuseLightingFactor = saturate(diffuseLightingFactor);
+			diffuseLightingFactor *= DiffuseIntensity * 0.25f;//xLightPower;
+		}
+	}
+
+	float2 uv = (PSIn.Position / resolution);
+	uv *= 1.0f - uv.yx;
+
+	float len = length(uv);
+	float vignette = pow(uv.x * uv.y * 15.0f, 0.1f);
+
+	//vignette = 1;
+
+	Output.Color = PSIn.Color * (DiffuseColor * diffuseLightingFactor + AmbientColor * AmbientIntensity) * vignette;
+
+	return Output;
+}
+
 
 technique ShadowedScene
 {
@@ -254,5 +314,15 @@ technique ShadowedScene
 	{
 		VertexShader = compile vs_4_0 ShadowedSceneVertexShader();
 		PixelShader = compile ps_4_0 ShadowedScenePixelShader();
+	}
+}
+
+
+technique ShadowedTerrain
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_4_0 ShadowedTerrainVertexShader();
+		PixelShader = compile ps_4_0 ShadowedTerrainPixelShader();
 	}
 }

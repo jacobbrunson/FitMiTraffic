@@ -33,7 +33,8 @@ namespace FitMiTraffic.Main.Environment
 
 		public void Render(GraphicsDevice graphics, GameTime gameTime, Matrix view, Matrix projection, Matrix lightViewProjection, Texture2D shadowMap, string technique)
 		{
-			ground.Render(graphics, view, projection);
+			if (technique.Equals("ShadowedScene"))
+				ground.Render(graphics, view, projection, lightViewProjection, shadowMap);
 			road.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
 			leftRail.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
 			rightRail.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);

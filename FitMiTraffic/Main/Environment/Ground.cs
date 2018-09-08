@@ -54,7 +54,7 @@ namespace FitMiTraffic.Main.Environment
 		{
 			positionY = Y;
 
-			effect = content.Load<Effect>("terrain");
+			effect = content.Load<Effect>("effect");
 
 			var random = new Random();
 
@@ -144,14 +144,19 @@ namespace FitMiTraffic.Main.Environment
 			}
 		}
 
-		public void Render(GraphicsDevice graphics, Matrix view, Matrix projection)
+		public void Render(GraphicsDevice graphics, Matrix view, Matrix projection, Matrix lightViewProjection, Texture2D shadowMap)
 		{
 			Matrix world = Matrix.CreateTranslation(Vector3.Left * (float)width * scale / 2f + Vector3.UnitY * positionY);
-
+			effect.CurrentTechnique = effect.Techniques["ShadowedTerrain"];
 			effect.Parameters["World"].SetValue(world);
 			effect.Parameters["View"].SetValue(view);
 			effect.Parameters["Projection"].SetValue(projection);
 			effect.Parameters["WorldInverseTranspose"].SetValue(Matrix.Transpose(Matrix.Invert(world)));
+			effect.Parameters["ShadowMap"].SetValue(shadowMap);
+			effect.Parameters["xLightsWorldViewProjection"].SetValue(world * lightViewProjection);
+			effect.Parameters["xLightPos"].SetValue(TrafficGame.lightPosition);
+			effect.Parameters["DiffuseLightDirection"].SetValue(TrafficGame.lightDirection);
+			effect.Parameters["resolution"].SetValue(new Vector2(600, 800));
 			foreach (EffectPass pass in effect.CurrentTechnique.Passes)
 			{
 				pass.Apply();
