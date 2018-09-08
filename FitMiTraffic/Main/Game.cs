@@ -53,6 +53,8 @@ namespace FitMiTraffic.Main
 
 		PostProcessor postProcessor;
 
+		Ground ground;
+
 		public enum GameState
 		{
 			STARTING, RUNNING, RECENTERING
@@ -77,7 +79,6 @@ namespace FitMiTraffic.Main
 
 		private void DodgeCompleted(Body b)
 		{
-			Console.WriteLine(b.Position.X);
 			messagesUI.WriteMessage("+1000", (int) b.Position.X * 60); //TODO: 60 should really not be a magic constant
 			scoreUI.ShowPoints(DodgePoints);
 			score += DodgePoints;
@@ -150,14 +151,15 @@ namespace FitMiTraffic.Main
 			GameOverUI.LoadContent(Content);
 
 			player = new Player(Content, CarType.TEST1, world, 20);
-			player.Position = new Vector2(0, -5);
+			player.Position = new Vector2(0, 0);
 			player.DodgeCompleteCallback = DodgeCompleted;
 
 			cameraEffect = new BasicEffect(GraphicsDevice);
-			cameraEffect.TextureEnabled = true;
+			cameraEffect.TextureEnabled = false;
 
 			shadowMapRenderTarget = new RenderTarget2D(GraphicsDevice, 2048, 2048, true, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.PlatformContents);
 
+			//ground = new Ground(Content);
 
 			Effect e = Content.Load<Effect>("desaturate");
 			postProcessor = new PostProcessor(GraphicsDevice, spriteBatch, e);
@@ -259,19 +261,21 @@ namespace FitMiTraffic.Main
 			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 			GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
 			//GraphicsDevice.RasterizerState = RasterizerState.CullNone;
-			environment.Render(spriteBatch, gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
+			environment.Render(GraphicsDevice, spriteBatch, gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
 			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
 			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowMap");
 			graphics.GraphicsDevice.SetRenderTarget(null);
 
-
+			
 
 			postProcessor.Begin();
 
 			GraphicsDevice.BlendState = BlendState.Opaque;
+			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+			//ground.Render(GraphicsDevice, cameraEffect.View, cameraEffect.Projection);
 			//GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 			//GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
-			environment.Render(spriteBatch, gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
+			environment.Render(GraphicsDevice, spriteBatch, gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
 			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
 			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
 

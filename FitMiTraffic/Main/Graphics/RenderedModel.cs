@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FitMiTraffic.Main.Graphics
 {
-	public class RenderedModel
+	public class RenderedModel : Renderable
 	{
 		protected Model Model;
 		protected Texture2D Texture;
@@ -23,6 +23,7 @@ namespace FitMiTraffic.Main.Graphics
 		public Vector3 Offset;
 		public Matrix Rotation = Matrix.Identity;
 		public Vector3 Size = Vector3.One;
+		public Vector3 Scale = Vector3.One;
 
 		private Vector3 meshSize;
 
@@ -149,7 +150,7 @@ namespace FitMiTraffic.Main.Graphics
 
 		public void Render(GameTime gameTime, Matrix view, Matrix projection, Matrix lightViewProjection, Texture2D shadowMap, string technique)
 		{
-			Matrix world = Matrix.CreateScale(Size / meshSize) * Rotation * Matrix.CreateTranslation(Position + Offset);
+			Matrix world = Matrix.CreateScale(Size / meshSize * Scale) * Rotation * Matrix.CreateTranslation(Position + Offset);
 
 			foreach (ModelMesh mesh in Model.Meshes)
 			{

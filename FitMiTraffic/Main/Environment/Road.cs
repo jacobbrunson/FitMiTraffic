@@ -73,11 +73,11 @@ namespace FitMiTraffic.Main.Environment
 			}
 		}
 
-		public void Render(GameTime gameTime, Matrix view, Matrix projection, Matrix lightViewProjection, Texture2D shadowMap, string technique)
+		public void Render(GraphicsDevice graphics, GameTime gameTime, Matrix view, Matrix projection, Matrix lightViewProjection, Texture2D shadowMap, string technique)
 		{
 			foreach (RoadSegment p in Segments)
 			{
-				p.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
+				p.Render(graphics, gameTime, view, projection, lightViewProjection, shadowMap, technique);
 			}
 		}
 

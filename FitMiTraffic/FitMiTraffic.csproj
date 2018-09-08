@@ -51,6 +51,7 @@
     <Compile Include="Main\Environment\RoadSegment.cs" />
     <Compile Include="Main\Environment\SpeedLimit.cs" />
     <Compile Include="Main\Graphics\PostProcessor.cs" />
+    <Compile Include="Main\Graphics\Renderable.cs" />
     <Compile Include="Main\Graphics\RenderedModel.cs" />
     <Compile Include="Main\Gui\GameOverUI.cs" />
     <Compile Include="Main\Gui\MessageQueue.cs" />
@@ -84,6 +85,9 @@
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
     </Reference>
+    <Reference Include="SharpNoise, Version=0.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpNoise.0.11.0\lib\net45\SharpNoise.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -91,6 +95,7 @@
     <Content Include="Content\desaturate.fx" />
     <Content Include="Content\effect.fx" />
     <Content Include="Content\shadowmap.fx" />
+    <Content Include="Content\terrain.fx" />
     <Content Include="FitMi_Research_Puck.dll" />
     <Content Include="Icon.ico" />
   </ItemGroup>
