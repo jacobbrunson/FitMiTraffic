@@ -3,7 +3,7 @@ float4x4 View;
 float4x4 Projection;
 float4x4 WorldInverseTranspose;
 
-float3 DiffuseLightDirection = float3(0, 0, -1);
+float3 DiffuseLightDirection = float3(-1, -1, -1);
 float4 DiffuseColor = float4(1, 1, 1, 1);
 float DiffuseIntensity = 0.5f;
 float4 AmbientColor = float4(1, 1, 1, 1);

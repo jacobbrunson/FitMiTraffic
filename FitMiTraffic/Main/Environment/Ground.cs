@@ -62,7 +62,7 @@ namespace FitMiTraffic.Main.Environment
 			{
 				for (int y = 0; y <= length; y++)
 				{
-					float value = ((float)noiseSource.GetValue(x*0.5f, (y + positionY/scale)*0.5f, 0.5f) + 1) / 2;
+					float value = ((float)noiseSource.GetValue(x*0.5f, (y + positionY/scale)*0.5f, 0.5f) + 0) / 1;
 					if (Math.Abs(x - width / 2) * scale < Road.Size * 0.6f)
 					{
 						value = 0;
@@ -98,15 +98,15 @@ namespace FitMiTraffic.Main.Environment
 						vertex.Position = new Vector3(ox*scale, oy*scale, height*1.5f);
 						Vector3[] colors =
 						{
-							new Vector3(0.2f, heightMap[(int)ox, (int)oy]/2 + 0.6f, 0.5f),
-							new Vector3(height.Map(0, 1, 0.5f, 1), 0.5f, 0.4f),
-							new Vector3(height.Map(0, 1, 0.8f, 1), height.Map(0, 1, 0.7f, 0.9f), height.Map(0, 1, 0.3f, 0.6f)),
+							new Vector3(0.2f, (heightMap[(int)ox, (int)oy]+1)/4 + 0.6f, 0.5f),
+							new Vector3(height.Map(-1, 1, 0.5f, 1), 0.5f, 0.4f),
+							new Vector3(height.Map(-1, 1, 0.8f, 1), height.Map(-1, 1, 0.7f, 0.9f), height.Map(-1, 1, 0.3f, 0.6f)),
 						};
-						float val = (y + positionY) / 100 % 3;
+						float val = (y + positionY) / 500 % colors.Length;
 						int primary = (int)val;
-						int secondary = (primary + 1) % 3;
+						int secondary = (primary + 1) % colors.Length;
 						float blendAmt = 1-(float)Math.Pow((val - primary)*2 - 1f, 2);
-						if (val - primary < 0.5f)
+						if (val - primary < 0.8f)
 						{
 							blendAmt = 1;
 						}

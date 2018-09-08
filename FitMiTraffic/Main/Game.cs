@@ -41,7 +41,7 @@ namespace FitMiTraffic.Main
 		Vector2 cameraRot = Vector2.Zero;
 
 		RenderTarget2D shadowMapRenderTarget;
-		public static Vector3 lightPosition = new Vector3(20, 0, 20);
+		public static Vector3 lightPosition = new Vector3(20, 20, 20);
 		public static Vector3 lightDirection = new Vector3(-1f, -1, -1);
 		Matrix lightView;
 
