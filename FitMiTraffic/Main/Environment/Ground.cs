@@ -8,8 +8,10 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using SharpNoise.Modules;
+using FitMiTraffic.Main.Utility;
 
 namespace FitMiTraffic.Main.Environment
+
 {
 	public class Ground
 	{
@@ -61,7 +63,6 @@ namespace FitMiTraffic.Main.Environment
 				for (int y = 0; y <= length; y++)
 				{
 					float value = ((float)noiseSource.GetValue(x*0.5f, (y + positionY/scale)*0.5f, 0.5f) + 1) / 2;
-					value = value;
 					if (Math.Abs(x - width / 2) * scale < Road.Size * 0.6f)
 					{
 						value = 0;
@@ -92,9 +93,28 @@ namespace FitMiTraffic.Main.Environment
 					{
 						float ox = x + offsets[j].X;
 						float oy = y + offsets[j].Y;
+						float height = heightMap[(int)ox, (int)oy];
 						vertex = new VertexPositionColorNormal();
-						vertex.Position = new Vector3(ox*scale, oy*scale, heightMap[(int)ox, (int)oy]);
-						vertex.Color = new Color(0.2f, heightMap[(int)ox, (int)oy] + 0.6f, 0.4f);
+						vertex.Position = new Vector3(ox*scale, oy*scale, height*1.5f);
+						Vector3[] colors =
+						{
+							new Vector3(0.2f, heightMap[(int)ox, (int)oy]/2 + 0.6f, 0.5f),
+							new Vector3(height.Map(0, 1, 0.5f, 1), 0.5f, 0.4f),
+							new Vector3(height.Map(0, 1, 0.8f, 1), height.Map(0, 1, 0.7f, 0.9f), height.Map(0, 1, 0.3f, 0.6f)),
+						};
+						float val = (y + positionY) / 100 % 3;
+						int primary = (int)val;
+						int secondary = (primary + 1) % 3;
+						float blendAmt = 1-(float)Math.Pow((val - primary)*2 - 1f, 2);
+						if (val - primary < 0.5f)
+						{
+							blendAmt = 1;
+						}
+
+						Vector3 blended = colors[primary] * blendAmt + colors[secondary] * (1 - blendAmt);
+						Color color = new Color(blended.X, blended.Y, blended.Z);
+						vertex.Color = color;
+
 						vertices[i + j] = vertex;
 					}
 				}       
@@ -108,9 +128,13 @@ namespace FitMiTraffic.Main.Environment
 				normal.Normalize();
 
 				Color color = Color.White;
-				color.R = (byte)((vertices[i + 0].Color.R + vertices[i + 1].Color.R + vertices[i + 2].Color.R) / 3);
-				color.G = (byte)((vertices[i + 0].Color.G + vertices[i + 1].Color.G + vertices[i + 2].Color.G) / 3);
-				color.B = (byte)((vertices[i + 0].Color.B + vertices[i + 1].Color.B + vertices[i + 2].Color.B) / 3);
+				//color.R = (byte)((vertices[i + 0].Color.R + vertices[i + 1].Color.R + vertices[i + 2].Color.R) / 3);
+				//color.G = (byte)((vertices[i + 0].Color.G + vertices[i + 1].Color.G + vertices[i + 2].Color.G) / 3);
+				//color.B = (byte)((vertices[i + 0].Color.B + vertices[i + 1].Color.B + vertices[i + 2].Color.B) / 3);
+
+				color.R = Math.Max(Math.Max(vertices[i + 0].Color.R, vertices[i + 1].Color.R), vertices[i + 2].Color.R);
+				color.G = Math.Max(Math.Max(vertices[i + 0].Color.G, vertices[i + 1].Color.G), vertices[i + 2].Color.G);
+				color.B = Math.Max(Math.Max(vertices[i + 0].Color.B, vertices[i + 1].Color.B), vertices[i + 2].Color.B);
 
 				for (int j = 0; j < 3; j++)
 				{
