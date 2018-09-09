@@ -10,12 +10,15 @@ namespace FitMiTraffic.Main.Vehicle
 {
 	class CarType
 	{
-		public static readonly CarType TEST1 = new CarType("blue", 1.6f, 3f, 0, 0, 0.04f);
-		public static readonly CarType TEST2 = new CarType("green", 1.6f, 3f, 0, 0, 0.04f);
-		public static readonly CarType TEST3 = new CarType("pink", 1.6f, 3f, 0, 0, 0.04f);
+		public static readonly CarType BASIC = new CarType("car1", 1.6f, 3f, 1.5f, 0, 0, 0.04f);
+		public static readonly CarType ROUNDY = new CarType("car2", 1.6f, 3.8f, 1.35f, 0, 0, 0.04f);
+		public static readonly CarType PICKUP = new CarType("pickup", 1.65f, 4f, 1.4f, 0, 0, 0.04f);
+		public static readonly CarType SEMI = new CarType("semi", 1.7f, 5f, 2.5f, 0, 0, 0.04f);
+		public static readonly CarType SPORT = new CarType("sport", 1.6f, 4.35f, 1.25f, 0, 0, 0.04f);
 
 		public string Name;
 		public float Width;
+		public float Length;
 		public float Height;
 		public float RadiusTop;
 		public float RadiusBottom;
@@ -26,10 +29,11 @@ namespace FitMiTraffic.Main.Vehicle
 		public string TextureName;
 
 
-		public CarType(string name, float width, float height, float radiusTop, float radiusBottom, float modelScale)
+		public CarType(string name, float width, float length, float height, float radiusTop, float radiusBottom, float modelScale)
 		{
 			Name = name;
 			Width = width;
+			Length = length;
 			Height = height;
 			RadiusTop = radiusTop;
 			RadiusBottom = radiusBottom;
@@ -54,9 +58,11 @@ namespace FitMiTraffic.Main.Vehicle
 			{
 				return new CarType[]
 				{
-					TEST1,
-					TEST2,
-					TEST3
+					SPORT,
+					BASIC,
+					ROUNDY,
+					PICKUP,
+					SEMI,
 				};
 			}
 		}
@@ -65,8 +71,8 @@ namespace FitMiTraffic.Main.Vehicle
 		{
 			foreach (CarType ct in CarType.ALL)
 			{
-				ct.TextureName = "cars/tex/" + ct.Name;
-				ct.ModelName = "cars/" + ct.Name;
+				ct.TextureName = "new_cars/texture/" + ct.Name;
+				ct.ModelName = "new_cars/" + ct.Name;
 				ct.Texture = content.Load<Texture2D>(ct.TextureName);
 				ct.Model = content.Load<Model>(ct.ModelName);
 			}

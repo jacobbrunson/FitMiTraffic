@@ -290,7 +290,7 @@ SScenePixelToFrame ShadowedTerrainPixelShader(STerrainVertexToPixel PSIn)
 		{
 			diffuseLightingFactor = DotProduct(xLightPos, PSIn.Position3D, PSIn.Normal);
 			diffuseLightingFactor = saturate(diffuseLightingFactor);
-			diffuseLightingFactor *= DiffuseIntensity * 0.25f;//xLightPower;
+			diffuseLightingFactor *= DiffuseIntensity;//xLightPower;
 		}
 	}
 

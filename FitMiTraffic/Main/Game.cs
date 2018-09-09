@@ -150,7 +150,7 @@ namespace FitMiTraffic.Main
 			ScoreUI.LoadContent(Content);
 			GameOverUI.LoadContent(Content);
 
-			player = new Player(Content, CarType.TEST1, world, 20);
+			player = new Player(Content, CarType.SPORT, world, 20);
 			player.Position = new Vector2(0, 0);
 			player.DodgeCompleteCallback = DodgeCompleted;
 
@@ -272,6 +272,7 @@ namespace FitMiTraffic.Main
 
 			GraphicsDevice.BlendState = BlendState.Opaque;
 			GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+			
 			//ground.Render(GraphicsDevice, cameraEffect.View, cameraEffect.Projection);
 			//GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 			//GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);

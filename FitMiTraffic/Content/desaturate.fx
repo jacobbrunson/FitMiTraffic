@@ -25,7 +25,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	float4 gray = float4(avg*1.1f, avg, avg, 1);
 	return gray;
 }
-// Here comes the rest of the things I don't understand
+
 technique SpriteDrawing
 {
 	pass P0

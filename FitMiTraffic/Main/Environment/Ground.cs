@@ -98,11 +98,11 @@ namespace FitMiTraffic.Main.Environment
 						vertex.Position = new Vector3(ox*scale, oy*scale, height*1.5f);
 						Vector3[] colors =
 						{
-							new Vector3(0.2f, (heightMap[(int)ox, (int)oy]+1)/4 + 0.6f, 0.5f),
-							new Vector3(height.Map(-1, 1, 0.5f, 1), 0.5f, 0.4f),
-							new Vector3(height.Map(-1, 1, 0.8f, 1), height.Map(-1, 1, 0.7f, 0.9f), height.Map(-1, 1, 0.3f, 0.6f)),
+							new Vector3(0.2f, (heightMap[(int)ox, (int)oy]+1)/4 + 0.3f, 0.3f),
+							new Vector3(height.Map(-1, 1, 0.4f, 0.9f), 0.4f, 0.3f),
+							new Vector3(height.Map(-1, 1, 0.7f, 0.9f), height.Map(-1, 1, 0.6f, 0.8f), height.Map(-1, 1, 0.2f, 0.5f)),
 						};
-						float val = (y + positionY) / 500 % colors.Length;
+						float val = (y + positionY) / 100 % colors.Length;
 						int primary = (int)val;
 						int secondary = (primary + 1) % colors.Length;
 						float blendAmt = 1-(float)Math.Pow((val - primary)*2 - 1f, 2);

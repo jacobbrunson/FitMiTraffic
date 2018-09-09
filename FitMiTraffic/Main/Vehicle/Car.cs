@@ -92,12 +92,12 @@ namespace FitMiTraffic.Main.Vehicle
 
 			model = new RenderedModel(content, type.ModelName, type.TextureName);
 
-			var textureSize = new Vector2(type.Width, type.Height);
+			var textureSize = new Vector2(type.Width, type.Length);
 			textureSizePx = new Vector2(type.Texture.Width, type.Texture.Height);
 
 			scale = textureSize / textureSizePx;
 
-			BodySize = new Vector2(type.Width, type.Height);
+			BodySize = new Vector2(type.Width, type.Length);
 
 			float rTop = Type.RadiusTop * scale.Y;
 			float rBot = Type.RadiusBottom * scale.Y;
@@ -301,9 +301,9 @@ namespace FitMiTraffic.Main.Vehicle
 
 		public void Render(SpriteBatch spriteBatch, GameTime gameTime, Matrix projection, Matrix view, Matrix lightViewProjection, Texture2D shadowMap, string technique)
 		{
-			model.Position = new Vector3(Position, 0);
-			model.Size = new Vector3(Type.Width, 1.5f, Type.Height);
-			model.Rotation = Matrix.CreateFromAxisAngle(Vector3.Left, -MathHelper.PiOver2) * Matrix.CreateFromAxisAngle(Vector3.Backward, Body.Rotation);// new Vector3(0, 0, Body.Rotation);
+			model.Position = new Vector3(Position, 1.25f);
+			model.Size = new Vector3(Type.Length, Type.Width, Type.Height);
+			model.Rotation = Matrix.CreateFromAxisAngle(Vector3.Forward, -MathHelper.PiOver2) * Matrix.CreateFromAxisAngle(Vector3.Backward, Body.Rotation);// new Vector3(0, 0, Body.Rotation);
 
 			model.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
 		}
