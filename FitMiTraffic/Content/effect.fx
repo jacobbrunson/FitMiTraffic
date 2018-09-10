@@ -2,15 +2,15 @@
 float4x4 View;
 float4x4 Projection;
 
-float4 AmbientColor = float4(1, 0.8, 0.8, 1);//float4(0.9, 0.9, 1, 1);
-float AmbientIntensity = 0.4f;//0.8f;
+float4 AmbientColor;// = float4(1, 0.8, 0.8, 1);//float4(0.9, 0.9, 1, 1);
+float AmbientIntensity;// = 0.4f;//0.8f;
 
 float4x4 WorldInverseTranspose;
 
 float3 xLightPos;
 float3 DiffuseLightDirection;
 float4 DiffuseColor = float4(1, 0.8, 0.8, 1);
-float DiffuseIntensity = 0.8f;//1.0f;
+float DiffuseIntensity;// = 0.8f;//1.0f;
 
 float2 resolution;
 

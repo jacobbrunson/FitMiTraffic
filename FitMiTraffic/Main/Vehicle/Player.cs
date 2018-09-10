@@ -68,8 +68,8 @@ namespace FitMiTraffic.Main.Vehicle
 			var s = content.Load<SoundEffect>("Buzz2");
 			sound = s.CreateInstance();
 			sound.IsLooped = true;
-			sound.Play();
-			model.Color = Color.Red;
+			//sound.Play();
+			model.Color = new Color(229, 189, 15, 255);
 
 		}
 

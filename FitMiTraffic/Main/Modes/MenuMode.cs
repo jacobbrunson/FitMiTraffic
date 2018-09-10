@@ -21,6 +21,9 @@ namespace FitMiTraffic.Main.Modes
 		private Vector3 initialLightPosition = new Vector3(10, -5, 20);
 		private Vector3 lightDirection = new Vector3(-1, 1, -1);
 		private const int groundWidth = 16;
+		private Vector4 ambientColor = new Vector4(1, 0.8f, 0.8f, 1);
+		private const float ambientIntensity = 0.4f;
+		private const float diffuseIntensity = 0.8f;
 
 		//Things
 		private World world;
@@ -107,6 +110,9 @@ namespace FitMiTraffic.Main.Modes
 			effect.LightViewProjection = lighting.View * lighting.Projection;
 			effect.Parameters["xLightPos"].SetValue(lighting.Position);
 			effect.Parameters["DiffuseLightDirection"].SetValue(lighting.Direction);
+			effect.Parameters["DiffuseIntensity"].SetValue(diffuseIntensity);
+			effect.Parameters["AmbientColor"].SetValue(ambientColor);
+			effect.Parameters["AmbientIntensity"].SetValue(ambientIntensity);
 
 			//Render shadow map
 			graphics.SetRenderTarget(lighting.ShadowMap);
