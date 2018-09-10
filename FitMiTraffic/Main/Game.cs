@@ -13,7 +13,67 @@ using FitMiTraffic.Main.Graphics;
 
 namespace FitMiTraffic.Main
 {
-    public class TrafficGame : Game
+
+	public class TrafficGame : Game
+	{
+
+		public static GameMode Mode;
+		public static bool DEBUG;
+
+		private GraphicsDeviceManager graphicsManager;
+		private SpriteBatch spriteBatch;
+
+		public TrafficGame()
+		{
+			graphicsManager = new GraphicsDeviceManager(this);
+			graphicsManager.PreferredBackBufferWidth = 600;
+			graphicsManager.PreferredBackBufferHeight = 800;
+			graphicsManager.GraphicsProfile = GraphicsProfile.HiDef;
+			graphicsManager.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
+			graphicsManager.ApplyChanges();
+
+			Content.RootDirectory = "Content";
+		}
+
+		private void Graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+		{
+			//_graphicsManager.PreferMultiSampling = true;
+			//e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;
+		}
+
+		protected override void LoadContent()
+		{
+			spriteBatch = new SpriteBatch(GraphicsDevice);
+
+			Car.LoadContent(Content);
+			Road.LoadContent(Content);
+
+			MessagesUI.LoadContent(Content);
+			ScoreUI.LoadContent(Content);
+			GameOverUI.LoadContent(Content);
+
+			//Effect e = Content.Load<Effect>("desaturate");
+			//postProcessor = new PostProcessor(GraphicsDevice, _spriteBatch, e);
+
+			//DebugView.LoadContent(GraphicsDevice, Content);
+
+			Mode = new GameMode(this, GraphicsDevice, spriteBatch, Content);
+		}
+
+		protected override void Update(GameTime gameTime)
+		{
+			Mode.Update(gameTime);
+			base.Update(gameTime);
+		}
+
+		protected override void Draw(GameTime gameTime)
+		{
+			Mode.Render(gameTime);
+			base.Draw(gameTime);
+		}
+	}
+
+    /*public class TrafficGame : Game
     {
 
 		private const int DodgePoints = 10000;
@@ -55,69 +115,7 @@ namespace FitMiTraffic.Main
 
 		Ground ground;
 
-		public enum GameState
-		{
-			STARTING, RUNNING, RECENTERING
-		}
-
-		private void Graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
-		{
-			//graphics.PreferMultiSampling = true;
-			//e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;
-		}
-		public TrafficGame()
-        {
-            graphics = new GraphicsDeviceManager(this);
-			graphics.PreferredBackBufferWidth = 600;
-			graphics.PreferredBackBufferHeight = 800;
-			graphics.GraphicsProfile = GraphicsProfile.HiDef;
-			graphics.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
-			graphics.ApplyChanges();
-
-			Content.RootDirectory = "Content";
-        }
-
-		private void DodgeCompleted(Body b)
-		{
-			messagesUI.WriteMessage("+1000", (int) b.Position.X * 60); //TODO: 60 should really not be a magic constant
-			scoreUI.ShowPoints(DodgePoints);
-			score += DodgePoints;
-		}
-
-		private void HandleInput(GameTime gameTime)
-		{
-			InputManager.Update();
-
-			if (InputManager.Escape)
-			{
-				Exit();
-			}
-
-			if (InputManager.ToggleDebug)
-			{
-				DEBUG = !DEBUG;
-				cameraRot = Vector2.Zero;
-			}
-
-			if (InputManager.ZoomOut)
-			{
-				scale /= 1.5f;
-			}
-
-			if (InputManager.ZoomIn)
-			{
-				scale *= 1.5f;
-			}
-
-			if (InputManager.Restart)
-			{
-				player.Recenter(gameTime);
-				state = GameState.RECENTERING;
-				stateChangeTime = gameTime.TotalGameTime.TotalSeconds;
-			}
-
-			cameraRot += InputManager.MoveCameraAmount / 30;
-		}
+	
 
         protected override void Initialize()
         {
@@ -312,5 +310,5 @@ namespace FitMiTraffic.Main
 
             base.Draw(gameTime);
         }
-    }
+    }*/
 }

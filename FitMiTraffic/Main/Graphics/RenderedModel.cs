@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FitMiTraffic.Main.Graphics
 {
-	public class RenderedModel : Renderable
+	public class RenderedModel
 	{
 		protected Model Model;
 		protected Texture2D Texture;
@@ -150,56 +150,39 @@ namespace FitMiTraffic.Main.Graphics
 			}
 		}
 
-		public void Render(GameTime gameTime, Matrix view, Matrix projection, Matrix lightViewProjection, Texture2D shadowMap, string technique)
+		public void Render(GameTime gameTime, BaseEffect effect)
 		{
 			Matrix world = Matrix.CreateScale(Size / meshSize * Scale) * Rotation * Matrix.CreateTranslation(Position + Offset);
-
+			if (effect.Technique.Name.Equals("ShadowMap"))
+			{
+				//Console.WriteLine(effect.LightViewProjection);
+			}
 			foreach (ModelMesh mesh in Model.Meshes)
 			{
 				foreach (ModelMeshPart part in mesh.MeshParts)
 				{
-					part.Effect = effect;
+					part.Effect = effect.Effect;
 
-					effect.CurrentTechnique = effect.Techniques[technique];
+					//effect.CurrentTechnique = effect.Techniques[technique];
 					effect.Parameters["World"].SetValue(world); //world * mesh.ParentBone.Transform
-					effect.Parameters["View"].SetValue(view);
-					effect.Parameters["Projection"].SetValue(projection);
+					//effect.Parameters["View"].SetValue(view);
+					//effect.Parameters["Projection"].SetValue(projection);
 					//effect.Parameters["LightViewProj"].SetValue(world * lightViewProjection);
-					effect.Parameters["ShadowMap"].SetValue(shadowMap);
-					effect.Parameters["xLightsWorldViewProjection"].SetValue(world * lightViewProjection);
+					//effect.Parameters["ShadowMap"].SetValue(shadowMap);
+					effect.Parameters["xLightsWorldViewProjection"].SetValue(world * effect.LightViewProjection);
 
 					Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(world)); // mesh.ParentBone.Transform * world
 					effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);
 
 					effect.Parameters["ModelTexture"].SetValue(Texture);
 
-					effect.Parameters["xLightPos"].SetValue(TrafficGame.lightPosition);
-					effect.Parameters["DiffuseLightDirection"].SetValue(TrafficGame.lightDirection);
+					//effect.Parameters["xLightPos"].SetValue(TrafficGame.lightPosition);
+					//effect.Parameters["DiffuseLightDirection"].SetValue(TrafficGame.lightDirection);
 
 					effect.Parameters["resolution"].SetValue(new Vector2(600, 800));
 
 					effect.Parameters["CarColor"].SetValue(new Vector4(Color.R/255f, Color.G/255f, Color.B/255f, 1));
 				}
-				/*foreach (BasicEffect effect in mesh.Effects)
-				{
-					//effect.EnableDefaultLighting();
-					effect.LightingEnabled = true;
-					effect.AmbientLightColor = new Vector3(1, 1, 1);
-
-					//effect.DirectionalLight0.Enabled = true;
-					//effect.DirectionalLight0.Direction = Vector3.Backward;
-					//effect.DirectionalLight0.DiffuseColor = new Vector3(255, 1, 1);
-
-					effect.TextureEnabled = true;
-					if (Texture != null)
-					{
-						effect.Texture = Texture;
-					}
-					effect.World = world;
-					effect.View = view;
-					effect.Projection = projection;
-					effect.Alpha = 1;
-				}*/
 				mesh.Draw();
 			}
 		}

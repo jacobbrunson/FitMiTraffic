@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using FitMiTraffic.Main.Utility;
 using FitMiTraffic.Main.Vehicle;
 using tainicom.Aether.Physics2D.Dynamics;
+using FitMiTraffic.Main.Graphics;
 
 namespace FitMiTraffic.Main.Environment
 {
@@ -73,11 +74,11 @@ namespace FitMiTraffic.Main.Environment
 			}
 		}
 
-		public void Render(GraphicsDevice graphics, GameTime gameTime, Matrix view, Matrix projection, Matrix lightViewProjection, Texture2D shadowMap, string technique)
+		public void Render(GameTime gameTime, GraphicsDevice graphics, BaseEffect effect)
 		{
 			foreach (RoadSegment p in Segments)
 			{
-				p.Render(graphics, gameTime, view, projection, lightViewProjection, shadowMap, technique);
+				p.Render(gameTime, graphics, effect);
 			}
 		}
 

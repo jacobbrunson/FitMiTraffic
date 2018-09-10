@@ -313,13 +313,13 @@ namespace FitMiTraffic.Main.Vehicle
 			Body.Rotation = Body.Rotation * 0.5f + desiredAngle * 0.5f;
 		}
 
-		public void Render(SpriteBatch spriteBatch, GameTime gameTime, Matrix projection, Matrix view, Matrix lightViewProjection, Texture2D shadowMap, string technique)
+		public void Render(GameTime gameTime, BaseEffect effect)
 		{
 			model.Position = new Vector3(Position, 1.25f);
 			model.Size = new Vector3(Type.Length, Type.Width, Type.Height);
 			model.Rotation = Matrix.CreateFromAxisAngle(Vector3.Forward, -MathHelper.PiOver2) * Matrix.CreateFromAxisAngle(Vector3.Backward, Body.Rotation);// new Vector3(0, 0, Body.Rotation);
 
-			model.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
+			model.Render(gameTime, effect);
 		}
 
 

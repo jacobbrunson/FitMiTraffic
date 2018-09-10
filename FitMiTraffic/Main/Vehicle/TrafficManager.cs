@@ -10,6 +10,8 @@ using Microsoft.Xna.Framework.Graphics;
 using tainicom.Aether.Physics2D.Dynamics;
 using FitMiTraffic.Main.Utility;
 using static FitMiTraffic.Main.TrafficGame;
+using FitMiTraffic.Main.Graphics;
+using tainicom.Aether.Physics2D.Diagnostics;
 
 namespace FitMiTraffic.Main.Vehicle
 {
@@ -42,25 +44,25 @@ namespace FitMiTraffic.Main.Vehicle
 			random = new Random();
 		}
 
-		public void RenderDebug(Matrix view, Matrix projection)
+		public void RenderDebug(DebugView debugView, Matrix view, Matrix projection)
 		{
 			foreach (Car car in cars)
 			{
 				foreach (CastedRay ray in car.Rays)
 				{
-					TrafficGame.DebugView.BeginCustomDraw(projection, view);
+					debugView.BeginCustomDraw(projection, view);
 
 					if (ray.Hit)
 					{
-						TrafficGame.DebugView.DrawPoint(ray.P1, .25f, new Color(0.9f, 0.4f, 0.4f));
-						TrafficGame.DebugView.DrawSegment(ray.P2, ray.P1, new Color(0.8f, 0.4f, 0.4f));
+						debugView.DrawPoint(ray.P1, .25f, new Color(0.9f, 0.4f, 0.4f));
+						debugView.DrawSegment(ray.P2, ray.P1, new Color(0.8f, 0.4f, 0.4f));
 					}
 					else
 					{
-						TrafficGame.DebugView.DrawPoint(ray.P1, .25f, new Color(0.4f, 0.9f, 0.4f));
-						TrafficGame.DebugView.DrawSegment(ray.P2, ray.P1, new Color(0.8f, 0.8f, 0.8f));
+						debugView.DrawPoint(ray.P1, .25f, new Color(0.4f, 0.9f, 0.4f));
+						debugView.DrawSegment(ray.P2, ray.P1, new Color(0.8f, 0.8f, 0.8f));
 					}
-					TrafficGame.DebugView.EndCustomDraw();
+					debugView.EndCustomDraw();
 				}
 
 				car.Rays.Clear();
@@ -156,25 +158,16 @@ namespace FitMiTraffic.Main.Vehicle
 		}
 
 
-		public void RenderTraffic(SpriteBatch spriteBatch, GameTime gameTime, Matrix projection, Matrix view, Matrix lightViewProjection, Texture2D shadowMap, string technique)
+		public void RenderTraffic(GameTime gameTime, BaseEffect effect)
 		{
-			if (technique.Equals("ShadowedScene"))
+			//if (technique.Equals("ShadowedScene"))
 			{
-				technique = "ShadowedCar";
+			//	technique = "ShadowedCar";
 			}
 			foreach (Car car in cars)
 			{
-				car.Render(spriteBatch, gameTime, projection, view, lightViewProjection, shadowMap, technique);
+				car.Render(gameTime, effect);
 			}
 		}
-
-		public void RenderShadowMap(GraphicsDevice graphics, Matrix lightViewProjection)
-		{
-			foreach (Car car in cars)
-			{
-				car.model.RenderShadowMap(graphics, lightViewProjection);
-			}
-		}
-
 	}
 }

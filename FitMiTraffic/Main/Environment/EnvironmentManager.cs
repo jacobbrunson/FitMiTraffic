@@ -62,20 +62,12 @@ namespace FitMiTraffic.Main.Environment
 			//ground.Position = new Vector2(0, playerY);
 		}
 
-		public void Render(GraphicsDevice graphics, SpriteBatch spriteBatch, GameTime gameTime, Matrix view, Matrix projection, Matrix lightViewProjection, Texture2D shadowMap, string technique)
+		public void Render(GameTime gameTime, GraphicsDevice graphics, BaseEffect effect)
 		{
-			road.Render(graphics, gameTime, view, projection, lightViewProjection, shadowMap, technique);
+			road.Render(gameTime, graphics, effect);
 			foreach (RenderedModel model in models)
 			{
-				model.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
-			}
-		}
-
-		public void RenderShadowMap(GraphicsDevice graphics, Matrix lightViewProjection)
-		{
-			foreach (RenderedModel model in models)
-			{
-				model.RenderShadowMap(graphics, lightViewProjection);
+				model.Render(gameTime, effect);
 			}
 		}
 	}

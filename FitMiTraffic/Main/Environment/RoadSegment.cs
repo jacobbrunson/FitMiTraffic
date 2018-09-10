@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using FitMiTraffic.Main.Graphics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -31,13 +32,15 @@ namespace FitMiTraffic.Main.Environment
             this.world = world;
 		}
 
-		public void Render(GraphicsDevice graphics, GameTime gameTime, Matrix view, Matrix projection, Matrix lightViewProjection, Texture2D shadowMap, string technique)
+		public void Render(GameTime gameTime, GraphicsDevice graphics, BaseEffect effect)
 		{
-			if (technique.Equals("ShadowedScene"))
-				ground.Render(graphics, view, projection, lightViewProjection, shadowMap);
-			road.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
-			leftRail.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
-			rightRail.Render(gameTime, view, projection, lightViewProjection, shadowMap, technique);
+			if (effect.Technique.Name.Equals("ShadowedScene"))
+			{
+				ground.Render(graphics, effect);
+			}
+			road.Render(gameTime, effect);
+			leftRail.Render(gameTime, effect);
+			rightRail.Render(gameTime, effect);
 		}
 
         public void Destroy()

@@ -144,26 +144,30 @@ namespace FitMiTraffic.Main.Environment
 			}
 		}
 
-		public void Render(GraphicsDevice graphics, Matrix view, Matrix projection, Matrix lightViewProjection, Texture2D shadowMap)
+		public void Render(GraphicsDevice graphics, BaseEffect effect)
 		{
+			var prevTechnique = effect.Technique;
+
 			Matrix world = Matrix.CreateTranslation(Vector3.Left * (float)width * scale / 2f + Vector3.UnitY * positionY);
-			effect.CurrentTechnique = effect.Techniques["ShadowedTerrain"];
+			effect.Technique = effect.Techniques["ShadowedTerrain"];
 			effect.Parameters["World"].SetValue(world);
-			effect.Parameters["View"].SetValue(view);
-			effect.Parameters["Projection"].SetValue(projection);
+			//effect.Parameters["View"].SetValue(view);
+			//effect.Parameters["Projection"].SetValue(projection);
 			effect.Parameters["WorldInverseTranspose"].SetValue(Matrix.Transpose(Matrix.Invert(world)));
-			effect.Parameters["ShadowMap"].SetValue(shadowMap);
-			effect.Parameters["xLightsWorldViewProjection"].SetValue(world * lightViewProjection);
-			effect.Parameters["xLightPos"].SetValue(TrafficGame.lightPosition);
-			effect.Parameters["DiffuseLightDirection"].SetValue(TrafficGame.lightDirection);
+			//effect.Parameters["ShadowMap"].SetValue(shadowMap);
+			effect.Parameters["xLightsWorldViewProjection"].SetValue(world * effect.LightViewProjection);
+			//effect.Parameters["xLightPos"].SetValue(TrafficGame.lightPosition);
+			//effect.Parameters["DiffuseLightDirection"].SetValue(TrafficGame.lightDirection);
 			effect.Parameters["resolution"].SetValue(new Vector2(600, 800));
-			foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+			foreach (EffectPass pass in effect.Technique.Passes)
 			{
 				pass.Apply();
 				graphics.DrawUserPrimitives<VertexPositionColorNormal>(PrimitiveType.TriangleList, vertices, 0, vertices.Length / 3);
 				//graphics.DrawUserIndexedPrimitives<VertexPositionColorNormal>(PrimitiveType.TriangleList, vertices, 0, vertices.Length, indices, 0, indices.Length / 3);
 				//graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, vertices.Length, indices, 0, indices.Length / 3);
 			}
+
+			effect.Technique = prevTechnique;
 		}
 	}
 }
