@@ -38,8 +38,8 @@ namespace FitMiTraffic.Main
 
 		private void Graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
 		{
-			//_graphicsManager.PreferMultiSampling = true;
-			//e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;
+			graphicsManager.PreferMultiSampling = true;
+			e.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;
 		}
 
 		protected override void LoadContent()
@@ -57,7 +57,9 @@ namespace FitMiTraffic.Main
 			//postProcessor = new PostProcessor(GraphicsDevice, _spriteBatch, e);
 
 			//DebugView.LoadContent(GraphicsDevice, Content);
+			InputManager.Initialize();
 
+			//Mode = new GameMode(this, GraphicsDevice, spriteBatch, Content); 
 			Mode = new MenuMode(this, GraphicsDevice, spriteBatch, Content);
 		}
 

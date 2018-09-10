@@ -2,15 +2,15 @@
 float4x4 View;
 float4x4 Projection;
 
-float4 AmbientColor = float4(0.9, 0.9, 1, 1);
-float AmbientIntensity = 0.8f;
+float4 AmbientColor = float4(1, 0.8, 0.8, 1);//float4(0.9, 0.9, 1, 1);
+float AmbientIntensity = 0.4f;//0.8f;
 
 float4x4 WorldInverseTranspose;
 
-float3 xLightPos;// = float3(-10, -10, -10);
-float3 DiffuseLightDirection;// = float3(1, 1, 1);
+float3 xLightPos;
+float3 DiffuseLightDirection;
 float4 DiffuseColor = float4(1, 0.8, 0.8, 1);
-float DiffuseIntensity = 1.0f;
+float DiffuseIntensity = 0.8f;//1.0f;
 
 float2 resolution;
 
@@ -21,6 +21,15 @@ float ShadowMapSize = float2(2048, 2048);
 
 texture ModelTexture;
 sampler2D textureSampler = sampler_state {
+	Texture = (ModelTexture);
+	MagFilter = Anisotropic;
+	MinFilter = Anisotropic;
+	AddressU = Clamp;
+	AddressV = Clamp;
+};
+
+
+sampler2D carTextureSampler = sampler_state {
 	Texture = (ModelTexture);
 	MagFilter = Point;
 	MinFilter = Point;
@@ -260,6 +269,11 @@ SScenePixelToFrame ShadowedScenePixelShader(SSceneVertexToPixel PSIn)
 			diffuseLightingFactor *= DiffuseIntensity;//xLightPower;
 		}
 	}
+	else {
+		diffuseLightingFactor = DotProduct(xLightPos, PSIn.Position3D, PSIn.Normal);
+		diffuseLightingFactor = saturate(diffuseLightingFactor);
+		diffuseLightingFactor *= DiffuseIntensity;//xLightPower;
+	}
 
 	float2 uv = (PSIn.Position / resolution);
 	uv *= 1.0f - uv.yx;
@@ -295,7 +309,11 @@ SScenePixelToFrame ShadowedTerrainPixelShader(STerrainVertexToPixel PSIn)
 			diffuseLightingFactor *= DiffuseIntensity;//xLightPower;
 		}
 	}
-
+	else {
+		diffuseLightingFactor = DotProduct(xLightPos, PSIn.Position3D, PSIn.Normal);
+		diffuseLightingFactor = saturate(diffuseLightingFactor);
+		diffuseLightingFactor *= DiffuseIntensity;//xLightPower;
+	}
 	float2 uv = (PSIn.Position / resolution);
 	uv *= 1.0f - uv.yx;
 
@@ -338,7 +356,7 @@ SScenePixelToFrame ShadowedCarPixelShader(SSceneVertexToPixel PSIn)
 
 	//vignette = 1;
 
-	float4 baseColor = tex2D(textureSampler, PSIn.TexCoords);
+	float4 baseColor = tex2D(carTextureSampler, PSIn.TexCoords);
 	if (baseColor.r <= 0.05 && baseColor.g >= 0.95 && baseColor.b <= 0.05) {
 		baseColor = CarColor;
 	}

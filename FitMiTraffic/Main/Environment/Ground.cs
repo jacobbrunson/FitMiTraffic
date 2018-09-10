@@ -17,13 +17,14 @@ namespace FitMiTraffic.Main.Environment
 	{
 
 		public float positionY;
+		public int offsetX;
 
-		private const int width = 10;
+		private int width = 10;
 		private const int length = 4;
-		private float scale = Road.Size / length;
+		private Vector2 scale = new Vector2(Road.Size / length);
 
-		private float[,] heightMap = new float[width + 1, length + 1];
-		private VertexPositionColorNormal[] vertices = new VertexPositionColorNormal[width * length * 6]; //we are intentionally duplicating vertices, hence the * 6 and lack of indexing
+		private float[,] heightMap;
+		private VertexPositionColorNormal[] vertices;
 
 		private Effect effect;
 
@@ -50,8 +51,12 @@ namespace FitMiTraffic.Main.Environment
 			}
 		}
 
-		public Ground(ContentManager content, float Y)
+		public Ground(ContentManager content, float Y, int width = 10, int offsetX=0, float biomeScale=100)
 		{
+			this.width = width;
+			this.offsetX = offsetX;
+			heightMap = new float[width + 1, length + 1];
+			vertices = new VertexPositionColorNormal[width * length * 6]; //we are intentionally duplicating vertices, hence the * 6 and lack of indexing
 			positionY = Y;
 
 			effect = content.Load<Effect>("effect");
@@ -62,8 +67,8 @@ namespace FitMiTraffic.Main.Environment
 			{
 				for (int y = 0; y <= length; y++)
 				{
-					float value = ((float)noiseSource.GetValue(x*0.5f, (y + positionY/scale)*0.5f, 0.5f) + 0) / 1;
-					if (Math.Abs(x - width / 2) * scale < Road.Size * 0.6f)
+					float value = ((float)noiseSource.GetValue(x*0.5f, (y + positionY/scale.Y)*0.5f, 0.5f) + 0) / 1;
+					if (Math.Abs(x - width / 2 - offsetX) * scale.X < Road.Size * 0.6f)
 					{
 						value = 0;
 					}
@@ -95,14 +100,15 @@ namespace FitMiTraffic.Main.Environment
 						float oy = y + offsets[j].Y;
 						float height = heightMap[(int)ox, (int)oy];
 						vertex = new VertexPositionColorNormal();
-						vertex.Position = new Vector3(ox*scale, oy*scale, height*1.5f);
+						vertex.Position = new Vector3(ox*scale.X, oy*scale.Y, height*1.5f);
 						Vector3[] colors =
 						{
 							new Vector3(0.2f, (heightMap[(int)ox, (int)oy]+1)/4 + 0.3f, 0.3f),
 							new Vector3(height.Map(-1, 1, 0.4f, 0.9f), 0.4f, 0.3f),
 							new Vector3(height.Map(-1, 1, 0.7f, 0.9f), height.Map(-1, 1, 0.6f, 0.8f), height.Map(-1, 1, 0.2f, 0.5f)),
 						};
-						float val = (y + positionY) / 100 % colors.Length;
+						float val = Math.Abs(y + positionY) / biomeScale % colors.Length;
+				
 						int primary = (int)val;
 						int secondary = (primary + 1) % colors.Length;
 						float blendAmt = 1-(float)Math.Pow((val - primary)*2 - 1f, 2);
@@ -148,7 +154,7 @@ namespace FitMiTraffic.Main.Environment
 		{
 			var prevTechnique = effect.Technique;
 
-			Matrix world = Matrix.CreateTranslation(Vector3.Left * (float)width * scale / 2f + Vector3.UnitY * positionY);
+			Matrix world = Matrix.CreateTranslation(Vector3.Left * ((float)width * scale.X / 2f + offsetX * scale.X) + Vector3.UnitY * positionY);
 			effect.Technique = effect.Techniques["ShadowedTerrain"];
 			effect.Parameters["World"].SetValue(world);
 			//effect.Parameters["View"].SetValue(view);

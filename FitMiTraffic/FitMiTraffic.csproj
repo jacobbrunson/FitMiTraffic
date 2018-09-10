@@ -50,6 +50,7 @@
     <Compile Include="Main\Environment\RoadPiece.cs" />
     <Compile Include="Main\Environment\RoadSegment.cs" />
     <Compile Include="Main\Environment\SpeedLimit.cs" />
+    <Compile Include="Main\Gui\TitleUI.cs" />
     <Compile Include="Main\Modes\GameMode.cs" />
     <Compile Include="Main\Graphics\BaseEffect.cs" />
     <Compile Include="Main\Graphics\Camera.cs" />
@@ -97,9 +98,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\depthoffield.fx" />
     <Content Include="Content\desaturate.fx" />
     <Content Include="Content\effect.fx" />
-    <Content Include="Content\shadowmap.fx" />
     <Content Include="Content\terrain.fx" />
     <Content Include="FitMi_Research_Puck.dll" />
     <Content Include="Icon.ico" />

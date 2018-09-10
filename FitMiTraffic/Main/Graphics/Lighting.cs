@@ -10,12 +10,10 @@ namespace FitMiTraffic.Main.Graphics
 {
 	class Lighting
 	{
-
-		private const float width = 25;
-		private const float height = 50;
 		private const float nearZ = 10;
 		private const float farZ = 40;
-		private const int shadowRes = 2048;
+		private const float width = 25;
+		private const float height = 50;
 
 		public Vector3 Position;
 		public Vector3 Direction;
@@ -25,7 +23,7 @@ namespace FitMiTraffic.Main.Graphics
 		public RenderTarget2D ShadowMap;
 
 
-		public Lighting(GraphicsDevice graphics)
+		public Lighting(GraphicsDevice graphics, int shadowRes=2048)
 		{
 			Projection = Matrix.CreateOrthographic(width, height, nearZ, farZ);
 			ShadowMap = new RenderTarget2D(graphics, shadowRes, shadowRes, true, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.PlatformContents);

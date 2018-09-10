@@ -18,8 +18,8 @@ namespace FitMiTraffic.Main.Environment
 		LinkedList<RoadSegment> Segments = new LinkedList<RoadSegment>();
 
 		public const int NumLanes = 4;
-		public static float LaneWidth = 2.45f;
-		public static float Size = NumLanes * LaneWidth;
+		public const float LaneWidth = 2.45f;
+		public const float Size = NumLanes * LaneWidth;
 
 		public static Vector2 Scale;
 		//private static Texture2D Texture;
@@ -29,19 +29,35 @@ namespace FitMiTraffic.Main.Environment
 
         private World world;
 
-		public Road(World world)
+		public bool CullBack = true;
+		private int groundWidth = 10;
+		private int groundOffsetX = 0;
+
+		public Road(World world, int groundWidth = 10, int groundOffsetX = 0, float biomeScale = 100)
 		{
             this.world = world;
+			this.groundWidth = groundWidth;
+			this.groundOffsetX = groundOffsetX;
 			Reset();
 		}
 
 		public void Reset()
 		{
 			Segments.Clear();
-			for (int i = 0; i < 10; i++)
+			if (CullBack)
 			{
-				var piece = new RoadSegment(content, world, Size * (i - 1));
-				Segments.AddLast(piece);
+				for (int i = 0; i < 10; i++)
+				{
+					var piece = new RoadSegment(content, world, Size * (i - 1));
+					Segments.AddLast(piece);
+				}
+			} else
+			{
+				for (int i = 0; i < 15; i++)
+				{
+					var piece = new RoadSegment(content, world, Size * (-i), groundWidth, groundOffsetX);
+					Segments.AddLast(piece);
+				}
 			}
 		}
 
@@ -65,12 +81,18 @@ namespace FitMiTraffic.Main.Environment
 
 		public void Update(float playerY)
 		{
-			if (playerY - Segments.First.Value.Y > Size*2)
+			if (CullBack && playerY - Segments.First.Value.Y > Size*2)
 			{
                 Segments.First.Value.Destroy();
 				Segments.RemoveFirst();
 				var piece = new RoadSegment(content, world, Segments.Last.Value.Y + Size);
 				Segments.AddLast(piece);
+			} else if (!CullBack && Segments.First.Value.Y < playerY)
+			{
+				Segments.Last.Value.Destroy();
+				Segments.RemoveLast();
+				var piece = new RoadSegment(content, world, Segments.First.Value.Y + Size, groundWidth, groundOffsetX);
+				Segments.AddFirst(piece);
 			}
 		}
 

@@ -20,6 +20,7 @@ namespace FitMiTraffic.Main.Graphics
 		private const float fov = MathHelper.PiOver2 * 0.8f;
 
 		public Vector2 Target;
+		public Vector2 Offset = Vector2.Zero;
 		public Vector2 Revolution;
 
 		public Matrix View;
@@ -53,14 +54,19 @@ namespace FitMiTraffic.Main.Graphics
 				Projection = Matrix.CreateOrthographic(Width / Scale, Height / Scale, orthoNearZ, orthoFarZ);
 			} else
 			{
-				target = new Vector3(0, 0, 0);
-				position = new Vector3(Target, 5);
-				//up = Vector3.Down;
+				target = new Vector3(Target, 0);
+				position = new Vector3(Offset + Target, 2);
+				up = Vector3.UnitZ;
 				Projection = Matrix.CreatePerspectiveFieldOfView(fov, (float)Width / (float)Height, perspNearZ, perspFarZ);
 			}
-			//position = Vector3.Transform(position - target, Matrix.CreateFromYawPitchRoll(Revolution.X, Revolution.Y, 0)) + target;
+			position = Vector3.Transform(position - target, Matrix.CreateFromYawPitchRoll(Revolution.X, Revolution.Y, 0)) + target;
 
 			View = Matrix.CreateLookAt(position, target, up);
+
+			if (Mode == CameraMode.FIXED)
+			{
+				View *= Matrix.CreateTranslation(Vector3.UnitY * -1);
+			}
 		}
 	}
 }

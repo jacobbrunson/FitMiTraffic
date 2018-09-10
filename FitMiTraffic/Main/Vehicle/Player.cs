@@ -65,10 +65,10 @@ namespace FitMiTraffic.Main.Vehicle
 			Body.Mass = 4000.0f;
 			Reset();
 
-			//var s = content.Load<SoundEffect>("loop_0");
-			//sound = s.CreateInstance();
-			//sound.IsLooped = true;
-			//sound.Play();
+			var s = content.Load<SoundEffect>("Buzz2");
+			sound = s.CreateInstance();
+			sound.IsLooped = true;
+			sound.Play();
 			model.Color = Color.Red;
 
 		}

@@ -76,9 +76,6 @@ namespace FitMiTraffic.Main.Modes
 			messagesUI = new MessagesUI();
 			scoreUI = new ScoreUI();
 			gameOverUI = new GameOverUI();
-
-
-			InputManager.Initialize();
 		}
 
 		private void HandleInput(GameTime gameTime)
