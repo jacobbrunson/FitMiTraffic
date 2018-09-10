@@ -69,6 +69,7 @@ namespace FitMiTraffic.Main.Vehicle
 			//sound = s.CreateInstance();
 			//sound.IsLooped = true;
 			//sound.Play();
+			model.Color = Color.Red;
 
 		}
 

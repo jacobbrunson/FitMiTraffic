@@ -12,7 +12,7 @@ namespace FitMiTraffic.Main.Vehicle
 	{
 		public static readonly CarType BASIC = new CarType("car1", 1.6f, 3f, 1.5f, 0, 0, 0.04f);
 		public static readonly CarType ROUNDY = new CarType("car2", 1.6f, 3.8f, 1.35f, 0, 0, 0.04f);
-		public static readonly CarType PICKUP = new CarType("pickup", 1.65f, 4f, 1.4f, 0, 0, 0.04f);
+		public static readonly CarType PICKUP = new CarType("pickup2", 1.65f, 4f, 1.4f, 0, 0, 0.04f);
 		public static readonly CarType SEMI = new CarType("semi", 1.7f, 5f, 2.5f, 0, 0, 0.04f);
 		public static readonly CarType SPORT = new CarType("sport", 1.6f, 4.35f, 1.25f, 0, 0, 0.04f);
 

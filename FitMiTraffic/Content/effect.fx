@@ -14,14 +14,16 @@ float DiffuseIntensity = 1.0f;
 
 float2 resolution;
 
+float4 CarColor;
+
 matrix  LightViewProj;
 float ShadowMapSize = float2(2048, 2048);
 
 texture ModelTexture;
 sampler2D textureSampler = sampler_state {
 	Texture = (ModelTexture);
-	MagFilter = Linear;
-	MinFilter = Linear;
+	MagFilter = Point;
+	MinFilter = Point;
 	AddressU = Clamp;
 	AddressV = Clamp;
 };
@@ -307,6 +309,45 @@ SScenePixelToFrame ShadowedTerrainPixelShader(STerrainVertexToPixel PSIn)
 	return Output;
 }
 
+SScenePixelToFrame ShadowedCarPixelShader(SSceneVertexToPixel PSIn)
+{
+	SScenePixelToFrame Output = (SScenePixelToFrame)0;
+
+	float2 ProjectedTexCoords;
+	ProjectedTexCoords[0] = PSIn.Pos2DAsSeenByLight.x / PSIn.Pos2DAsSeenByLight.w / 2.0f + 0.5f;
+	ProjectedTexCoords[1] = -PSIn.Pos2DAsSeenByLight.y / PSIn.Pos2DAsSeenByLight.w / 2.0f + 0.5f;
+
+	float diffuseLightingFactor = 0;
+	if ((saturate(ProjectedTexCoords).x == ProjectedTexCoords.x) && (saturate(ProjectedTexCoords).y == ProjectedTexCoords.y))
+	{
+		float depthStoredInShadowMap = tex2D(ShadowMapSampler, ProjectedTexCoords).r;
+		float realDistance = PSIn.Pos2DAsSeenByLight.z / PSIn.Pos2DAsSeenByLight.w;
+		if ((realDistance - 1.0f / 100.0f) <= depthStoredInShadowMap)
+		{
+			diffuseLightingFactor = DotProduct(xLightPos, PSIn.Position3D, PSIn.Normal);
+			diffuseLightingFactor = saturate(diffuseLightingFactor);
+			diffuseLightingFactor *= DiffuseIntensity;//xLightPower;
+		}
+	}
+
+	float2 uv = (PSIn.Position / resolution);
+	uv *= 1.0f - uv.yx;
+
+	float len = length(uv);
+	float vignette = pow(uv.x * uv.y * 15.0f, 0.1f);
+
+	//vignette = 1;
+
+	float4 baseColor = tex2D(textureSampler, PSIn.TexCoords);
+	if (baseColor.r <= 0.05 && baseColor.g >= 0.95 && baseColor.b <= 0.05) {
+		baseColor = CarColor;
+	}
+
+	Output.Color = baseColor * (DiffuseColor * diffuseLightingFactor + AmbientColor * AmbientIntensity) * vignette;
+
+	return Output;
+}
+
 
 technique ShadowedScene
 {
@@ -324,5 +365,14 @@ technique ShadowedTerrain
 	{
 		VertexShader = compile vs_4_0 ShadowedTerrainVertexShader();
 		PixelShader = compile ps_4_0 ShadowedTerrainPixelShader();
+	}
+}
+
+technique ShadowedCar
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_4_0 ShadowedSceneVertexShader();
+		PixelShader = compile ps_4_0 ShadowedCarPixelShader();
 	}
 }

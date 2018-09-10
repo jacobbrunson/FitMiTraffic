@@ -251,7 +251,7 @@ namespace FitMiTraffic.Main
 			//cameraEffect.Alpha = 1f;
 
 
-			lightProjection = Matrix.CreateOrthographic(25, 50, 0, 50);
+			lightProjection = Matrix.CreateOrthographic(25, 50, 10, 40);
 			lightView = Matrix.CreateLookAt(lightPosition,
 						lightPosition + lightDirection,
 						Vector3.Up);
@@ -277,7 +277,7 @@ namespace FitMiTraffic.Main
 			//GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 			//GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
 			environment.Render(GraphicsDevice, spriteBatch, gameTime, cameraEffect.View, cameraEffect.Projection, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
-			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
+			player.Render(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowedCar");
 			trafficManager.RenderTraffic(spriteBatch, gameTime, cameraEffect.Projection, cameraEffect.View, lightViewProjection, shadowMapRenderTarget, "ShadowedScene");
 
 			postProcessor.End(player.crashed);

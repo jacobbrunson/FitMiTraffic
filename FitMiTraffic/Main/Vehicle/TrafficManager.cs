@@ -158,6 +158,10 @@ namespace FitMiTraffic.Main.Vehicle
 
 		public void RenderTraffic(SpriteBatch spriteBatch, GameTime gameTime, Matrix projection, Matrix view, Matrix lightViewProjection, Texture2D shadowMap, string technique)
 		{
+			if (technique.Equals("ShadowedScene"))
+			{
+				technique = "ShadowedCar";
+			}
 			foreach (Car car in cars)
 			{
 				car.Render(spriteBatch, gameTime, projection, view, lightViewProjection, shadowMap, technique);

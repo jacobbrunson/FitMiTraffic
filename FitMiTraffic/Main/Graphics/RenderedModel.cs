@@ -24,6 +24,7 @@ namespace FitMiTraffic.Main.Graphics
 		public Matrix Rotation = Matrix.Identity;
 		public Vector3 Size = Vector3.One;
 		public Vector3 Scale = Vector3.One;
+		public Color Color = Color.White;
 
 		private Vector3 meshSize;
 
@@ -113,6 +114,7 @@ namespace FitMiTraffic.Main.Graphics
 				}
 			}
 
+			//if (new Random().Next(0, 2) == 0)
 			FlattenNormals();
 
 			var bounds = GetBounds();
@@ -175,6 +177,8 @@ namespace FitMiTraffic.Main.Graphics
 					effect.Parameters["DiffuseLightDirection"].SetValue(TrafficGame.lightDirection);
 
 					effect.Parameters["resolution"].SetValue(new Vector2(600, 800));
+
+					effect.Parameters["CarColor"].SetValue(new Vector4(Color.R/255f, Color.G/255f, Color.B/255f, 1));
 				}
 				/*foreach (BasicEffect effect in mesh.Effects)
 				{

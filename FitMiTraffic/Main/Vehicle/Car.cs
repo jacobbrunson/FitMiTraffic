@@ -47,6 +47,18 @@ namespace FitMiTraffic.Main.Vehicle
 
 		public RenderedModel model;
 
+		private static Color[] colors =
+		{
+			new Color(229, 189, 15, 255),
+			new Color(229, 28, 28, 255),
+			new Color(242, 139, 245, 255),
+			new Color(39, 119, 238, 255),
+			new Color(39, 238, 119, 255),
+			new Color(238, 133, 39, 255),
+			new Color(236, 247, 250, 255),
+			new Color(41, 41, 41, 255)
+		};
+
 		public int Lane
 		{
 			get { return _Lane; }
@@ -90,7 +102,9 @@ namespace FitMiTraffic.Main.Vehicle
 			DesiredSpeed = initialSpeed;
 			InitialSpeed = initialSpeed;
 
+
 			model = new RenderedModel(content, type.ModelName, type.TextureName);
+			model.Color = colors[new Random().Next(0, colors.Length)];
 
 			var textureSize = new Vector2(type.Width, type.Length);
 			textureSizePx = new Vector2(type.Texture.Width, type.Texture.Height);
