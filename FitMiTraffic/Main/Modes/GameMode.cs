@@ -14,7 +14,7 @@ using Microsoft.Xna.Framework.Graphics;
 using tainicom.Aether.Physics2D.Diagnostics;
 using tainicom.Aether.Physics2D.Dynamics;
 
-namespace FitMiTraffic.Main
+namespace FitMiTraffic.Main.Modes
 {
 	public class GameMode : Mode
 	{
