@@ -18,8 +18,6 @@ namespace FitMiTraffic.Main.Modes
 {
 	public class GameMode : Mode
 	{
-		private TrafficGame game;
-
 		//Parameters
 		private const int dodgePoints = 10000;
 		private Vector3 initialLightPosition = new Vector3(20, 20, 20);
@@ -32,8 +30,6 @@ namespace FitMiTraffic.Main.Modes
 		private TrafficManager trafficManager;
 
 		//Graphics
-		private GraphicsDevice graphics;
-		private SpriteBatch spriteBatch;
 		private Camera camera;
 		private Lighting lighting;
 		private BaseEffect effect;
@@ -51,7 +47,7 @@ namespace FitMiTraffic.Main.Modes
 		private double stateChangeTime;
 
 
-		public GameMode(TrafficGame game, GraphicsDevice graphics, SpriteBatch spriteBatch, ContentManager content)
+		public GameMode(TrafficGame game, GraphicsDevice graphics, SpriteBatch spriteBatch, ContentManager content) : base(game, graphics, spriteBatch, content)
 		{
 			this.graphics = graphics;
 			this.spriteBatch = spriteBatch;

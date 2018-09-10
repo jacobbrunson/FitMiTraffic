@@ -9,7 +9,7 @@ namespace FitMiTraffic.Main.Graphics
 {
 	enum CameraMode
 	{
-		PERSPECTIVE, FLAT
+		PERSPECTIVE, FLAT, FIXED
 	}
 	class Camera
 	{
@@ -41,19 +41,26 @@ namespace FitMiTraffic.Main.Graphics
 		{
 			Vector3 position;
 			Vector3 target = new Vector3(0 * Zoom + Target.X * (1 - Zoom), Target.Y + 5 * Zoom, 0);
+			Vector3 up = Vector3.Up;
 			if (Mode == CameraMode.PERSPECTIVE)
 			{
 				position = target + new Vector3(0, -5 * Zoom, 12 * Zoom);
 				Projection = Matrix.CreatePerspectiveFieldOfView(fov, (float)Width / (float)Height, perspNearZ, perspFarZ);
 			}
-			else
+			else if (Mode == CameraMode.FLAT)
 			{
 				position = target + new Vector3(0, 0, 10);
 				Projection = Matrix.CreateOrthographic(Width / Scale, Height / Scale, orthoNearZ, orthoFarZ);
+			} else
+			{
+				target = new Vector3(0, 0, 0);
+				position = new Vector3(Target, 5);
+				//up = Vector3.Down;
+				Projection = Matrix.CreatePerspectiveFieldOfView(fov, (float)Width / (float)Height, perspNearZ, perspFarZ);
 			}
-			position = Vector3.Transform(position - target, Matrix.CreateFromYawPitchRoll(Revolution.X, Revolution.Y, 0)) + target;
+			//position = Vector3.Transform(position - target, Matrix.CreateFromYawPitchRoll(Revolution.X, Revolution.Y, 0)) + target;
 
-			View = Matrix.CreateLookAt(position, target, Vector3.Up);
+			View = Matrix.CreateLookAt(position, target, up);
 		}
 	}
 }

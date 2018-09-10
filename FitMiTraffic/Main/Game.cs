@@ -18,7 +18,7 @@ namespace FitMiTraffic.Main
 	public class TrafficGame : Game
 	{
 
-		public static GameMode Mode;
+		public static Mode Mode;
 		public static bool DEBUG;
 
 		private GraphicsDeviceManager graphicsManager;
@@ -58,7 +58,7 @@ namespace FitMiTraffic.Main
 
 			//DebugView.LoadContent(GraphicsDevice, Content);
 
-			Mode = new GameMode(this, GraphicsDevice, spriteBatch, Content);
+			Mode = new MenuMode(this, GraphicsDevice, spriteBatch, Content);
 		}
 
 		protected override void Update(GameTime gameTime)
