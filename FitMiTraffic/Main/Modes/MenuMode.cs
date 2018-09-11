@@ -86,6 +86,11 @@ namespace FitMiTraffic.Main.Modes
 				game.Exit();
 			}
 
+            if (InputManager.Enter)
+            {
+                game.Play();
+            }
+
 
 			car.Position = car.Position + Vector2.UnitY * 5 * (float) gameTime.ElapsedGameTime.TotalSeconds;
 

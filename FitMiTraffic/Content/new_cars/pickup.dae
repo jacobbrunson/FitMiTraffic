@@ -12,7 +12,7 @@
   </asset>
   <library_images>
     <image id="pickup" name="pickup">
-      <init_from>/C:/Users/Jacob/Desktop/FitMiTraffic/FitMiTraffic/Content/new_cars/texture/pickup.png</init_from>
+      <init_from>texture/pickup.png</init_from>
     </image>
   </library_images>
   <library_effects>

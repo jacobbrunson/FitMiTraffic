@@ -12,7 +12,7 @@
   </asset>
   <library_images>
     <image id="semi_png" name="semi_png">
-      <init_from>/C:/Users/Jacob/Desktop/FitMiTraffic/FitMiTraffic/Content/new_cars/texture/semi.png</init_from>
+      <init_from>texture/semi.png</init_from>
     </image>
   </library_images>
   <library_effects>

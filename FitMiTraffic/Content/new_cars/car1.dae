@@ -12,7 +12,7 @@
   </asset>
   <library_images>
     <image id="car1" name="car1">
-      <init_from>/C:/Users/Jacob/Desktop/FitMiTraffic/FitMiTraffic/Content/new_cars/texture/car1.png</init_from>
+      <init_from>texture/car1.png</init_from>
     </image>
   </library_images>
   <library_effects>

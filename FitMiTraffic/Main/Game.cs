@@ -30,8 +30,8 @@ namespace FitMiTraffic.Main
 			graphicsManager.PreferredBackBufferWidth = 600;
 			graphicsManager.PreferredBackBufferHeight = 800;
 			graphicsManager.GraphicsProfile = GraphicsProfile.HiDef;
-			graphicsManager.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
-			graphicsManager.ApplyChanges();
+			//graphicsManager.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
+			//graphicsManager.ApplyChanges();
 
 			Content.RootDirectory = "Content";
 		}
@@ -62,6 +62,11 @@ namespace FitMiTraffic.Main
 			//Mode = new GameMode(this, GraphicsDevice, spriteBatch, Content); 
 			Mode = new MenuMode(this, GraphicsDevice, spriteBatch, Content);
 		}
+
+        public void Play()
+        {
+            Mode = new GameMode(this, GraphicsDevice, spriteBatch, Content);
+        }
 
 		protected override void Update(GameTime gameTime)
 		{

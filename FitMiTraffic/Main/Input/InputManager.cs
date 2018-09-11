@@ -109,7 +109,15 @@ namespace FitMiTraffic.Main.Input
 			}
 		}
 
-		public static bool Initialize()
+        public static bool Enter
+        {
+            get
+            {
+                return CurrentKeyState.IsKeyDown(Keys.Enter);
+            }
+        }
+
+        public static bool Initialize()
 		{
 			try
 			{

@@ -97,7 +97,7 @@ namespace FitMiTraffic.Main.Graphics
 		{
 			Model = content.Load<Model>(modelName);
 			effect = content.Load<Effect>("effect");
-			shadowEffect = content.Load<Effect>("shadowmap");
+			//shadowEffect = content.Load<Effect>("shadowmap");
 
 			if (textureName != null)
 			{
