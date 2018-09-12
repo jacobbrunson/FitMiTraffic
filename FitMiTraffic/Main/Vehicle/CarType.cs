@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -10,11 +11,11 @@ namespace FitMiTraffic.Main.Vehicle
 {
 	class CarType
 	{
-		public static readonly CarType BASIC = new CarType("car1", 1.6f, 3f, 1.5f, 0, 0, 0.04f);
-		public static readonly CarType ROUNDY = new CarType("car2", 1.6f, 3.8f, 1.35f, 0, 0, 0.04f);
-		public static readonly CarType PICKUP = new CarType("pickup2", 1.65f, 4f, 1.4f, 0, 0, 0.04f);
-		public static readonly CarType SEMI = new CarType("semi", 1.7f, 5f, 2.5f, 0, 0, 0.04f);
-		public static readonly CarType SPORT = new CarType("sport", 1.6f, 4.35f, 1.25f, 0, 0, 0.04f);
+		public static readonly CarType BASIC = new CarType("car1", 1.6f, 3f, 1.5f, 0, 0, new Vector3(0, 0.35f, 0));
+		public static readonly CarType ROUNDY = new CarType("car2", 1.6f, 3.8f, 1.35f, 0.15f, 0.5f, new Vector3(0, 0.15f, 0));
+		public static readonly CarType PICKUP = new CarType("pickup2", 1.65f, 4f, 1.4f, 0, 0, new Vector3(0, -0.8f, 0));
+		public static readonly CarType SEMI = new CarType("semi", 1.7f, 5f, 2.5f, 0, 0, new Vector3(0, 1.5f, 0));
+		public static readonly CarType SPORT = new CarType("sport", 1.6f, 4.35f, 1.25f, 0, 0, new Vector3(0, -0.5f, 0));
 
 		public string Name;
 		public float Width;
@@ -24,12 +25,12 @@ namespace FitMiTraffic.Main.Vehicle
 		public float RadiusBottom;
 		public Model Model;
 		public Texture2D Texture;
-		public float Scale;
 		public string ModelName;
 		public string TextureName;
+        public Vector3 Offset;
 
 
-		public CarType(string name, float width, float length, float height, float radiusTop, float radiusBottom, float modelScale)
+		public CarType(string name, float width, float length, float height, float radiusTop, float radiusBottom, Vector3 offset)
 		{
 			Name = name;
 			Width = width;
@@ -37,7 +38,7 @@ namespace FitMiTraffic.Main.Vehicle
 			Height = height;
 			RadiusTop = radiusTop;
 			RadiusBottom = radiusBottom;
-			Scale = modelScale;
+            Offset = offset;
 		}
 
 		public static CarType RANDOM

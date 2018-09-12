@@ -50,6 +50,7 @@
     <Compile Include="Main\Environment\RoadPiece.cs" />
     <Compile Include="Main\Environment\RoadSegment.cs" />
     <Compile Include="Main\Environment\SpeedLimit.cs" />
+    <Compile Include="Main\Gui\FPSUI.cs" />
     <Compile Include="Main\Gui\TitleUI.cs" />
     <Compile Include="Main\Modes\GameMode.cs" />
     <Compile Include="Main\Graphics\BaseEffect.cs" />

@@ -43,6 +43,7 @@ namespace FitMiTraffic.Main.Modes
 		private MessagesUI messagesUI;
 		private ScoreUI scoreUI;
 		private GameOverUI gameOverUI;
+        private FPSUI fpsUI;
 
 		//State
 		private int score;
@@ -79,6 +80,7 @@ namespace FitMiTraffic.Main.Modes
 			messagesUI = new MessagesUI();
 			scoreUI = new ScoreUI();
 			gameOverUI = new GameOverUI();
+            fpsUI = new FPSUI();
 		}
 
 		private void HandleInput(GameTime gameTime)
@@ -186,6 +188,7 @@ namespace FitMiTraffic.Main.Modes
 			//Update GUI
 			messagesUI.Update(gameTime);
 			scoreUI.Update(gameTime, score);
+            fpsUI.Update(gameTime);
 		}
 
 		public override void Render(GameTime gameTime)
@@ -249,12 +252,15 @@ namespace FitMiTraffic.Main.Modes
 			}
 
 			spriteBatch.End();
-
-			//Render debug
-			if (TrafficGame.DEBUG)
+            spriteBatch.Begin();
+            fpsUI.Render(spriteBatch, 600, 800);
+            spriteBatch.End();
+            //Render debug
+            if (TrafficGame.DEBUG)
 			{
 				trafficManager.RenderDebug(debugView, camera.View, camera.Projection);
-				debugView.RenderDebugData(camera.Projection, camera.View, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, 0.8f);
+                debugView.RenderDebugData(camera.Projection, camera.View, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, 0.8f);
+                
 			}
 
 			//DEBUG: render shadow map

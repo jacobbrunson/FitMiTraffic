@@ -39,6 +39,7 @@ namespace FitMiTraffic.Main.Modes
 
 		//GUI
 		private TitleUI titleUI;
+        private FPSUI fpsUI;
 
 		public MenuMode(TrafficGame game, GraphicsDevice graphics, SpriteBatch spriteBatch, ContentManager content) : base(game, graphics, spriteBatch, content)
 		{
@@ -75,6 +76,9 @@ namespace FitMiTraffic.Main.Modes
 			TitleUI.LoadContent(content);
 			titleUI = new TitleUI();
 
+            FPSUI.LoadContent(content);
+            fpsUI = new FPSUI();
+
 			sky = content.Load<Texture2D>("sky");
 		}
 		public override void Update(GameTime gameTime)
@@ -91,8 +95,13 @@ namespace FitMiTraffic.Main.Modes
                 game.Play();
             }
 
+            if (InputManager.ToggleDebug)
+            {
+                TrafficGame.DEBUG = !TrafficGame.DEBUG;
+            }
 
-			car.Position = car.Position + Vector2.UnitY * 5 * (float) gameTime.ElapsedGameTime.TotalSeconds;
+
+                car.Position = car.Position + Vector2.UnitY * 5 * (float) gameTime.ElapsedGameTime.TotalSeconds;
 
 			road.Update(car.Position.Y);
 			lighting.Position = initialLightPosition + new Vector3(car.Position, 0);
@@ -100,6 +109,7 @@ namespace FitMiTraffic.Main.Modes
 			camera.Revolution += InputManager.MoveCameraAmount / 30;
 
 			titleUI.Update(gameTime);
+            fpsUI.Update(gameTime);
 		}
 		public override void Render(GameTime gameTime)
 		{	
@@ -152,7 +162,11 @@ namespace FitMiTraffic.Main.Modes
 
 			spriteBatch.Begin();
 			titleUI.Render(spriteBatch, gameTime, graphics.Viewport.Width, graphics.Viewport.Height);
+            if (TrafficGame.DEBUG)
+            {
+                fpsUI.Render(spriteBatch, 600, 800);
+            }
 			spriteBatch.End();
-		}
+        }
 	}
 }

@@ -16,9 +16,6 @@ namespace FitMiTraffic.Main.Graphics
 
 		private Effect effect;
 
-
-		private Effect shadowEffect;
-
 		public Vector3 Position;
 		public Vector3 Offset;
 		public Matrix Rotation = Matrix.Identity;
@@ -119,35 +116,6 @@ namespace FitMiTraffic.Main.Graphics
 
 			var bounds = GetBounds();
 			meshSize = bounds.Max - bounds.Min;
-		}
-
-		public void RenderShadowMap(GraphicsDevice graphics, Matrix lightViewProjection)
-		{
-			Matrix world = Matrix.CreateScale(Size / meshSize) * Rotation * Matrix.CreateTranslation(Position + Offset);
-			for (int index = 0; index < Model.Meshes.Count; index++)
-			{
-				ModelMesh mesh = Model.Meshes[index];
-				for (int i = 0; i < mesh.MeshParts.Count; i++)
-				{
-					
-					ModelMeshPart meshpart = mesh.MeshParts[i];
-					shadowEffect.Parameters["World"].SetValue(world);
-					shadowEffect.Parameters["LightViewProj"].SetValue(world * lightViewProjection);
-
-					shadowEffect.CurrentTechnique.Passes[0].Apply();
-					graphics.SetVertexBuffer(meshpart.VertexBuffer);
-					graphics.Indices = meshpart.IndexBuffer;
-					//shadowEffect.SetVertexBuffer(meshpart.VertexBuffer);
-					//shadowEffect.Indices = (meshpart.IndexBuffer);
-					int primitiveCount = meshpart.PrimitiveCount;
-					int vertexOffset = meshpart.VertexOffset;
-					int vCount = meshpart.NumVertices;
-					int startIndex = meshpart.StartIndex;
-					
-					graphics.DrawIndexedPrimitives(PrimitiveType.TriangleList, vertexOffset, startIndex,
-						primitiveCount);
-				}
-			}
 		}
 
 		public void Render(GameTime gameTime, BaseEffect effect)

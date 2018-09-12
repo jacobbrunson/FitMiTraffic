@@ -90,9 +90,6 @@ namespace FitMiTraffic.Main.Vehicle
 			}
 		}
 
-
-		private Vector2 scale;
-		private Vector2 textureSizePx;
 		public Vector2 BodySize;
 
 		public Car(ContentManager content, CarType type, World world, float initialSpeed)
@@ -107,14 +104,12 @@ namespace FitMiTraffic.Main.Vehicle
 			model.Color = colors[new Random().Next(0, colors.Length)];
 
 			var textureSize = new Vector2(type.Width, type.Length);
-			textureSizePx = new Vector2(type.Texture.Width, type.Texture.Height);
 
-			scale = textureSize / textureSizePx;
 
 			BodySize = new Vector2(type.Width, type.Length);
 
-			float rTop = Type.RadiusTop * scale.Y;
-			float rBot = Type.RadiusBottom * scale.Y;
+			float rTop = Type.RadiusTop;
+			float rBot = Type.RadiusBottom;
 
 			Vertices verts = new Vertices();
 			int steps = 4;
@@ -318,7 +313,7 @@ namespace FitMiTraffic.Main.Vehicle
 			model.Position = new Vector3(Position, 1.25f);
 			model.Size = new Vector3(Type.Length, Type.Width, Type.Height);
 			model.Rotation = Matrix.CreateFromAxisAngle(Vector3.Forward, -MathHelper.PiOver2) * Matrix.CreateFromAxisAngle(Vector3.Backward, Body.Rotation);// new Vector3(0, 0, Body.Rotation);
-
+            model.Offset = Type.Offset;
 			model.Render(gameTime, effect);
 		}
 
