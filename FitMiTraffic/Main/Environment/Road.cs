@@ -32,12 +32,14 @@ namespace FitMiTraffic.Main.Environment
 		public bool CullBack = true;
 		private int groundWidth = 10;
 		private int groundOffsetX = 0;
+        private float biomeScale = 100;
 
 		public Road(World world, int groundWidth = 10, int groundOffsetX = 0, float biomeScale = 100)
 		{
             this.world = world;
 			this.groundWidth = groundWidth;
 			this.groundOffsetX = groundOffsetX;
+            this.biomeScale = biomeScale;
 			Reset();
 		}
 
@@ -55,7 +57,7 @@ namespace FitMiTraffic.Main.Environment
 			{
 				for (int i = 0; i < 15; i++)
 				{
-					var piece = new RoadSegment(content, world, Size * (-i), groundWidth, groundOffsetX);
+					var piece = new RoadSegment(content, world, Size * (-i), groundWidth, groundOffsetX, biomeScale);
 					Segments.AddLast(piece);
 				}
 			}

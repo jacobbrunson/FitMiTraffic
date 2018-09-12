@@ -56,8 +56,8 @@ namespace FitMiTraffic.Main
 
 			InputManager.Initialize();
 
-			Mode = new GameMode(this, GraphicsDevice, spriteBatch, Content); 
-			//Mode = new MenuMode(this, GraphicsDevice, spriteBatch, Content);
+			//Mode = new GameMode(this, GraphicsDevice, spriteBatch, Content); 
+			Mode = new MenuMode(this, GraphicsDevice, spriteBatch, Content);
 		}
 
         public void Play()

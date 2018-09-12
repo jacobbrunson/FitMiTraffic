@@ -252,16 +252,16 @@ namespace FitMiTraffic.Main.Modes
 			}
 
 			spriteBatch.End();
-            spriteBatch.Begin();
-            fpsUI.Render(spriteBatch, 600, 800);
-            spriteBatch.End();
+            
             //Render debug
             if (TrafficGame.DEBUG)
 			{
 				trafficManager.RenderDebug(debugView, camera.View, camera.Projection);
                 debugView.RenderDebugData(camera.Projection, camera.View, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, 0.8f);
-                
-			}
+                spriteBatch.Begin();
+                fpsUI.Render(spriteBatch, 600, 800);
+                spriteBatch.End();
+            }
 
 			//DEBUG: render shadow map
 			//spriteBatch.Begin(0, BlendState.Opaque, SamplerState.AnisotropicClamp);

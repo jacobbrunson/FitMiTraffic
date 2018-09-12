@@ -24,6 +24,7 @@ namespace FitMiTraffic.Main.Modes
 		private Vector4 ambientColor = new Vector4(1, 0.8f, 0.8f, 1);
 		private const float ambientIntensity = 0.4f;
 		private const float diffuseIntensity = 0.8f;
+        private const int shadowMapRes = 2048;
 
 		//Things
 		private World world;
@@ -44,7 +45,7 @@ namespace FitMiTraffic.Main.Modes
 		public MenuMode(TrafficGame game, GraphicsDevice graphics, SpriteBatch spriteBatch, ContentManager content) : base(game, graphics, spriteBatch, content)
 		{
 			world = new World(Vector2.Zero);
-			road = new Road(world, groundWidth, groundWidth / 2, 5);
+			road = new Road(world, groundWidth, groundWidth / 2, 1f);
 			road.CullBack = false;
 			road.Reset();
 			//roadSegments = new LinkedList<RoadSegment>();
@@ -54,7 +55,7 @@ namespace FitMiTraffic.Main.Modes
 			}
 
 			car = new Car(content, CarType.SPORT, world, 0);
-			car.Position = new Vector2(Road.LaneWidth/2, 0);
+			car.Position = new Vector2(Road.LaneWidth/2, 50);
 			car.model.Color = new Color(229, 189, 15, 255);
 
 			camera = new Camera(graphics.Viewport.Width, graphics.Viewport.Height);
@@ -65,7 +66,7 @@ namespace FitMiTraffic.Main.Modes
 			//camera.Scale = 5;
 			//camera.Target = new Vector2(4, -60);
 
-			lighting = new Lighting(graphics, 4096);//, 35, 100);
+			lighting = new Lighting(graphics, shadowMapRes);
 			lighting.Position = initialLightPosition;
 			lighting.Direction = lightDirection;
 
@@ -138,8 +139,9 @@ namespace FitMiTraffic.Main.Modes
 			car.Render(gameTime, effect);
 
 
-			//Render scene
-			postProcessor.Begin();
+            //Render scene
+            graphics.SetRenderTarget(null);
+			//postProcessor.Begin();
 
 			graphics.Clear(Color.Orange);
 
@@ -158,7 +160,7 @@ namespace FitMiTraffic.Main.Modes
 			effect.Technique = effect.Techniques["ShadowedCar"];
 			car.Render(gameTime, effect);
 
-			postProcessor.End();
+			//postProcessor.End();
 
 			spriteBatch.Begin();
 			titleUI.Render(spriteBatch, gameTime, graphics.Viewport.Width, graphics.Viewport.Height);
