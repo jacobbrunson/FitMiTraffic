@@ -24,7 +24,7 @@ namespace FitMiTraffic.Main.Modes
 		private Vector4 ambientColor = new Vector4(1, 0.8f, 0.8f, 1);
 		private const float ambientIntensity = 0.4f;
 		private const float diffuseIntensity = 0.8f;
-        private const int shadowMapRes = 2048;
+        private const int shadowMapRes = 8;
 
 		//Things
 		private World world;

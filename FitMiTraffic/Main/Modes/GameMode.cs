@@ -25,9 +25,10 @@ namespace FitMiTraffic.Main.Modes
 		private Vector4 ambientColor = new Vector4(0.9f, 0.9f, 1, 1);
 		private const float ambientIntensity = 0.8f;
 		private const float diffuseIntensity = 1;
+        private const int shadowMapRes = 2048;
 
-		//Things
-		private World world;
+        //Things
+        private World world;
 		private Player player;
 		private EnvironmentManager environment;
 		private TrafficManager trafficManager;
@@ -70,7 +71,7 @@ namespace FitMiTraffic.Main.Modes
 			trafficManager = new TrafficManager(content, world, 1000, Road.NumLanes, Road.LaneWidth);
 
 			camera = new Camera(graphics.Viewport.Width, graphics.Viewport.Height);
-			lighting = new Lighting(graphics);
+			lighting = new Lighting(graphics, shadowMapRes);
 			lighting.Position = initialLightPosition;
 			lighting.Direction = lightDirection;
 
@@ -182,7 +183,7 @@ namespace FitMiTraffic.Main.Modes
 			player.Update(gameTime, InputManager.LateralMovement);
 
 			//Light & camera follow player
-			camera.Target = new Vector2(0, player.Position.Y);
+			camera.Target = new Vector2(player.Position.X, player.Position.Y);
 			lighting.Position = new Vector3(lighting.Position.X, player.Position.Y + 15, lighting.Position.Z);
 
 			//Update GUI
