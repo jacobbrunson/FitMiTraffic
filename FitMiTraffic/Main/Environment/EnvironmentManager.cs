@@ -1,4 +1,5 @@
 ﻿using FitMiTraffic.Main.Graphics;
+using FitMiTraffic.Main.Vehicle;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,6 +19,8 @@ namespace FitMiTraffic.Main.Environment
 		private List<RenderedModel> models = new List<RenderedModel>();
 
 		private ContentManager content;
+
+        private List<Coin> coins = new List<Coin>();
 
 		public EnvironmentManager(ContentManager content, World world)
 		{
@@ -43,6 +46,13 @@ namespace FitMiTraffic.Main.Environment
 			models.Add(model);
 
 			model = new ExitSign(content) { Position = new Vector3(5.5f, 50, 0) };
+
+            for (int i = 1; i < 50; i++)
+            {
+                var coin = new Coin(content) { Position = new Vector3((float)Math.Sin((float)i/25) * 3f, i * 10, 0) };
+                coins.Add(coin);
+            }
+            
 			//models.Add(model);
 		}
 
@@ -56,9 +66,12 @@ namespace FitMiTraffic.Main.Environment
 			models.Add(model);
 		}
 
-		public void Update(GameTime gameTime, float playerY)
+		public void Update(GameTime gameTime, Player player)
 		{
-			road.Update(playerY);
+			road.Update(player.Position.Y);
+            foreach (Coin coin in coins) {
+                coin.Update(gameTime, player);
+            }
 			//ground.Position = new Vector2(0, playerY);
 		}
 
@@ -69,6 +82,10 @@ namespace FitMiTraffic.Main.Environment
 			{
 				model.Render(gameTime, effect);
 			}
-		}
+            foreach (Coin coin in coins)
+            {
+                coin.Render(gameTime, effect);
+            }
+        }
 	}
 }

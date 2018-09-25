@@ -72,6 +72,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Main\Environment\BigSign.cs" />
+    <Compile Include="Main\Environment\Coin.cs" />
     <Compile Include="Main\Environment\EnvironmentManager.cs" />
     <Compile Include="Main\Environment\ExitSign.cs" />
     <Compile Include="Main\Environment\Ground.cs" />

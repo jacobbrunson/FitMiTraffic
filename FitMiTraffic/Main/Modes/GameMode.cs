@@ -26,6 +26,7 @@ namespace FitMiTraffic.Main.Modes
 		private const float ambientIntensity = 0.8f;
 		private const float diffuseIntensity = 1;
         private const int shadowMapRes = 2048;
+        private const float playerSpeed = 20;
 
         //Things
         private World world;
@@ -64,7 +65,7 @@ namespace FitMiTraffic.Main.Modes
 			debugView.AppendFlags(DebugViewFlags.DebugPanel | DebugViewFlags.PolygonPoints);
 			debugView.LoadContent(graphics, content);
 
-			player = new Player(content, CarType.SPORT, world, 20);
+			player = new Player(content, CarType.SPORT, world, playerSpeed);
 			player.DodgeCompleteCallback = DodgeCompleted;
 
 			environment = new EnvironmentManager(content, world);
@@ -160,7 +161,7 @@ namespace FitMiTraffic.Main.Modes
 				{
 					state = GameState.RUNNING;
 					stateChangeTime = gameTime.TotalGameTime.TotalSeconds;
-					player.Velocity = new Vector2(player.Velocity.X, 20);
+					player.Velocity = new Vector2(player.Velocity.X, playerSpeed);
 				}
 			}
 			else if (state == GameState.RECENTERING)
@@ -179,7 +180,7 @@ namespace FitMiTraffic.Main.Modes
 
 			//Update game stuff
 			trafficManager.Update(gameTime, player, state);
-			environment.Update(gameTime, player.Position.Y);
+			environment.Update(gameTime, player);
 			player.Update(gameTime, InputManager.LateralMovement);
 
 			//Light & camera follow player
