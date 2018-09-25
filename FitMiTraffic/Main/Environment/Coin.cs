@@ -21,9 +21,8 @@ namespace FitMiTraffic.Main.Environment
             this.Offset = new Vector3(0, 0, 0.75f);
         }
 
-        public void Update(GameTime gameTime, Player player)
+        public void Update(GameTime gameTime)
         {
-            //if (player.Position)
             this.Rotation *= Matrix.CreateFromAxisAngle(Vector3.UnitZ, (float)gameTime.ElapsedGameTime.TotalSeconds);
         }
     }

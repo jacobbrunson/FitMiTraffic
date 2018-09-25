@@ -70,7 +70,12 @@ namespace FitMiTraffic.Main.Environment
 		{
 			road.Update(player.Position.Y);
             foreach (Coin coin in coins) {
-                coin.Update(gameTime, player);
+                if (Math.Abs(player.Position.X - coin.Position.X) < player.model.Size.X / 2 && coin.Position.Y < player.Position.Y + player.model.Size.Y / 2)
+                {
+                    coin.Scale = new Vector3(0, 0, 0);
+                    continue;
+                }
+                coin.Update(gameTime);
             }
 			//ground.Position = new Vector2(0, playerY);
 		}
