@@ -112,10 +112,10 @@ namespace FitMiTraffic.Main.Graphics
 			}
 
 			//if (new Random().Next(0, 2) == 0)
-			FlattenNormals();
+			//FlattenNormals();
 
-			var bounds = GetBounds();
-			meshSize = bounds.Max - bounds.Min;
+			//var bounds = GetBounds();
+			meshSize = Vector3.One;// bounds.Max - bounds.Min;
 		}
 
 		public void Render(GameTime gameTime, BaseEffect effect)

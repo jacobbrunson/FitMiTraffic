@@ -214,13 +214,13 @@ namespace FitMiTraffic.Main.Modes
 			effect.Parameters["AmbientIntensity"].SetValue(ambientIntensity);
 
 			//Render shadow map
-			graphics.SetRenderTarget(lighting.ShadowMap);
-			graphics.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.White, 1.0f, 0);
-			effect.Technique = effect.Techniques["ShadowMap"];
+			//graphics.SetRenderTarget(lighting.ShadowMap);
+			//graphics.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.White, 1.0f, 0);
+			//effect.Technique = effect.Techniques["ShadowMap"];
 
-			environment.Render(gameTime, graphics, effect);
-			player.Render(gameTime, effect);
-			trafficManager.RenderTraffic(gameTime, effect);
+			//environment.Render(gameTime, graphics, effect);
+			//player.Render(gameTime, effect);
+			//trafficManager.RenderTraffic(gameTime, effect);
 
 
 			//Render scene

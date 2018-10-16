@@ -131,8 +131,8 @@ technique Textured
 {
 	pass Pass1
 	{
-		VertexShader = compile vs_4_0 VertexShaderFunction();
-		PixelShader = compile ps_4_0 PixelShaderFunction();
+		VertexShader = compile vs_3_0 VertexShaderFunction();
+		PixelShader = compile ps_3_0 PixelShaderFunction();
 	}
 }
 
@@ -177,8 +177,8 @@ technique ShadowMap
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_4_0 ShadowMapVertexShader();
-		PixelShader = compile ps_4_0 ShadowMapPixelShader();
+		VertexShader = compile vs_3_0 ShadowMapVertexShader();
+		PixelShader = compile ps_3_0 ShadowMapPixelShader();
 	}
 }
 
@@ -188,7 +188,7 @@ technique ShadowMap
 
 struct SSceneVertexToPixel
 {
-	float4 Position             : POSITION;
+	float4 Position             : SV_POSITION;
 	float4 Pos2DAsSeenByLight    : TEXCOORD0;
 
 	float2 TexCoords            : TEXCOORD1;
@@ -199,7 +199,7 @@ struct SSceneVertexToPixel
 
 struct STerrainVertexToPixel
 {
-	float4 Position             : POSITION;
+	float4 Position             : SV_POSITION;
 	float4 Pos2DAsSeenByLight    : TEXCOORD0;
 
 	float3 Normal                : TEXCOORD2;
@@ -371,8 +371,8 @@ technique ShadowedScene
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_4_0 ShadowedSceneVertexShader();
-		PixelShader = compile ps_4_0 ShadowedScenePixelShader();
+		VertexShader = compile vs_3_0 ShadowedSceneVertexShader();
+		PixelShader = compile ps_3_0 ShadowedScenePixelShader();
 	}
 }
 
@@ -381,8 +381,8 @@ technique ShadowedTerrain
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_4_0 ShadowedTerrainVertexShader();
-		PixelShader = compile ps_4_0 ShadowedTerrainPixelShader();
+		VertexShader = compile vs_3_0 ShadowedTerrainVertexShader();
+		PixelShader = compile ps_3_0 ShadowedTerrainPixelShader();
 	}
 }
 
@@ -390,7 +390,7 @@ technique ShadowedCar
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_4_0 ShadowedSceneVertexShader();
-		PixelShader = compile ps_4_0 ShadowedCarPixelShader();
+		VertexShader = compile vs_3_0 ShadowedSceneVertexShader();
+		PixelShader = compile ps_3_0 ShadowedCarPixelShader();
 	}
 }
