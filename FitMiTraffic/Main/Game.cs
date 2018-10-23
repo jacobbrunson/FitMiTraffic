@@ -26,12 +26,10 @@ namespace FitMiTraffic.Main
 
 		public TrafficGame()
 		{
-			Console.WriteLine("ONE");
 			graphicsManager = new GraphicsDeviceManager(this);
 			graphicsManager.PreferredBackBufferWidth = 600;
 			graphicsManager.PreferredBackBufferHeight = 800;
-			graphicsManager.GraphicsProfile = GraphicsProfile.Reach;
-			Console.WriteLine("TWO");
+			graphicsManager.GraphicsProfile = GraphicsProfile.HiDef;
 			//graphicsManager.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
 			//graphicsManager.ApplyChanges();
 
@@ -46,7 +44,6 @@ namespace FitMiTraffic.Main
 
 		protected override void LoadContent()
 		{
-			Console.WriteLine("HELLOOOOOOO!!!!!!!");
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 
 			Car.LoadContent(Content);
