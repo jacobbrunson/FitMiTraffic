@@ -21,6 +21,8 @@ namespace FitMiTraffic.Main.Environment
 		public const float LaneWidth = 2.45f;
 		public const float Size = NumLanes * LaneWidth;
 
+		public int Highlight = 0;
+
 		public static Vector2 Scale;
 		//private static Texture2D Texture;
 		private static Vector2 TextureSize;
@@ -50,14 +52,14 @@ namespace FitMiTraffic.Main.Environment
 			{
 				for (int i = 0; i < 10; i++)
 				{
-					var piece = new RoadSegment(content, world, Size * (i - 1));
+					var piece = new RoadSegment(content, world, Size * (i - 1), Highlight);
 					Segments.AddLast(piece);
 				}
 			} else
 			{
 				for (int i = 0; i < 15; i++)
 				{
-					var piece = new RoadSegment(content, world, Size * (-i), groundWidth, groundOffsetX, biomeScale);
+					var piece = new RoadSegment(content, world, Size * (-i), Highlight, groundWidth, groundOffsetX, biomeScale);
 					Segments.AddLast(piece);
 				}
 			}
@@ -87,13 +89,13 @@ namespace FitMiTraffic.Main.Environment
 			{
                 Segments.First.Value.Destroy();
 				Segments.RemoveFirst();
-				var piece = new RoadSegment(content, world, Segments.Last.Value.Y + Size);
+				var piece = new RoadSegment(content, world, Segments.Last.Value.Y + Size, Highlight);
 				Segments.AddLast(piece);
 			} else if (!CullBack && Segments.First.Value.Y < playerY)
 			{
 				Segments.Last.Value.Destroy();
 				Segments.RemoveLast();
-				var piece = new RoadSegment(content, world, Segments.First.Value.Y + Size, groundWidth, groundOffsetX);
+				var piece = new RoadSegment(content, world, Segments.First.Value.Y + Size, Highlight, groundWidth, groundOffsetX);
 				Segments.AddFirst(piece);
 			}
 		}

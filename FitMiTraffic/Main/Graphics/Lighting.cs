@@ -26,7 +26,7 @@ namespace FitMiTraffic.Main.Graphics
 		public Lighting(GraphicsDevice graphics, int shadowRes=2048)
 		{
 			Projection = Matrix.CreateOrthographic(width, height, nearZ, farZ);
-			ShadowMap = new RenderTarget2D(graphics, shadowRes, shadowRes, true, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.PlatformContents);
+			ShadowMap = new RenderTarget2D(graphics, shadowRes, shadowRes, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.PlatformContents);
 		}
 
 		public void Update()

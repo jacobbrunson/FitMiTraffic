@@ -25,19 +25,21 @@ namespace FitMiTraffic.Main.Modes
 		private Vector4 ambientColor = new Vector4(0.9f, 0.9f, 1, 1);
 		private const float ambientIntensity = 0.8f;
 		private const float diffuseIntensity = 1;
-        private const int shadowMapRes = 2048;
-        private const float playerSpeed = 20;
+		private const int shadowMapRes = 2048;
+		private const float playerSpeed = 20;
 
-        //Things
-        private World world;
+		//Things
+		private World world;
 		private Player player;
 		private EnvironmentManager environment;
 		private TrafficManager trafficManager;
+		private Highlight highlight;
 
 		//Graphics
 		private Camera camera;
 		private Lighting lighting;
 		private BaseEffect effect;
+		private BaseEffect highlightEffect;
 		private PostProcessor postProcessor;
 		private DebugView debugView;
 
@@ -45,19 +47,21 @@ namespace FitMiTraffic.Main.Modes
 		private MessagesUI messagesUI;
 		private ScoreUI scoreUI;
 		private GameOverUI gameOverUI;
-        private FPSUI fpsUI;
+		private FPSUI fpsUI;
 
 		//State
 		private int score;
 		private GameState state;
 		private double stateChangeTime;
+		private float difficulty;
 
 
-		public GameMode(TrafficGame game, GraphicsDevice graphics, SpriteBatch spriteBatch, ContentManager content) : base(game, graphics, spriteBatch, content)
+		public GameMode(TrafficGame game, GraphicsDevice graphics, SpriteBatch spriteBatch, ContentManager content, float difficulty) : base(game, graphics, spriteBatch, content)
 		{
 			this.graphics = graphics;
 			this.spriteBatch = spriteBatch;
 			this.game = game;
+			this.difficulty = difficulty;
 
 			tainicom.Aether.Physics2D.Settings.MaxPolygonVertices = 16;
 			world = new World(Vector2.Zero);
@@ -65,11 +69,11 @@ namespace FitMiTraffic.Main.Modes
 			debugView.AppendFlags(DebugViewFlags.DebugPanel | DebugViewFlags.PolygonPoints);
 			debugView.LoadContent(graphics, content);
 
-			player = new Player(content, CarType.SPORT, world, playerSpeed);
+			player = new Player(content, CarType.BASIC, world, adjustedSpeed);
 			player.DodgeCompleteCallback = DodgeCompleted;
 
 			environment = new EnvironmentManager(content, world);
-			trafficManager = new TrafficManager(content, world, 1000, Road.NumLanes, Road.LaneWidth);
+			trafficManager = new TrafficManager(content, world, difficulty, Road.NumLanes, Road.LaneWidth);
 
 			camera = new Camera(graphics.Viewport.Width, graphics.Viewport.Height);
 			lighting = new Lighting(graphics, shadowMapRes);
@@ -77,12 +81,15 @@ namespace FitMiTraffic.Main.Modes
 			lighting.Direction = lightDirection;
 
 			effect = new BaseEffect(content.Load<Effect>("effect"));
+			//highlightEffect = new BaseEffect(content.Load<Effect>("highlightEffect"));
 			postProcessor = new PostProcessor(graphics, spriteBatch, content.Load<Effect>("desaturate"));
 
 			messagesUI = new MessagesUI();
 			scoreUI = new ScoreUI();
 			gameOverUI = new GameOverUI();
-            fpsUI = new FPSUI();
+			fpsUI = new FPSUI();
+
+			highlight = new Highlight(content);
 		}
 
 		private void HandleInput(GameTime gameTime)
@@ -161,7 +168,7 @@ namespace FitMiTraffic.Main.Modes
 				{
 					state = GameState.RUNNING;
 					stateChangeTime = gameTime.TotalGameTime.TotalSeconds;
-					player.Velocity = new Vector2(player.Velocity.X, playerSpeed);
+					player.Velocity = new Vector2(player.Velocity.X, adjustedSpeed);
 				}
 			}
 			else if (state == GameState.RECENTERING)
@@ -190,7 +197,7 @@ namespace FitMiTraffic.Main.Modes
 			//Update GUI
 			messagesUI.Update(gameTime);
 			scoreUI.Update(gameTime, score);
-            fpsUI.Update(gameTime);
+			fpsUI.Update(gameTime);
 		}
 
 		public override void Render(GameTime gameTime)
@@ -208,7 +215,7 @@ namespace FitMiTraffic.Main.Modes
 			//Set lighting parameters
 			effect.LightViewProjection = lighting.View * lighting.Projection;
 			effect.Parameters["xLightPos"].SetValue(lighting.Position);
-			effect.Parameters["DiffuseLightDirection"].SetValue(lighting.Direction);
+			//effect.Parameters["DiffuseLightDirection"].SetValue(lighting.Direction);
 			effect.Parameters["DiffuseIntensity"].SetValue(diffuseIntensity);
 			effect.Parameters["AmbientColor"].SetValue(ambientColor);
 			effect.Parameters["AmbientIntensity"].SetValue(ambientIntensity);
@@ -235,6 +242,11 @@ namespace FitMiTraffic.Main.Modes
 			effect.Technique = effect.Techniques["ShadowedScene"];
 			environment.Render(gameTime, graphics, effect);
 
+			//highlightEffect.View = camera.View;
+			//highlightEffect.Projection = camera.Projection;
+			//highlightEffect.LightViewProjection = Matrix.Identity;
+			//highlight.Render(gameTime, effect);
+
 			effect.Technique = effect.Techniques["ShadowedCar"];
 			player.Render(gameTime, effect);
 			trafficManager.RenderTraffic(gameTime, effect);
@@ -254,21 +266,27 @@ namespace FitMiTraffic.Main.Modes
 			}
 
 			spriteBatch.End();
-            
-            //Render debug
-            if (TrafficGame.DEBUG)
+
+			//Render debug
+			if (TrafficGame.DEBUG)
 			{
 				trafficManager.RenderDebug(debugView, camera.View, camera.Projection);
-                debugView.RenderDebugData(camera.Projection, camera.View, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, 0.8f);
-                spriteBatch.Begin();
-                fpsUI.Render(spriteBatch, 600, 800);
-                spriteBatch.End();
-            }
+				debugView.RenderDebugData(camera.Projection, camera.View, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, 0.8f);
+				spriteBatch.Begin();
+				fpsUI.Render(spriteBatch, 600, 800);
+				spriteBatch.End();
+			}
 
 			//DEBUG: render shadow map
 			//spriteBatch.Begin(0, BlendState.Opaque, SamplerState.AnisotropicClamp);
 			//spriteBatch.Draw(lighting.ShadowMap, new Rectangle(0, 0, 600, 800), Color.White);
 			//spriteBatch.End();
+		}
+
+		public float adjustedSpeed {
+			get {
+				return playerSpeed * Math.Max(0.5f, difficulty);
+			}
 		}
 	}
 

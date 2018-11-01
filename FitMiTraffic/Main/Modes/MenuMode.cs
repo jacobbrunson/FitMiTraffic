@@ -24,7 +24,7 @@ namespace FitMiTraffic.Main.Modes
 		private Vector4 ambientColor = new Vector4(1, 0.8f, 0.8f, 1);
 		private const float ambientIntensity = 0.4f;
 		private const float diffuseIntensity = 0.8f;
-        private const int shadowMapRes = 8;
+        private const int shadowMapRes = 1024;
 
 		//Things
 		private World world;
@@ -53,7 +53,6 @@ namespace FitMiTraffic.Main.Modes
 			{
 				//roadSegments.AddLast(new RoadSegment(content, world, -i * Road.Size + 2.5f, groundWidth, groundWidth/2));
 			}
-
 			car = new Car(content, CarType.SPORT, world, 0);
 			car.Position = new Vector2(Road.LaneWidth/2, 50);
 			car.model.Color = new Color(229, 189, 15, 255);
@@ -61,7 +60,6 @@ namespace FitMiTraffic.Main.Modes
 			camera = new Camera(graphics.Viewport.Width, graphics.Viewport.Height);
 			camera.Mode = CameraMode.FIXED;
 			camera.Offset = new Vector2(2, 3);
-
 			//camera.Mode = CameraMode.FLAT;
 			//camera.Scale = 5;
 			//camera.Target = new Vector2(4, -60);
@@ -69,11 +67,10 @@ namespace FitMiTraffic.Main.Modes
 			lighting = new Lighting(graphics, shadowMapRes);
 			lighting.Position = initialLightPosition;
 			lighting.Direction = lightDirection;
-
+			//test = new RenderTarget2D(graphics, 256, 256, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
 			effect = new BaseEffect(content.Load<Effect>("effect"));
 
-			postProcessor = new PostProcessor(graphics, spriteBatch, content.Load<Effect>("depthoffield"));
-
+			//postProcessor = new PostProcessor(graphics, spriteBatch, content.Load<Effect>("depthoffield"));
 			TitleUI.LoadContent(content);
 			titleUI = new TitleUI();
 
@@ -125,14 +122,13 @@ namespace FitMiTraffic.Main.Modes
 			//Set lighting parameters
 			effect.LightViewProjection = lighting.View * lighting.Projection;
 			effect.Parameters["xLightPos"].SetValue(lighting.Position);
-			effect.Parameters["DiffuseLightDirection"].SetValue(lighting.Direction);
 			effect.Parameters["DiffuseIntensity"].SetValue(diffuseIntensity);
 			effect.Parameters["AmbientColor"].SetValue(ambientColor);
 			effect.Parameters["AmbientIntensity"].SetValue(ambientIntensity);
 
 			//Render shadow map
 			graphics.SetRenderTarget(lighting.ShadowMap);
-			graphics.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.White, 1.0f, 0);
+			graphics.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
 			effect.Technique = effect.Techniques["ShadowMap"];
 
 			road.Render(gameTime, graphics, effect);
@@ -168,6 +164,7 @@ namespace FitMiTraffic.Main.Modes
             {
                 fpsUI.Render(spriteBatch, 600, 800);
             }
+			//spriteBatch.Draw(lighting.ShadowMap, Vector2.Zero);
 			spriteBatch.End();
         }
 	}

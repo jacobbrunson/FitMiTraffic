@@ -19,16 +19,21 @@ namespace FitMiTraffic.Main.Environment
 		private RoadPiece road;
 		private Rail leftRail;
 		private Rail rightRail;
+		private int highlightedLane;
+		private Highlight highlight;
 
         private World world;
 
-		public RoadSegment(ContentManager content, World world, float y, int groundWidth=10, int groundOffsetX=0, float biomeScale=100)
+		public RoadSegment(ContentManager content, World world, float y, int highlightedLane, int groundWidth=10, int groundOffsetX=0, float biomeScale=100)
 		{
+			
 			ground = new Ground(content, y, groundWidth, groundOffsetX, biomeScale);
 			road = new RoadPiece(content, y);
 			leftRail = new Rail(content, world, -Road.Size/2, y);
 			rightRail = new Rail(content, world, Road.Size/2, y);
 			Y = y;
+			this.highlightedLane = highlightedLane;
+			highlight = new Highlight(content);
 			this.world = world;
 		}
 
@@ -40,8 +45,16 @@ namespace FitMiTraffic.Main.Environment
 			rightRail.Position = new Vector3(rightRail.Position.X, Y, rightRail.Position.Z);
 			if (effect.Technique.Name.Equals("ShadowedScene"))
 			{
-				ground.Render(graphics, effect);
+				//ground.Render(graphics, effect);
 			}
+
+			if (highlightedLane >= 0)
+			{
+				var X = (highlightedLane - Road.NumLanes/2 + 1) * Road.LaneWidth * 0.95f;
+				highlight.Position = new Vector3(X, Y, 0);
+				highlight.Render(gameTime, effect);
+			}
+
 			road.Render(gameTime, effect);
 			leftRail.Render(gameTime, effect);
 			rightRail.Render(gameTime, effect);

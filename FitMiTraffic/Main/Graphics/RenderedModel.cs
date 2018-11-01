@@ -30,6 +30,13 @@ namespace FitMiTraffic.Main.Graphics
 
 		private BoundingBox GetBounds()
 		{
+			if (Model.Tag == null)
+			{
+				throw new Exception("Model must be processed using Jacob's Flat Processor");
+			}
+			return (BoundingBox) Model.Tag;
+
+
 			Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
 			Vector3 max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
 
@@ -63,8 +70,8 @@ namespace FitMiTraffic.Main.Graphics
 				foreach (ModelMeshPart part in mesh.MeshParts)
 				{
 					VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[part.VertexBuffer.VertexCount];
-					part.VertexBuffer.GetData<VertexPositionNormalTexture>(vertices);
-
+					part.VertexBuffer.GetData<VertexPositionNormalTexture>(vertices); // System.NotSupportedException: Vertex buffers are write-only on OpenGL ES platforms
+					//part.VertexBuffer.B
 					short[] indices = new short[part.IndexBuffer.IndexCount];
 					part.IndexBuffer.GetData<short>(indices);
 
@@ -92,10 +99,10 @@ namespace FitMiTraffic.Main.Graphics
 
 		public RenderedModel(ContentManager content, string modelName, string textureName=null)
 		{
+			Console.WriteLine(modelName);
 			Model = content.Load<Model>(modelName);
 			effect = content.Load<Effect>("effect");
 			//shadowEffect = content.Load<Effect>("shadowmap");
-
 			if (textureName != null)
 			{
 				Texture = content.Load<Texture2D>(textureName);
@@ -112,7 +119,7 @@ namespace FitMiTraffic.Main.Graphics
 			}
 
 			//if (new Random().Next(0, 2) == 0)
-			FlattenNormals();
+			//FlattenNormals();
 
 			var bounds = GetBounds();
 			meshSize = bounds.Max - bounds.Min;
@@ -137,19 +144,20 @@ namespace FitMiTraffic.Main.Graphics
 					//effect.Parameters["Projection"].SetValue(projection);
 					//effect.Parameters["LightViewProj"].SetValue(world * lightViewProjection);
 					//effect.Parameters["ShadowMap"].SetValue(shadowMap);
+
 					effect.Parameters["xLightsWorldViewProjection"].SetValue(world * effect.LightViewProjection);
 
 					Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(world)); // mesh.ParentBone.Transform * world
-					effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);
+					effect.Parameters["WorldInverseTranspose"]?.SetValue(worldInverseTransposeMatrix);
 
-					effect.Parameters["ModelTexture"].SetValue(Texture);
+					effect.Parameters["ModelTexture"]?.SetValue(Texture);
 
 					//effect.Parameters["xLightPos"].SetValue(TrafficGame.lightPosition);
 					//effect.Parameters["DiffuseLightDirection"].SetValue(TrafficGame.lightDirection);
 
-					effect.Parameters["resolution"].SetValue(new Vector2(600, 800));
+					effect.Parameters["resolution"]?.SetValue(new Vector2(600, 800));
 
-					effect.Parameters["CarColor"].SetValue(new Vector4(Color.R/255f, Color.G/255f, Color.B/255f, 1));
+					effect.Parameters["CarColor"]?.SetValue(new Vector4(Color.R/255f, Color.G/255f, Color.B/255f, 1));
 				}
 				mesh.Draw();
 			}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SourceFile>C:/Users/labuser/source/repos/fitmitraffic/TrafficAndroid/Content/new_cars/car1.dae</SourceFile>
+  <SourceTime>2018-09-11T14:53:02.9323177-05:00</SourceTime>
+  <DestFile>C:/Users/labuser/source/repos/fitmitraffic/TrafficAndroid/Content/new_cars/car1.xnb</DestFile>
+  <DestTime>2018-10-31T19:59:31.5281811-05:00</DestTime>
+  <Importer>OpenAssetImporter</Importer>
+  <ImporterTime>2017-03-01T09:05:36-06:00</ImporterTime>
+  <Processor>ModelProcessor</Processor>
+  <ProcessorTime>2017-03-01T09:05:36-06:00</ProcessorTime>
+  <Dependencies />
+  <BuildAsset>
+    <string>C:/Users/labuser/source/repos/fitmitraffic/TrafficAndroid/Content/new_cars/texture/car1_0.xnb</string>
+  </BuildAsset>
+  <BuildOutput />
+</PipelineBuildEvent>

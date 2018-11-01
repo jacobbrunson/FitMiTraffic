@@ -45,14 +45,14 @@ namespace FitMiTraffic.Main.Environment
 			model = new BigSign(content) { Position = new Vector3(0, 100, 0) };
 			models.Add(model);
 
-			model = new ExitSign(content) { Position = new Vector3(5.5f, 50, 0) };
+			//model = new ExitSign(content) { Position = new Vector3(5.5f, 50, 0) };
 
             for (int i = 1; i < 50; i++)
             {
                 var coin = new Coin(content) { Position = new Vector3((float)Math.Sin((float)i/25) * 3f, i * 10, 0) };
-                coins.Add(coin);
+                //coins.Add(coin);
             }
-            
+
 			//models.Add(model);
 		}
 
@@ -68,6 +68,10 @@ namespace FitMiTraffic.Main.Environment
 
 		public void Update(GameTime gameTime, Player player)
 		{
+			if (gameTime.TotalGameTime.Seconds % 5 == 0)
+			{
+				road.Highlight = (road.Highlight + 1) % Road.NumLanes;
+			}
 			road.Update(player.Position.Y);
             foreach (Coin coin in coins) {
                 if (Math.Abs(player.Position.X - coin.Position.X) < player.model.Size.X / 2 && coin.Position.Y < player.Position.Y + player.model.Size.Y / 2)

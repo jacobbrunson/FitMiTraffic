@@ -17,6 +17,7 @@ namespace FitMiTraffic.Main
 
 	public class TrafficGame : Game
 	{
+		private const float difficulty = 0f;
 
 		public static Mode Mode;
 		public static bool DEBUG;
@@ -29,7 +30,7 @@ namespace FitMiTraffic.Main
 			graphicsManager = new GraphicsDeviceManager(this);
 			graphicsManager.PreferredBackBufferWidth = 600;
 			graphicsManager.PreferredBackBufferHeight = 800;
-			graphicsManager.GraphicsProfile = GraphicsProfile.HiDef;
+			graphicsManager.GraphicsProfile = GraphicsProfile.Reach;
 			//graphicsManager.PreparingDeviceSettings += Graphics_PreparingDeviceSettings;
 			//graphicsManager.ApplyChanges();
 
@@ -45,7 +46,6 @@ namespace FitMiTraffic.Main
 		protected override void LoadContent()
 		{
 			spriteBatch = new SpriteBatch(GraphicsDevice);
-
 			Car.LoadContent(Content);
 			Road.LoadContent(Content);
 
@@ -56,14 +56,14 @@ namespace FitMiTraffic.Main
 
 			InputManager.Initialize();
 
-			Mode = new GameMode(this, GraphicsDevice, spriteBatch, Content); 
+			Mode = new GameMode(this, GraphicsDevice, spriteBatch, Content, difficulty); 
 			//Mode = new MenuMode(this, GraphicsDevice, spriteBatch, Content);
 		}
 
         public void Play()
         {
             DEBUG = false;
-            Mode = new GameMode(this, GraphicsDevice, spriteBatch, Content);
+            Mode = new GameMode(this, GraphicsDevice, spriteBatch, Content, difficulty);
         }
 
 		protected override void Update(GameTime gameTime)
@@ -75,6 +75,7 @@ namespace FitMiTraffic.Main
 		protected override void Draw(GameTime gameTime)
 		{
 			Mode.Render(gameTime);
+			//GraphicsDevice.Clear(Color.Red);
 			base.Draw(gameTime);
 		}
 	}

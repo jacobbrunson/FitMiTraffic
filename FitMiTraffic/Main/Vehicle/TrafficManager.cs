@@ -26,21 +26,31 @@ namespace FitMiTraffic.Main.Vehicle
 		private ContentManager Content;
 		private int NumLanes;
 		public float LaneWidth;
+		private float difficulty;
 
 		private float LastOnRamp = -1;
 		private float LastOnRampSeconds;
 
 		private Random random;
 
-		public TrafficManager(ContentManager content, World world, int interval, int numLanes, float laneWidth)
+		public TrafficManager(ContentManager content, World world, float difficulty, int numLanes, float laneWidth)
 		{
 			World = world;
-			Interval = interval;
 			Content = content;
 			NumLanes = numLanes;
 			LaneWidth = laneWidth;
+			this.difficulty = difficulty;
 
-			LastSpawnMillis = -Interval;
+			if (difficulty > 0.3f)
+			{
+				Interval = (int)difficulty.Map(0.3f, 1, 10000, 1000);
+				LastSpawnMillis = -Interval;
+			}
+			else
+			{
+				Interval = int.MaxValue;
+				LastSpawnMillis = int.MaxValue;
+			}
 
 			random = new Random();
 		}
@@ -129,7 +139,8 @@ namespace FitMiTraffic.Main.Vehicle
 				} while (!foundSpawnPos && spawnAttempts < 5);
 
 				if (foundSpawnPos) {
-					float speed = (float)random.NextDouble() * 5.0f + (NumLanes - lane + 1) * 1.5f + 3.0f;
+					float speed = player.Velocity.Y + (NumLanes - lane + 1) * 1.0f + (float)random.NextDouble().Map(0, 1, -10, 0);
+					speed *= (1 - Math.Min(0.5f, difficulty));
 
 					Car car = new Car(Content, type, World, speed);
 					car.Position = new Vector2(posX, posY);

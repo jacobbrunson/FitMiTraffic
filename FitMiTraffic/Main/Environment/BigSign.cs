@@ -13,7 +13,7 @@ namespace FitMiTraffic.Main.Environment
 {
 	public class BigSign : RenderedModel
 	{
-		private const string ModelName = "BigSign";
+		private const string ModelName = "bigsign";
 
 		public BigSign(ContentManager content) : base(content, ModelName)
 		{
