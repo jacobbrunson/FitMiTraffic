@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5D15AB7D-B372-45FB-BE2D-2E094FBABEE1}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NewTrafficRacer</RootNamespace>
+    <AssemblyName>NewTrafficRacer</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <AndroidApplication>true</AndroidApplication>
+    <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <AndroidSupportedAbis>armeabi-v7a%3bx86</AndroidSupportedAbis>
+    <AndroidStoreUncompressedFileExtensions>.m4a</AndroidStoreUncompressedFileExtensions>
+    <MandroidI18n />
+    <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
+    <MonoGamePlatform>Android</MonoGamePlatform>
+    <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\$(MonoGamePlatform)\$(Platform)\$(Configuration)\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;ANDROID</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
+    <AndroidLinkMode>None</AndroidLinkMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\$(MonoGamePlatform)\$(Platform)\$(Configuration)\</OutputPath>
+    <DefineConstants>TRACE;ANDROID</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Aether.Physics2D, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Aether.Physics2D.1.3.1\lib\portable-net40+win8\Aether.Physics2D.dll</HintPath>
+    </Reference>
+    <Reference Include="Aether.Physics2D.Diagnostics, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Aether.Physics2D.Diagnostics.1.3.1\lib\portable-net40+win8\Aether.Physics2D.Diagnostics.dll</HintPath>
+    </Reference>
+    <Reference Include="FitMiAndroid">
+      <HintPath>.\FitMiAndroid.dll</HintPath>
+    </Reference>
+    <Reference Include="FitMi_Research_Puck">
+      <HintPath>.\FitMi_Research_Puck.dll</HintPath>
+    </Reference>
+    <Reference Include="HidSharp, Version=2.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HidSharp.2.0.5\lib\netstandard2.0\HidSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Android" />
+    <Reference Include="mscorlib" />
+    <Reference Include="OpenTK-1.0" />
+    <Reference Include="SharpNoiseAndroid">
+      <HintPath>.\SharpNoiseAndroid.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
+    <Reference Include="MonoGame.Framework">
+      <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Android\MonoGame.Framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Activity1.cs" />
+    <Compile Include="Main\Environment\BigSign.cs" />
+    <Compile Include="Main\Environment\BoringGround.cs" />
+    <Compile Include="Main\Environment\Coin.cs" />
+    <Compile Include="Main\Environment\EnvironmentManager.cs" />
+    <Compile Include="Main\Environment\ExitSign.cs" />
+    <Compile Include="Main\Environment\Rail.cs" />
+    <Compile Include="Main\Environment\Road.cs" />
+    <Compile Include="Main\Environment\RoadPiece.cs" />
+    <Compile Include="Main\Environment\RoadSegment.cs" />
+    <Compile Include="Main\Environment\SpeedLimit.cs" />
+    <Compile Include="Main\Graphics\Camera.cs" />
+    <Compile Include="Main\Graphics\PostProcessor.cs" />
+    <Compile Include="Main\Gui\CountdownUI.cs" />
+    <Compile Include="Main\Gui\FPSUI.cs" />
+    <Compile Include="Main\Gui\GameOverUI.cs" />
+    <Compile Include="Main\Gui\MessageQueue.cs" />
+    <Compile Include="Main\Gui\MessagesUI.cs" />
+    <Compile Include="Main\Gui\ScoreUI.cs" />
+    <Compile Include="Main\Gui\TitleUI.cs" />
+    <Compile Include="Main\Input\InputManager.cs" />
+    <Compile Include="Main\Modes\GameMode.cs" />
+    <Compile Include="Main\Modes\MenuMode.cs" />
+    <Compile Include="Main\Modes\Mode.cs" />
+    <Compile Include="Main\Vehicle\Car.cs" />
+    <Compile Include="Main\Vehicle\CarType.cs" />
+    <Compile Include="Main\Utility\ExtensionMethods.cs" />
+    <Compile Include="Game1.cs" />
+    <Compile Include="Main\Environment\Ground.cs" />
+    <Compile Include="Main\Graphics\Lighting.cs" />
+    <Compile Include="Main\Graphics\RenderedModel.cs" />
+    <Compile Include="Main\Vehicle\Player.cs" />
+    <Compile Include="Main\Vehicle\TrafficManager.cs" />
+    <Compile Include="Resources\Resource.Designer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\DiagnosticsFont.xnb" />
+    <None Include="packages.config" />
+    <None Include="Resources\AboutResources.txt" />
+    <None Include="Assets\AboutAssets.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\Values\Strings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\Drawable\Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\Layout\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\Drawable\Splash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\Values\Styles.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <MonoGameContentReference Include="Content\Content.mgcb" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\AndroidManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\desaturate.fx" />
+    <Content Include="Content\effect.fx" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
