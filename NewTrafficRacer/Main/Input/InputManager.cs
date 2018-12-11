@@ -21,6 +21,8 @@ namespace NewTrafficRacer.Input
 		private static MouseState PreviousMouseState;
 		private static MouseState CurrentMouseState;
 
+        private static bool PuckPack1ForceDebounce = false;
+
 		private static HIDPuckDongle PuckManager;
 		private static PuckPacket Puck
 		{
@@ -99,6 +101,17 @@ namespace NewTrafficRacer.Input
 		{
 			get
 			{
+                if (PuckManager.PuckPack1.Loadcell > 500)
+                {
+                    if (PuckPack1ForceDebounce == false)
+                    {
+                        return true;
+                    }
+                    PuckPack1ForceDebounce = true;
+                } else
+                {
+                    PuckPack1ForceDebounce = false;
+                }
 				return PreviousKeyState.IsKeyUp(Keys.Z) && CurrentKeyState.IsKeyDown(Keys.Z);
 			}
 		}
