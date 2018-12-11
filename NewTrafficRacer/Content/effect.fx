@@ -74,7 +74,7 @@ float ComputeShadow(float4 positionLight)
     float real_depth = (positionLight.z / positionLight.w);
 	float closest_depth = tex2D(shadow_sampler, shadow_map_coords).x;
 
-	return real_depth <= closest_depth + 0.01 ? 1.0 : 0.0;
+	return real_depth <= closest_depth + 0.0005 ? 1.0 : 0.0;
 }
 
 VertexShaderOutput ComputeDiffuse(float4 position, float4 normal, float2 tex_coords, float4 color)

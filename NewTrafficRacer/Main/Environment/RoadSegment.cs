@@ -48,20 +48,21 @@ namespace NewTrafficRacer.Environment
             road.Position = new Vector3(road.Position.X, Y, road.Position.Z);
             leftRail.Position = new Vector3(leftRail.Position.X, Y, leftRail.Position.Z);
             rightRail.Position = new Vector3(rightRail.Position.X, Y, rightRail.Position.Z);
-            if (effect.CurrentTechnique.Name.Equals("ShadowedScene"))
+            if (effect.CurrentTechnique.Name == "ShadowedScene")
             {
                 GameMode.RENDER_FIX(effect);
                 ground.Render(graphics, effect);
+
+                if (HighlightedLane >= 0)
+                {
+                    var X = (HighlightedLane - Road.NumLanes / 2 + 1) * Road.LaneWidth * 0.95f;
+                    highlight.Position = new Vector3(X, Y, 0);
+                    highlight.Render(gameTime, effect);
+                }
+
+                road.Render(gameTime, effect);
             }
 
-            if (HighlightedLane >= 0)
-            {
-                var X = (HighlightedLane - Road.NumLanes / 2 + 1) * Road.LaneWidth * 0.95f;
-                highlight.Position = new Vector3(X, Y, 0);
-                highlight.Render(gameTime, effect);
-            }
-
-            road.Render(gameTime, effect);
             leftRail.Render(gameTime, effect);
             rightRail.Render(gameTime, effect);
         }

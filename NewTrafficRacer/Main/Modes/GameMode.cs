@@ -20,7 +20,7 @@ namespace NewTrafficRacer.Modes
 	{
         //Parameters
         private const int coinPoints = 1000;
-		private Vector3 initialLightPosition = new Vector3(10, 10, 10);
+		private Vector3 initialLightPosition = new Vector3(5, 5, 5);
         private Vector3 lightDirection = new Vector3(-1, -1, -1);
         private static Vector4 ambientColor = new Vector4(0.48f, 0.54f, 0.6f, 1f);
         private static Vector4 diffuseColor = new Vector4(1f, 0.8f, 0.8f, 1f);
@@ -279,6 +279,7 @@ namespace NewTrafficRacer.Modes
 			//Update graphics state
 			graphics.BlendState = BlendState.Opaque;
 			graphics.DepthStencilState = DepthStencilState.Default;
+            graphics.RasterizerState = new RasterizerState() { CullMode = CullMode.CullClockwiseFace };
 
             //Set lighting parameters
             //effect.LightViewProjection = lighting.View * lighting.Projection; //COMMENTED FOR COMPILE
@@ -294,10 +295,11 @@ namespace NewTrafficRacer.Modes
 			environment.Render(gameTime, graphics, effect);
 			player.Render(gameTime, effect);
 			trafficManager.RenderTraffic(gameTime, effect);
-            
 
-			//Render scene
-			graphics.SetRenderTarget(null);
+
+            //Render scene
+            graphics.RasterizerState = new RasterizerState() { CullMode = CullMode.CullCounterClockwiseFace };
+            graphics.SetRenderTarget(null);
 
 			postProcessor.Begin();
 
@@ -340,12 +342,12 @@ namespace NewTrafficRacer.Modes
                 spriteBatch.Begin();
                 fpsUI.Render(spriteBatch, 600, 800);
                 spriteBatch.End();
-            }
 
-			//DEBUG: render shadow map
-			spriteBatch.Begin(0, BlendState.Opaque, SamplerState.AnisotropicClamp);
-			spriteBatch.Draw(lighting.ShadowMap, new Rectangle(0, 0, 256, 256), Color.White);
-			spriteBatch.End();
+                //DEBUG: show shadow map
+                spriteBatch.Begin(0, BlendState.Opaque, SamplerState.AnisotropicClamp);
+                spriteBatch.Draw(lighting.ShadowMap, new Rectangle(0, graphics.Viewport.Height - 256, 256, 256), Color.White);
+                spriteBatch.End();
+            }
 		}
 	}
 
