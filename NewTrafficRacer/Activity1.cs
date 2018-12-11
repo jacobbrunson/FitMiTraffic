@@ -24,8 +24,8 @@ namespace NewTrafficRacer
             this.WindowManager.DefaultDisplay.GetSize(displaySize);
 
             string content_dir = Intent.GetStringExtra("CONTENT_DIR");
-            int duration = Intent.GetIntExtra("duration", 60);
-            float difficulty = 0.25f; //Normalized [0, 1]
+            int duration = Intent.GetIntExtra("duration", 180);
+            float difficulty = Intent.GetFloatExtra("difficulty", 1.0f); //Normalized [0, 1]
 
             var g = new TrafficGame(displaySize.X, displaySize.Y, content_dir, duration, difficulty);
 			SetContentView((View)g.Services.GetService(typeof(View)));

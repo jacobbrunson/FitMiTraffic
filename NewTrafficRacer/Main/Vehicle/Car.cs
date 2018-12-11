@@ -144,7 +144,7 @@ namespace NewTrafficRacer.Vehicle
 
 			Rays.Add(new CastedRay(p1, p2, hit));
 
-			if (hit)
+			if (hit && hits[0].Body.BodyType == BodyType.Dynamic)
 			{
 				return hits[0].Body;
 			}
