@@ -100,7 +100,6 @@ namespace NewTrafficRacer.Vehicle
 			DesiredSpeed = initialSpeed;
 			InitialSpeed = initialSpeed;
 
-			Console.WriteLine(type.ModelName);
 			model = new RenderedModel(content, type.ModelName, type.TextureName);
 			model.Color = colors[new Random().Next(0, colors.Length)];
 
@@ -177,97 +176,9 @@ namespace NewTrafficRacer.Vehicle
 			return null;
 		}
 
-		public bool IsSafeToMerge(Vector2 direction, float buffer=1)
-		{
-			//Note: This method should really use short-circuit evaluation, but I don't because it makes the debug view look cooler
-			int numRays = 4;
-
-			Body[] bodies = new Body[numRays];
-
-			for (int i = 0; i < numRays; i++)
-			{
-				Vector2 p1 = Position + direction * BodySize.X / 2 + Vector2.UnitY * BodySize.Y * i.Map(0, 3, -buffer, buffer);
-				Vector2 p2 = p1 + direction * Road.LaneWidth;
-
-				bodies[i] = RayCast(p1, p2);
-			}
-
-			for (int i = 0; i < numRays; i++)
-			{
-				if (bodies[i] != null)
-				{
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		private void ChangeState(CarState state, GameTime gameTime)
-		{
-			State = state;
-			StateChangeTime = gameTime.TotalGameTime.TotalSeconds;
-		}
-
 		public void Update(GameTime gameTime)
 		{
 			Random random = new Random((int)gameTime.TotalGameTime.TotalMilliseconds + (int)State + (int)(Velocity.Y*100) + GetHashCode());
-
-			if (State == CarState.Driving)
-			{
-				double d = random.NextDouble();
-				if (d < gameTime.ElapsedGameTime.TotalSeconds * 0.05f)
-				{
-					int i = random.Next(0, 2);
-					if (Lane != Road.NumLanes - 1 && i == 0)
-					{
-						ChangeState(CarState.LookingRight, gameTime);
-
-					} else if (Lane != 0 && i == 1)
-					{
-						ChangeState(CarState.LookingLeft, gameTime);
-						Velocity = new Vector2(Velocity.X, Velocity.Y + random.NextDouble().Map(0, 1, 0.5f, 2.0f));
-					}
-				}
-			} else if (State == CarState.LookingRight)
-			{
-				bool isSafe = IsSafeToMerge(Vector2.UnitX);
-				if (gameTime.TotalGameTime.TotalSeconds - StateChangeTime > 2.5 && isSafe)
-				{
-					ChangeState(CarState.MovingRight, gameTime);
-					DesiredLane = Lane + 1;
-				}
-				else if (gameTime.TotalGameTime.TotalSeconds - StateChangeTime > 5)
-				{
-					ChangeState(CarState.Driving, gameTime);
-				}
-			} else if (State == CarState.MovingRight)
-			{
-				if (Lane != PreviousLane)
-				{
-					ChangeState(CarState.Driving, gameTime);
-				}
-			}
-			else if (State == CarState.LookingLeft)
-			{
-				bool isSafe = IsSafeToMerge(-Vector2.UnitX, 1.5f);
-				if (gameTime.TotalGameTime.TotalSeconds - StateChangeTime > 2.5 && isSafe)
-				{
-					ChangeState(CarState.MovingLeft, gameTime);
-					DesiredLane = Lane - 1;
-				}
-				else if (gameTime.TotalGameTime.TotalSeconds - StateChangeTime > 5)
-				{
-					ChangeState(CarState.Driving, gameTime);
-				}
-			}
-			else if (State == CarState.MovingLeft)
-			{
-				if (Lane != PreviousLane)
-				{
-					ChangeState(CarState.Driving, gameTime);
-				}
-			}
 
 			Body b = AnticipateCollision(3);
 
@@ -287,22 +198,6 @@ namespace NewTrafficRacer.Vehicle
 			if (Math.Abs(Velocity.Y - DesiredSpeed) > 0.1)
 			{
 				Body.LinearVelocity = new Vector2(Velocity.X, Velocity.Y * 0.9f + DesiredSpeed * 0.1f);
-			}
-
-			if (DesiredLane != Lane)
-			{
-				float maxLateralSpeed = 2.0f;
-				float lateralSpeed = Velocity.X * 0.5f + maxLateralSpeed * (DesiredLane - Lane) * 0.5f;
-
-				int actualLane = Road.GetLane(Position.X);
-
-				if (actualLane == DesiredLane)
-				{
-					lateralSpeed = 0;
-					Lane = DesiredLane;
-				}
-
-				Velocity = new Vector2(lateralSpeed, Velocity.Y);
 			}
 
 			float desiredAngle = -Velocity.X * 0.05f;

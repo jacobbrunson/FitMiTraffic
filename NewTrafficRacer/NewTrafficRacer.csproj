@@ -81,6 +81,7 @@
     <Compile Include="Main\Environment\Coin.cs" />
     <Compile Include="Main\Environment\EnvironmentManager.cs" />
     <Compile Include="Main\Environment\ExitSign.cs" />
+    <Compile Include="Main\Environment\Highlight.cs" />
     <Compile Include="Main\Environment\Rail.cs" />
     <Compile Include="Main\Environment\Road.cs" />
     <Compile Include="Main\Environment\RoadPiece.cs" />

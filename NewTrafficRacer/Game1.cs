@@ -20,11 +20,12 @@ namespace NewTrafficRacer
         public static Mode Mode;
         public static bool DEBUG;
         public static int Duration;
+        public static float Difficulty;
 
         private GraphicsDeviceManager graphicsManager;
         private SpriteBatch spriteBatch;
 
-        public TrafficGame(int width, int height, string content_dir, int duration)
+        public TrafficGame(int width, int height, string content_dir, int duration, float difficulty)
         {
             graphicsManager = new GraphicsDeviceManager(this);
             graphicsManager.PreferredBackBufferWidth = width;
@@ -43,6 +44,7 @@ namespace NewTrafficRacer
             }
 
             Duration = duration;
+            Difficulty = difficulty;
         }
 
         private void Graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
@@ -63,6 +65,7 @@ namespace NewTrafficRacer
             GameOverUI.LoadContent(Content);
             FPSUI.LoadContent(Content);
             CountdownUI.LoadContent(Content);
+            TitleUI.LoadContent(Content);
 
             InputManager.Initialize();
 

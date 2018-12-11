@@ -41,6 +41,9 @@ namespace NewTrafficRacer.Vehicle
 		public delegate void DodgeCompleteDelegate(Body b);
 		public DodgeCompleteDelegate DodgeCompleteCallback;
 
+        public delegate void CoinGetDelegate(Body b);
+        public CoinGetDelegate CoinGetCallback;
+
 		Queue<Dodge> Dodges = new Queue<Dodge>();
 
         private float initialSpeed;
@@ -101,11 +104,12 @@ namespace NewTrafficRacer.Vehicle
 				Body.LinearVelocity = new Vector2(lateralSpeed, Body.LinearVelocity.Y * 0.98f + initialSpeed * 0.02f);
 				Body.Rotation = -lateralSpeed * 0.05f;
 
-				Body b = AnticipateCollision(4.0f);
+
+                //Dodge code
+				/*Body b = AnticipateCollision(4.0f);
 
 				if (ApproachingBody != null && !ApproachingBody.Equals(b))
 				{
-					//Game1.DodgeCompleted();
 					Dodges.Enqueue(new Dodge(ApproachingBody, gameTime.TotalGameTime.TotalSeconds));
 					ApproachingBody = null;
 				}
@@ -125,7 +129,7 @@ namespace NewTrafficRacer.Vehicle
 						DodgeCompleteCallback(d.Body);
 						Dodges.Dequeue();
 					}
-				}
+				}*/
 			}
 
 			previousTime = (float)gameTime.TotalGameTime.TotalSeconds;
@@ -158,7 +162,12 @@ namespace NewTrafficRacer.Vehicle
 		{
             if (b.Body.BodyType == BodyType.Static)
             {
-                
+                return true;
+            }
+
+            if (b.Body.BodyType == BodyType.Kinematic)
+            {
+                CoinGetCallback(b.Body);
                 return true;
             }
 

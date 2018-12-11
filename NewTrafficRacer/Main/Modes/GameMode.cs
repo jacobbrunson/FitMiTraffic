@@ -18,8 +18,8 @@ namespace NewTrafficRacer.Modes
 {
 	public class GameMode : Mode
 	{
-		//Parameters
-		private const int dodgePoints = 10000;
+        //Parameters
+        private const int coinPoints = 1000;
 		private Vector3 initialLightPosition = new Vector3(20, 20, 20);
         private Vector3 lightDirection = new Vector3(1, 1, 1);
         private static Vector4 ambientColor = new Vector4(0.48f, 0.54f, 0.6f, 1f);
@@ -47,6 +47,7 @@ namespace NewTrafficRacer.Modes
 		private GameOverUI gameOverUI;
         private FPSUI fpsUI;
         private CountdownUI countdownUI;
+        private TitleUI titleUI;
 
 		//State
 		private int score;
@@ -54,6 +55,7 @@ namespace NewTrafficRacer.Modes
 		private double stateChangeTime;
         private int startTime = -1;
         private int countdown = -1;
+        private bool inTargetLane = false;
 
 
 		public GameMode(TrafficGame game, GraphicsDevice graphics, SpriteBatch spriteBatch, ContentManager content) : base(game, graphics, spriteBatch, content)
@@ -68,11 +70,12 @@ namespace NewTrafficRacer.Modes
 			debugView.AppendFlags(DebugViewFlags.DebugPanel | DebugViewFlags.PolygonPoints);
 			debugView.LoadContent(graphics, content);
 
-            player = new Player(content, CarType.SPORT, world, playerSpeed);
-			player.DodgeCompleteCallback = DodgeCompleted;
+            player = new Player(content, CarType.SPORT, world, adjustedSpeed);
+            //player.DodgeCompleteCallback = DodgeCompleted;
+            player.CoinGetCallback = CoinGet;
 
             environment = new EnvironmentManager(content, world);
-			trafficManager = new TrafficManager(content, world, 1000, Road.NumLanes, Road.LaneWidth);
+			trafficManager = new TrafficManager(content, world, Road.NumLanes, Road.LaneWidth);
 
             lightDirection.Normalize();
             camera = new Camera(graphics.Viewport.Width, graphics.Viewport.Height);
@@ -88,6 +91,7 @@ namespace NewTrafficRacer.Modes
 			gameOverUI = new GameOverUI();
             fpsUI = new FPSUI();
             countdownUI = new CountdownUI();
+            titleUI = new TitleUI();
 		}
 
         private void EndGame()
@@ -139,10 +143,17 @@ namespace NewTrafficRacer.Modes
 
 		private void DodgeCompleted(Body b)
 		{
-			messagesUI.WriteMessage("+1000", (int)b.Position.X * 60); //TODO: 60 should really not be a magic constant
-			scoreUI.ShowPoints(dodgePoints);
-			score += dodgePoints;
+			//messagesUI.WriteMessage("+1000", (int)b.Position.X * 60); //TODO: 60 should really not be a magic constant
+			//scoreUI.ShowPoints(dodgePoints);
+			//score += dodgePoints;
 		}
+
+        private void CoinGet(Body b)
+        {
+            scoreUI.ShowPoints(coinPoints);
+            score += coinPoints;
+            environment.DestroyCoin(b);
+        }
 
 		public override void Update(GameTime gameTime)
 		{
@@ -153,6 +164,7 @@ namespace NewTrafficRacer.Modes
                 startTime = (int) gameTime.TotalGameTime.TotalSeconds;
             }
 
+            //Countdown
             countdown = startTime + TrafficGame.Duration - (int) gameTime.TotalGameTime.TotalSeconds;
             countdownUI.Update(countdown);
             if (countdown <= 5)
@@ -165,8 +177,13 @@ namespace NewTrafficRacer.Modes
                 }
             }
 
-			//Step forward time (slo-mo if player crashed)
-			float timeScale = 1.0f;
+            //Detect if in target lane
+            int lane = Road.GetLane(player.Position.X, 0.35f);
+            inTargetLane = lane == environment.road.GetHighlightAtPlayerPos();
+            environment.road.SetHighlightStatus(lane);
+
+            //Step forward time (slo-mo if player crashed or countdown finished)
+            float timeScale = 1.0f;
 			if (player.crashed || countdown <= 0)
 			{
 				timeScale = 0.25f;
@@ -178,7 +195,12 @@ namespace NewTrafficRacer.Modes
 			{
 				if (!player.crashed)
 				{
-					score += (int)(player.Velocity.Y * 0.5f);
+                    int deltaScore = (int)Math.Max(1, (player.Velocity.Y * gameTime.ElapsedGameTime.TotalSeconds));
+                    if (inTargetLane)
+                    {
+                        deltaScore *= 2;
+                    }
+                    score += deltaScore;
 				}
 			}
 			else if (state == GameState.STARTING)
@@ -188,7 +210,7 @@ namespace NewTrafficRacer.Modes
 				{
 					state = GameState.RUNNING;
 					stateChangeTime = gameTime.TotalGameTime.TotalSeconds;
-					player.Velocity = new Vector2(player.Velocity.X, playerSpeed);
+					player.Velocity = new Vector2(player.Velocity.X, adjustedSpeed);
 				}
 			}
 			else if (state == GameState.RECENTERING)
@@ -214,10 +236,11 @@ namespace NewTrafficRacer.Modes
 			camera.Target = new Vector2(player.Position.X, player.Position.Y);
 			lighting.Position = new Vector3(lighting.Position.X, player.Position.Y + 15, lighting.Position.Z);
 
-			//Update GUI
-			messagesUI.Update(gameTime);
+            //Update GUI
+            messagesUI.Update(gameTime);
 			scoreUI.Update(gameTime, score);
             fpsUI.Update(gameTime);
+            titleUI.Update(gameTime);
 		}
 
         //This is a really ugly hack that must be called before each and every model draw on Android
@@ -237,6 +260,14 @@ namespace NewTrafficRacer.Modes
             effect.Parameters["ChromaKeyReplace"].SetValue(new Vector4(-1, -1, -1, -1));
 
             effect.CurrentTechnique = effect.Techniques["ShadowedScene"];
+        }
+
+        public float adjustedSpeed
+        {
+            get
+            {
+                return playerSpeed * Math.Max(0.5f, TrafficGame.Difficulty);
+            }
         }
 
         public override void Render(GameTime gameTime)
@@ -292,8 +323,9 @@ namespace NewTrafficRacer.Modes
 			spriteBatch.Begin();
 
 			messagesUI.Render(spriteBatch, graphics.Viewport.Width, graphics.Viewport.Height);
-			scoreUI.Render(spriteBatch, graphics.Viewport.Width, graphics.Viewport.Height);
+			scoreUI.Render(spriteBatch, graphics.Viewport.Width, graphics.Viewport.Height, inTargetLane);
             countdownUI.Render(spriteBatch, graphics.Viewport.Width, graphics.Viewport.Height);
+            titleUI.Render(spriteBatch, gameTime, graphics.Viewport.Width, graphics.Viewport.Height);
 
 			if (player.crashed && state != GameState.RECENTERING)
 			{

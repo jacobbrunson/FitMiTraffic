@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using NewTrafficRacer.Graphics;
+using NewTrafficRacer.Utility;
 using NewTrafficRacer.Vehicle;
 using System;
 using System.Collections.Generic;
@@ -14,47 +15,33 @@ namespace NewTrafficRacer.Environment
 {
 	class EnvironmentManager
 	{
-		private Road road;
+		public Road road;
 		//private Ground ground;
 		private List<RenderedModel> models = new List<RenderedModel>();
 
+        private float lastBigSignSpawn = 0;
+        private float lastCoinSpawn = 0;
+
 		private ContentManager content;
 
-        private List<Coin> coins = new List<Coin>();
+        private Dictionary<Body, Coin> coins = new Dictionary<Body, Coin>();
+
+        private Queue<Body> coinDeleteQueue = new Queue<Body>();
+
+        private World world;
 
 		public EnvironmentManager(ContentManager content, World world)
 		{
 			this.content = content;
+            this.world = world;
 			Road.LoadContent(content);
-			road = new Road(world, 20);
-
-			RenderedModel model;
-
-			//ground = new Ground(content);
-			//models.Add(ground);
-
-			//model = new SpeedLimit(content) { Position = new Vector3(-6, 10, 0) };
-			//models.Add(model);
-
-			//model = new SpeedLimit(content) { Position = new Vector3(-6, 200, 0) };
-			//models.Add(model);
-
-			//model = new SpeedLimit(content) { Position = new Vector3(-6, 400, 0) };
-			//models.Add(model);
-
-		    model = new BigSign(content) { Position = new Vector3(0, 50, 0) };
-			models.Add(model);
-
-			//model = new ExitSign(content) { Position = new Vector3(5.5f, 50, 0) };
-
-            for (int i = 1; i < 50; i++)
-            {
-                var coin = new Coin(content) { Position = new Vector3((float)Math.Sin((float)i/25) * 3f, i * 10, 0) };
-                coins.Add(coin);
-            }
-            
-			//models.Add(model);
+			road = new Road(world, 24);            
 		}
+
+        public void DestroyCoin(Body b)
+        {
+            coinDeleteQueue.Enqueue(b);
+        }
 
 		public void Reset()
 		{
@@ -68,14 +55,48 @@ namespace NewTrafficRacer.Environment
 
 		public void Update(GameTime gameTime, Player player)
 		{
-			road.Update(player.Position.Y);
-            foreach (Coin coin in coins) {
-                if (Math.Abs(player.Position.X - coin.Position.X) < player.model.Size.X / 2 && coin.Position.Y < player.Position.Y + player.model.Size.Y / 2)
+			road.Update(gameTime, player.Position.Y);
+
+            while (coinDeleteQueue.Count > 0)
+            {
+                Body b = coinDeleteQueue.Dequeue();
+                world.Remove(b);
+                coins.Remove(b);
+            }
+
+            foreach (KeyValuePair<Body, Coin> pair in coins)
+            {
+                if (pair.Value.Position.Y < player.Position.Y - 10)
                 {
-                    coin.Scale = new Vector3(0, 0, 0);
-                    continue;
+                    DestroyCoin(pair.Key);
                 }
-                coin.Update(gameTime);
+                pair.Value.Update(gameTime);
+            }
+
+            for (int i = models.Count-1; i >= 0; i--)
+            {
+                RenderedModel model = models[i];
+                if (model.Position.Y + 20 < player.Position.Y)
+                {
+                    models.RemoveAt(i);
+                }
+            }
+
+            if (player.Position.Y > lastBigSignSpawn + 200)
+            {
+                lastBigSignSpawn = player.Position.Y + 30;
+                BigSign model = BigSign.Instantiate(content);
+                model.Position = new Vector3(0, lastBigSignSpawn, 0);
+                models.Add(model);
+            }
+
+            if (TrafficGame.Difficulty >= 0.2f && player.Position.Y > lastCoinSpawn + 10)
+            {
+                Random r = new Random();
+                lastCoinSpawn = player.Position.Y + r.Next(30, 40);
+                Vector2 pos = new Vector2(r.NextDouble().Map(0, 1, -Road.Size/2, Road.Size/2), player.Position.Y + lastCoinSpawn);
+                var coin = new Coin(content, world, pos);
+                coins.Add(coin.Body, coin);
             }
 			//ground.Position = new Vector2(0, playerY);
 		}
@@ -87,9 +108,9 @@ namespace NewTrafficRacer.Environment
 			{
 				model.Render(gameTime, effect);
 			}
-            foreach (Coin coin in coins)
+            foreach (KeyValuePair<Body, Coin> pair in coins)
             {
-                coin.Render(gameTime, effect);
+                pair.Value.Render(gameTime, effect);
             }
         }
 	}

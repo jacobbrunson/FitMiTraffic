@@ -107,7 +107,7 @@ namespace NewTrafficRacer.Modes
 
                 car.Position = car.Position + Vector2.UnitY * 5 * (float) gameTime.ElapsedGameTime.TotalSeconds;
 
-			road.Update(car.Position.Y);
+			road.Update(gameTime, car.Position.Y);
 			lighting.Position = initialLightPosition + new Vector3(car.Position, 0);
 			camera.Target = car.Position + Vector2.UnitY * 1.5f;
 			camera.Revolution += InputManager.MoveCameraAmount / 30;

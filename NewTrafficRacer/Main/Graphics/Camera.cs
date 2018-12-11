@@ -45,7 +45,7 @@ namespace NewTrafficRacer.Graphics
 			Vector3 up = Vector3.Up;
 			if (Mode == CameraMode.PERSPECTIVE)
 			{
-				position = target + new Vector3(0, -5 * Zoom, 12 * Zoom);
+				position = target + new Vector3(0, -6 * Zoom, 11 * Zoom);
 				Projection = Matrix.CreatePerspectiveFieldOfView(fov, (float)Width / (float)Height, perspNearZ, perspFarZ);
 			}
 			else if (Mode == CameraMode.FLAT)

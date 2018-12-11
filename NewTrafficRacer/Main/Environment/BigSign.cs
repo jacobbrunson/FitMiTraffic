@@ -10,11 +10,19 @@ using System.Threading.Tasks;
 
 namespace NewTrafficRacer.Environment
 {
-	public class BigSign : RenderedModel
-	{
-		private const string ModelName = "bigsign";
+    public class BigSign : RenderedModel
+    {
+        private const string ModelName = "bigsign";
+        private static readonly string[] tex_names = { "buckleup", "car", "comet", "doinggreat", "gameanddrive", "goodjob", "nice", "slowdown", "txbdc", "vroom", "watchout", "wow" };
 
-		public BigSign(ContentManager content) : base(content, ModelName, "OrangeSignTex")
+        public static BigSign Instantiate(ContentManager content)
+        {
+            Random r = new Random();
+            string tex_name = "orange_signs/" + tex_names[r.Next(tex_names.Length)];
+            return new BigSign(content, tex_name);
+        }
+
+		private BigSign(ContentManager content, string tex_name) : base(content, ModelName, tex_name)
 		{
 			//this.Rotation = Matrix.Identity
 			this.Offset = new Vector3(-6, 0, 0);
