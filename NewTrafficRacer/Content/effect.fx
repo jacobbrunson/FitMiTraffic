@@ -153,7 +153,7 @@ PixelShaderOutput TerrainPixelShaderFunction(VertexShaderOutput input)
 {
 	PixelShaderOutput output;
     
-	float shadow = 1;//ComputeShadow(input.PositionLight);
+	float shadow = ComputeShadow(input.PositionLight);
 	output.Color = saturate(input.RealColor * (input.Color * shadow + AmbientColor));
 
 	return output;

@@ -288,7 +288,7 @@ namespace NewTrafficRacer.Modes
             //Render shadow map
             
             graphics.SetRenderTarget(lighting.ShadowMap);
-			graphics.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
+			graphics.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.White, 1.0f, 0);
 			effect.CurrentTechnique = effect.Techniques["ShadowMap"];
 
 			environment.Render(gameTime, graphics, effect);
