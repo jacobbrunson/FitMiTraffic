@@ -184,20 +184,20 @@ namespace NewTrafficRacer.Vehicle
 
 			if (b != null)
 			{
-				Velocity = new Vector2(Velocity.X, Math.Max(0, Math.Min(Velocity.Y, b.LinearVelocity.Y - 1)));
+				Velocity = new Vector2(0, Math.Max(0, Math.Min(Velocity.Y, b.LinearVelocity.Y - 1)));
 				if (Velocity.Y <= 0.1f)
 				{
-					Velocity = new Vector2(Velocity.X, 0);
+					Velocity = new Vector2(0, 0);
 				}
 			}
 			else
 			{
-				Velocity = new Vector2(Velocity.X, InitialSpeed);
+				Velocity = new Vector2(0, InitialSpeed);
 			}
 
 			if (Math.Abs(Velocity.Y - DesiredSpeed) > 0.1)
 			{
-				Body.LinearVelocity = new Vector2(Velocity.X, Velocity.Y * 0.9f + DesiredSpeed * 0.1f);
+				Body.LinearVelocity = new Vector2(0, Velocity.Y * 0.9f + DesiredSpeed * 0.1f);
 			}
 
 			float desiredAngle = -Velocity.X * 0.05f;
