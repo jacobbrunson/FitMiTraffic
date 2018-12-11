@@ -4,12 +4,21 @@
 float4 AmbientColor;
 float4 DiffuseColor;
 
+float4 ChromaKeyReplace;
+
 float3 LightPosition;
 float4x4 LightMatrix;
 Texture2D ShadowMap;
-sampler ShadowMapSampler = sampler_state { texture = <ShadowMap>; magfilter = LINEAR; minfilter = LINEAR; mipfilter = LINEAR; AddressU = clamp; AddressV = clamp; };
+sampler2D shadow_sampler = sampler_state {
+	Texture = (ShadowMap);
+	MagFilter = Linear;
+	MinFilter = Linear;
+	MipFilter = Linear;
+	AddressU = Clamp;
+	AddressV = Clamp;
+};
 
-float4 ChromaKeyReplace;
+
 
 texture ModelTexture;
 sampler2D tex_sampler = sampler_state {
@@ -44,6 +53,7 @@ struct VertexShaderOutput
 {
     float4 Position : POSITION;
 	float4 Color : COLOR0;
+	float4 RealColor : COLOR1;
 	float3 Normal : NORMAL;
 	float2 TexCoords : TEXCOORD;
 	float4 PositionLight : TEXCOORD1;
@@ -55,6 +65,18 @@ struct PixelShaderOutput
 	float4 Color : COLOR0;
 };
 
+float ComputeShadow(float4 positionLight)
+{
+
+	float2 shadow_map_coords = mad(0.5f , positionLight.xy / positionLight.w , float2(0.5f, 0.5f));
+    shadow_map_coords.y = 1.0f - shadow_map_coords.y;
+
+    float real_depth = (positionLight.z / positionLight.w);
+	float closest_depth = tex2D(shadow_sampler, shadow_map_coords).x;
+
+	return real_depth <= closest_depth + 0.01 ? 1.0 : 0.0;
+}
+
 VertexShaderOutput ComputeDiffuse(float4 position, float4 normal, float2 tex_coords, float4 color)
 {
 	VertexShaderOutput output;
@@ -65,7 +87,8 @@ VertexShaderOutput ComputeDiffuse(float4 position, float4 normal, float2 tex_coo
 
 	float3 transformed_normal = normalize(mul(normal, NormalMatrix).rgb);
 	float light_intensity = dot(LightPosition.rgb, transformed_normal);
-	output.Color = saturate(color * DiffuseColor * light_intensity);
+	output.Color = saturate(DiffuseColor * light_intensity);
+	output.RealColor = color;
 
 	output.PositionLight = mul(position, LightMatrix);
 	output.WorldPosition = worldPosition;
@@ -74,12 +97,6 @@ VertexShaderOutput ComputeDiffuse(float4 position, float4 normal, float2 tex_coo
 	output.TexCoords = tex_coords;
 
     return output;
-}
-
-float DotProduct(float3 lightPos, float3 pos3D, float3 normal)
-{
-	float3 lightDir = normalize(lightPos - pos3D);
-	return dot(-lightDir, normal);
 }
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
@@ -104,7 +121,8 @@ PixelShaderOutput PixelShaderFunction(VertexShaderOutput input)
 		tex_color = ChromaKeyReplace;
 	}
 
-	output.Color = saturate(tex_color * (input.Color + AmbientColor));
+	float shadow = ComputeShadow(input.PositionLight);
+	output.Color = saturate(tex_color * (input.Color * shadow + AmbientColor));
 
 	return output;
 }
@@ -135,10 +153,8 @@ PixelShaderOutput TerrainPixelShaderFunction(VertexShaderOutput input)
 {
 	PixelShaderOutput output;
     
-	//float diffuse = ComputeDiffuseLightingFactor(input);
-	//float diffuse = 0.5;
-	//float4 base_color = tex2D(tex_sampler, input.TexCoords);
-	output.Color = saturate(input.Color + AmbientColor);
+	float shadow = 1;//ComputeShadow(input.PositionLight);
+	output.Color = saturate(input.RealColor * (input.Color * shadow + AmbientColor));
 
 	return output;
 }

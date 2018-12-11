@@ -69,7 +69,7 @@ namespace NewTrafficRacer.Graphics
 			Matrix world =  Matrix.CreateScale(Size / meshSize * Scale) * Rotation * Matrix.CreateTranslation(Position + Offset);
 			effect.Parameters["World"].SetValue(world);
 			effect.Parameters["NormalMatrix"].SetValue(Matrix.Transpose(Matrix.Invert(world)));
-            //effect.Parameters["LightMatrix"].SetValue(world * TrafficGame.lighting.View * TrafficGame.lighting.Projection);
+            effect.Parameters["LightMatrix"].SetValue(world * GameMode.lighting.View * GameMode.lighting.Projection);
 			effect.Parameters["ModelTexture"].SetValue(Texture);
 
             Vector4 ChromaKeyReplace = effect.Parameters["ChromaKeyReplace"].GetValueVector4();

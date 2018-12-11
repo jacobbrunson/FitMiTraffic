@@ -20,8 +20,8 @@ namespace NewTrafficRacer.Modes
 	{
         //Parameters
         private const int coinPoints = 1000;
-		private Vector3 initialLightPosition = new Vector3(20, 20, 20);
-        private Vector3 lightDirection = new Vector3(1, 1, 1);
+		private Vector3 initialLightPosition = new Vector3(10, 10, 10);
+        private Vector3 lightDirection = new Vector3(-1, -1, -1);
         private static Vector4 ambientColor = new Vector4(0.48f, 0.54f, 0.6f, 1f);
         private static Vector4 diffuseColor = new Vector4(1f, 0.8f, 0.8f, 1f);
         private const float diffuseIntensity = 1;
@@ -36,7 +36,7 @@ namespace NewTrafficRacer.Modes
 
 		//Graphics
 		private static Camera camera;
-		private static Lighting lighting;
+		public static Lighting lighting;
 		private PostProcessor postProcessor;
 		private DebugView debugView;
         private Effect effect;
@@ -248,18 +248,16 @@ namespace NewTrafficRacer.Modes
         {
             effect.Parameters["View"].SetValue(camera.View);
             effect.Parameters["Projection"].SetValue(camera.Projection);
-
+            
             effect.Parameters["AmbientColor"].SetValue(ambientColor);
 
             //lighting.Position.Normalize();
-            effect.Parameters["LightPosition"].SetValue(lighting.Direction);
+            effect.Parameters["LightPosition"].SetValue(-lighting.Direction);
             effect.Parameters["DiffuseColor"].SetValue(diffuseColor);
 
-            //effect.Parameters["ShadowMap"].SetValue(lighting.ShadowMap);
+            effect.Parameters["ShadowMap"]?.SetValue(lighting.ShadowMap);
 
             effect.Parameters["ChromaKeyReplace"].SetValue(new Vector4(-1, -1, -1, -1));
-
-            effect.CurrentTechnique = effect.Techniques["ShadowedScene"];
         }
 
         public float adjustedSpeed
@@ -284,19 +282,19 @@ namespace NewTrafficRacer.Modes
 
             //Set lighting parameters
             //effect.LightViewProjection = lighting.View * lighting.Projection; //COMMENTED FOR COMPILE
-            effect.Parameters["LightPosition"].SetValue(lighting.Direction);//effect.Parameters["DiffuseLightDirection"].SetValue(lighting.Direction); //CHANGED
+            //effect.Parameters["LightPosition"].SetValue(-lighting.Direction);//effect.Parameters["DiffuseLightDirection"].SetValue(lighting.Direction); //CHANGED
 			//effect.Parameters["AmbientColor"].SetValue(ambientColor);
 
             //Render shadow map
-            /*
+            
             graphics.SetRenderTarget(lighting.ShadowMap);
-			graphics.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.White, 1.0f, 0);
+			graphics.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
 			effect.CurrentTechnique = effect.Techniques["ShadowMap"];
 
 			environment.Render(gameTime, graphics, effect);
 			player.Render(gameTime, effect);
 			trafficManager.RenderTraffic(gameTime, effect);
-            */
+            
 
 			//Render scene
 			graphics.SetRenderTarget(null);
@@ -345,9 +343,9 @@ namespace NewTrafficRacer.Modes
             }
 
 			//DEBUG: render shadow map
-			//spriteBatch.Begin(0, BlendState.Opaque, SamplerState.AnisotropicClamp);
-			//spriteBatch.Draw(lighting.ShadowMap, new Rectangle(0, 0, 600, 800), Color.White);
-			//spriteBatch.End();
+			spriteBatch.Begin(0, BlendState.Opaque, SamplerState.AnisotropicClamp);
+			spriteBatch.Draw(lighting.ShadowMap, new Rectangle(0, 0, 256, 256), Color.White);
+			spriteBatch.End();
 		}
 	}
 
