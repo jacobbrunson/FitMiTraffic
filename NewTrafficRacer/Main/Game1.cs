@@ -24,7 +24,6 @@ namespace NewTrafficRacer
         static Vector4 ambientColor = new Vector4(0.48f, 0.54f, 0.6f, 1f);
         static Vector4 diffuseColor = new Vector4(1f, 0.8f, 0.8f, 1f);
         const float diffuseIntensity = 1;
-        const int shadowMapRes = 2048;
         const float playerSpeed = 20;
 
         //Things
@@ -35,7 +34,6 @@ namespace NewTrafficRacer
 
         //Graphics
         static Camera camera;
-        public static Lighting lighting;
         PostProcessor postProcessor;
         DebugView debugView;
         Effect effect;
@@ -57,7 +55,7 @@ namespace NewTrafficRacer
         bool inTargetLane = false;
 
 
-
+        public static GraphicsDevice Graphics;
 
         public float adjustedSpeed
         {
@@ -108,6 +106,8 @@ namespace NewTrafficRacer
         protected override void Initialize()
         {
             base.Initialize();
+            Graphics = GraphicsDevice;
+
             tainicom.Aether.Physics2D.Settings.MaxPolygonVertices = 16;
             world = new World(Vector2.Zero);
             debugView = new DebugView(world);
@@ -123,9 +123,9 @@ namespace NewTrafficRacer
 
             lightDirection.Normalize();
             camera = new Camera(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-            lighting = new Lighting(GraphicsDevice, shadowMapRes);
-            lighting.Position = initialLightPosition;
-            lighting.Direction = lightDirection;
+            Lighting.Initialize();
+            Lighting.Position = initialLightPosition;
+            Lighting.Direction = lightDirection;
 
             effect = Content.Load<Effect>("effect");
             postProcessor = new PostProcessor(GraphicsDevice, spriteBatch, Content.Load<Effect>("desaturate"));
@@ -145,7 +145,6 @@ namespace NewTrafficRacer
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Car.LoadContent(Content);
-            Road.LoadContent(Content);
 
             MessagesUI.LoadContent(Content);
             ScoreUI.LoadContent(Content);
@@ -296,7 +295,7 @@ namespace NewTrafficRacer
 
             //Light & camera follow player
             camera.Target = new Vector2(player.Position.X, player.Position.Y);
-            lighting.Position = new Vector3(lighting.Position.X, player.Position.Y + 15, lighting.Position.Z);
+            Lighting.Position = new Vector3(Lighting.Position.X, player.Position.Y + 15, Lighting.Position.Z);
 
             //Update GUI
             messagesUI.Update(gameTime);
@@ -314,10 +313,10 @@ namespace NewTrafficRacer
             effect.Parameters["AmbientColor"].SetValue(ambientColor);
 
             //lighting.Position.Normalize();
-            effect.Parameters["LightPosition"].SetValue(-lighting.Direction);
+            effect.Parameters["LightPosition"].SetValue(-Lighting.Direction);
             effect.Parameters["DiffuseColor"].SetValue(diffuseColor);
 
-            effect.Parameters["ShadowMap"]?.SetValue(lighting.ShadowMap);
+            effect.Parameters["ShadowMap"]?.SetValue(Lighting.ShadowMap);
 
             effect.Parameters["ChromaKeyReplace"].SetValue(new Vector4(-1, -1, -1, -1));
         }
@@ -329,7 +328,7 @@ namespace NewTrafficRacer
 
             //Update lights and camera
             camera.Update();
-            lighting.Update();
+            Lighting.Update();
 
             //Update graphics state
             GraphicsDevice.BlendState = BlendState.Opaque;
@@ -338,7 +337,7 @@ namespace NewTrafficRacer
 
             //Render shadow map
 
-            GraphicsDevice.SetRenderTarget(lighting.ShadowMap);
+            GraphicsDevice.SetRenderTarget(Lighting.ShadowMap);
             GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.White, 1.0f, 0);
             effect.CurrentTechnique = effect.Techniques["ShadowMap"];
 
@@ -390,7 +389,7 @@ namespace NewTrafficRacer
 
                 //DEBUG: show shadow map
                 spriteBatch.Begin(0, BlendState.Opaque, SamplerState.AnisotropicClamp);
-                spriteBatch.Draw(lighting.ShadowMap, new Rectangle(0, GraphicsDevice.Viewport.Height - 256, 256, 256), Color.White);
+                spriteBatch.Draw(Lighting.ShadowMap, new Rectangle(0, GraphicsDevice.Viewport.Height - 256, 256, 256), Color.White);
                 spriteBatch.End();
             }
         }

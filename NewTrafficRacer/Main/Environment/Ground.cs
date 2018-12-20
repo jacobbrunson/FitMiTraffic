@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NewTrafficRacer.Graphics;
 using NewTrafficRacer.Utility;
 using SharpNoise.Modules;
 
@@ -157,7 +158,7 @@ namespace NewTrafficRacer.Environment
 			effect.CurrentTechnique = effect.Techniques["ShadowedTerrain"];
 			effect.Parameters["World"].SetValue(world);
 			effect.Parameters["NormalMatrix"].SetValue(Matrix.Transpose(Matrix.Invert(world)));
-            effect.Parameters["LightMatrix"].SetValue(world * TrafficGame.lighting.View * TrafficGame.lighting.Projection);
+            effect.Parameters["LightMatrix"].SetValue(world * Lighting.View * Lighting.Projection);
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
 			{
 				pass.Apply();

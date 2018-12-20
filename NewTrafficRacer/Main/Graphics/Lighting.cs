@@ -8,28 +8,28 @@ using System.Threading.Tasks;
 
 namespace NewTrafficRacer.Graphics
 {
-	public class Lighting
+	public static class Lighting
 	{
 		const float nearZ = -10;
 		const float farZ = 40;
 		const float width = 25;
 		const float height = 50;
+        const int shadowRes = 2048;
 
-		public Vector3 Position;
-		public Vector3 Direction;
+		public static Vector3 Position;
+		public static Vector3 Direction;
 
-		public Matrix View;
-		public Matrix Projection;
-		public RenderTarget2D ShadowMap;
+		public static Matrix View;
+		public static Matrix Projection;
+		public static RenderTarget2D ShadowMap;
 
-
-		public Lighting(GraphicsDevice graphics, int shadowRes=2048)
+		public static void Initialize()
 		{
 			Projection = Matrix.CreateOrthographic(width, height, nearZ, farZ);
-			ShadowMap = new RenderTarget2D(graphics, shadowRes, shadowRes, true, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.PlatformContents);
+			ShadowMap = new RenderTarget2D(TrafficGame.Graphics, shadowRes, shadowRes, true, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.PlatformContents);
 		}
 
-		public void Update()
+		public static void Update()
 		{
 			View = Matrix.CreateLookAt(Position, Position + Direction, Vector3.Up);
 		}

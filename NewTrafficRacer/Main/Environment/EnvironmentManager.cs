@@ -34,8 +34,7 @@ namespace NewTrafficRacer.Environment
 		{
 			this.content = content;
             this.world = world;
-			Road.LoadContent(content);
-			road = new Road(world, 24);            
+			road = new Road(content, world, 24);            
 		}
 
         public void DestroyCoin(Body b)
