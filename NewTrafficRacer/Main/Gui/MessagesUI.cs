@@ -12,9 +12,9 @@ namespace NewTrafficRacer.Gui
 
 	class MessagesUI
 	{
-		private static SpriteFont Font;
+		static SpriteFont Font;
 
-		private MessageQueue messages = new MessageQueue();
+		MessageQueue messages = new MessageQueue();
 
 		public void WriteMessage(String message, int x)
 		{

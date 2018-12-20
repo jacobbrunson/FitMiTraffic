@@ -18,16 +18,16 @@ namespace NewTrafficRacer.Environment
         public float positionY;
         public int offsetX;
 
-        private int width = 10;
-        private const int length = 4;
-        private Vector2 scale = new Vector2(Road.Size / length);
+        int width = 10;
+        const int length = 4;
+        Vector2 scale = new Vector2(Road.Size / length);
 
-        private float[,] heightMap;
-        private VertexPositionColorNormal[] vertices;
+        float[,] heightMap;
+        VertexPositionColorNormal[] vertices;
 
-        private Effect effect;
+        Effect effect;
 
-        private static Perlin noiseSource = new Perlin
+        static Perlin noiseSource = new Perlin
         {
             Seed = new Random().Next()
         };

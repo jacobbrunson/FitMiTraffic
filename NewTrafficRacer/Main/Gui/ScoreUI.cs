@@ -11,10 +11,10 @@ namespace NewTrafficRacer.Gui
 {
 	class ScoreUI
 	{
-		private static SpriteFont Font;
+		static SpriteFont Font;
 
-		private int Score;
-		private MessageQueue points = new MessageQueue();
+		int Score;
+		MessageQueue points = new MessageQueue();
 
 		public void ShowPoints(int amount)
 		{

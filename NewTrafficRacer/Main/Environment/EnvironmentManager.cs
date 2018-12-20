@@ -16,19 +16,19 @@ namespace NewTrafficRacer.Environment
 	class EnvironmentManager
 	{
 		public Road road;
-		//private Ground ground;
-		private List<RenderedModel> models = new List<RenderedModel>();
+		//Ground ground;
+		List<RenderedModel> models = new List<RenderedModel>();
 
-        private float lastBigSignSpawn = 0;
-        private float lastCoinSpawn = 0;
+        float lastBigSignSpawn = 0;
+        float lastCoinSpawn = 0;
 
-		private ContentManager content;
+		ContentManager content;
 
-        private Dictionary<Body, Coin> coins = new Dictionary<Body, Coin>();
+        Dictionary<Body, Coin> coins = new Dictionary<Body, Coin>();
 
-        private Queue<Body> coinDeleteQueue = new Queue<Body>();
+        Queue<Body> coinDeleteQueue = new Queue<Body>();
 
-        private World world;
+        World world;
 
 		public EnvironmentManager(ContentManager content, World world)
 		{

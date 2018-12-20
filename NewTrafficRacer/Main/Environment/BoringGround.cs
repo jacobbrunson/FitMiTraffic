@@ -13,7 +13,7 @@ namespace NewTrafficRacer.Environment
 {
 	public class BoringGround : RenderedModel
 	{
-		private const string ModelName = "ground";
+		const string ModelName = "ground";
 
 		public BoringGround(ContentManager content) : base(content, ModelName)
 		{

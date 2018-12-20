@@ -11,10 +11,10 @@ namespace NewTrafficRacer.Gui
 { 
     class FPSUI
     {
-        private static SpriteFont Font;
-        private int total_frames;
-        private float total_time;
-        private int fps;
+        static SpriteFont Font;
+        int total_frames;
+        float total_time;
+        int fps;
 
         public void Update(GameTime gameTime)
         {

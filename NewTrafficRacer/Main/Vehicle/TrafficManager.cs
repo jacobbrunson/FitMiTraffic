@@ -18,16 +18,16 @@ namespace NewTrafficRacer.Vehicle
         public List<Car> cars = new List<Car>();
         public int Interval;
 
-        private World World;
-        private long LastSpawnMillis;
-        private ContentManager Content;
-        private int NumLanes;
+        World World;
+        long LastSpawnMillis;
+        ContentManager Content;
+        int NumLanes;
         public float LaneWidth;
 
-        private float LastOnRamp = -1;
-        private float LastOnRampSeconds;
+        float LastOnRamp = -1;
+        float LastOnRampSeconds;
 
-        private Random random;
+        Random random;
 
         public TrafficManager(ContentManager content, World world, int numLanes, float laneWidth)
         {

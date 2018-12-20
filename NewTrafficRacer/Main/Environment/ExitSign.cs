@@ -12,7 +12,7 @@ namespace NewTrafficRacer.Environment
 {
 	public class ExitSign : RenderedModel
 	{
-		private const string ModelName = "Exit";
+		const string ModelName = "Exit";
 
 		public ExitSign(ContentManager content) : base(content, ModelName)
 		{

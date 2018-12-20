@@ -36,19 +36,19 @@ namespace NewTrafficRacer.Vehicle
 	{
 		public Body Body;
 
-		private World World;
-		private CarType Type;
+		World World;
+		CarType Type;
 
-		private float DesiredSpeed;
-		private float InitialSpeed;
+		float DesiredSpeed;
+		float InitialSpeed;
 
 		public int DesiredLane = 0;
-		private int _Lane;
-		private int PreviousLane = -1;
+		int _Lane;
+		int PreviousLane = -1;
 
 		public RenderedModel model;
 
-		private static Color[] colors =
+		static Color[] colors =
 		{
 			new Color(229, 189, 15, 255),
 			new Color(229, 28, 28, 255),
@@ -74,7 +74,7 @@ namespace NewTrafficRacer.Vehicle
 
 		public CarState State = CarState.Driving;
 
-		private double StateChangeTime;
+		double StateChangeTime;
 
 		public Vector2 Position
 		{
@@ -136,7 +136,7 @@ namespace NewTrafficRacer.Vehicle
 			Body.LinearVelocity = new Vector2(0, initialSpeed);
 		}
 
-		private Body RayCast(Vector2 p1, Vector2 p2)
+		Body RayCast(Vector2 p1, Vector2 p2)
 		{
 			List<Fixture> hits = World.RayCast(p1, p2);
 

@@ -12,10 +12,10 @@ namespace NewTrafficRacer.Environment
 {
 	public class Rail : RenderedModel
 	{
-		private const string ModelName = "rail2";
+		const string ModelName = "rail2";
 
-        private World world;
-        private Body body;
+        World world;
+        Body body;
 
 		public Rail(ContentManager content, World world, float x, float y) : base(content, ModelName, "RailTex")
 		{

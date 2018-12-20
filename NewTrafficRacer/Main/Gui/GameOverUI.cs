@@ -11,8 +11,8 @@ namespace NewTrafficRacer.Gui
 {
 	class GameOverUI
 	{
-		private static Texture2D ouch;
-		private static Texture2D retry;
+		static Texture2D ouch;
+		static Texture2D retry;
 
 		public void Render(SpriteBatch spriteBatch, GameTime gameTime, int viewportWidth, int viewportHeight)
 		{

@@ -12,15 +12,15 @@ namespace NewTrafficRacer.Gui
 {
 	class TitleUI
 	{
-		private static Texture2D traffic;
-		private static Texture2D racer;
-		private static SpriteFont font;
+		static Texture2D traffic;
+		static Texture2D racer;
+		static SpriteFont font;
 
-		private float trafficOffset;
-		private float racerOffset;
-        private float objectiveAlpha;
-        private float titleAlpha;
-        private string objective;
+		float trafficOffset;
+		float racerOffset;
+        float objectiveAlpha;
+        float titleAlpha;
+        string objective;
 
         public TitleUI()
         {
@@ -49,7 +49,7 @@ namespace NewTrafficRacer.Gui
             CenteredText(objective, spriteBatch, viewportWidth, 560, 0.5f, objectiveAlpha);
 		}
 
-		private void CenteredText(string text, SpriteBatch spriteBatch, float viewportWidth, float y, float scale, float alpha)
+		void CenteredText(string text, SpriteBatch spriteBatch, float viewportWidth, float y, float scale, float alpha)
 		{
 			float x = viewportWidth / 2 - font.MeasureString(text).X * scale / 2;
 			y = y - font.MeasureString(text).Y * scale / 2;

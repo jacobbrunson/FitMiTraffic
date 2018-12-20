@@ -12,8 +12,8 @@ namespace NewTrafficRacer.Environment
 {
     public class BigSign : RenderedModel
     {
-        private const string ModelName = "bigsign";
-        private static readonly string[] tex_names = { "buckleup", "car", "comet", "doinggreat", "gameanddrive", "goodjob", "nice", "slowdown", "txbdc", "vroom", "watchout", "wow" };
+        const string ModelName = "bigsign";
+        static readonly string[] tex_names = { "buckleup", "car", "comet", "doinggreat", "gameanddrive", "goodjob", "nice", "slowdown", "txbdc", "vroom", "watchout", "wow" };
 
         public static BigSign Instantiate(ContentManager content)
         {
@@ -22,7 +22,7 @@ namespace NewTrafficRacer.Environment
             return new BigSign(content, tex_name);
         }
 
-		private BigSign(ContentManager content, string tex_name) : base(content, ModelName, tex_name)
+		BigSign(ContentManager content, string tex_name) : base(content, ModelName, tex_name)
 		{
 			//this.Rotation = Matrix.Identity
 			this.Offset = new Vector3(-6, 0, 0);

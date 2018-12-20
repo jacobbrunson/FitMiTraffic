@@ -11,8 +11,8 @@ namespace NewTrafficRacer.Gui
 {
     class CountdownUI
     {
-        private static SpriteFont Font;
-        private int countdown;
+        static SpriteFont Font;
+        int countdown;
 
         public void Update(int countdown)
         {

@@ -18,43 +18,43 @@ namespace NewTrafficRacer
     {
 
         //Parameters
-        private const int coinPoints = 1000;
-        private Vector3 initialLightPosition = new Vector3(5, 5, 5);
-        private Vector3 lightDirection = new Vector3(-1, -1, -1);
-        private static Vector4 ambientColor = new Vector4(0.48f, 0.54f, 0.6f, 1f);
-        private static Vector4 diffuseColor = new Vector4(1f, 0.8f, 0.8f, 1f);
-        private const float diffuseIntensity = 1;
-        private const int shadowMapRes = 2048;
-        private const float playerSpeed = 20;
+        const int coinPoints = 1000;
+        Vector3 initialLightPosition = new Vector3(5, 5, 5);
+        Vector3 lightDirection = new Vector3(-1, -1, -1);
+        static Vector4 ambientColor = new Vector4(0.48f, 0.54f, 0.6f, 1f);
+        static Vector4 diffuseColor = new Vector4(1f, 0.8f, 0.8f, 1f);
+        const float diffuseIntensity = 1;
+        const int shadowMapRes = 2048;
+        const float playerSpeed = 20;
 
         //Things
-        private World world;
-        private Player player;
-        private EnvironmentManager environment;
-        private TrafficManager trafficManager;
+        World world;
+        Player player;
+        EnvironmentManager environment;
+        TrafficManager trafficManager;
 
         //Graphics
-        private static Camera camera;
+        static Camera camera;
         public static Lighting lighting;
-        private PostProcessor postProcessor;
-        private DebugView debugView;
-        private Effect effect;
+        PostProcessor postProcessor;
+        DebugView debugView;
+        Effect effect;
 
         //GUI
-        private MessagesUI messagesUI;
-        private ScoreUI scoreUI;
-        private GameOverUI gameOverUI;
-        private FPSUI fpsUI;
-        private CountdownUI countdownUI;
-        private TitleUI titleUI;
+        MessagesUI messagesUI;
+        ScoreUI scoreUI;
+        GameOverUI gameOverUI;
+        FPSUI fpsUI;
+        CountdownUI countdownUI;
+        TitleUI titleUI;
 
         //State
-        private int score;
-        private GameState state;
-        private double stateChangeTime;
-        private int startTime = -1;
-        private int countdown = -1;
-        private bool inTargetLane = false;
+        int score;
+        GameState state;
+        double stateChangeTime;
+        int startTime = -1;
+        int countdown = -1;
+        bool inTargetLane = false;
 
 
 
@@ -74,8 +74,8 @@ namespace NewTrafficRacer
         public static int Duration;
         public static float Difficulty;
 
-        private GraphicsDeviceManager graphicsManager;
-        private SpriteBatch spriteBatch;
+        GraphicsDeviceManager graphicsManager;
+        SpriteBatch spriteBatch;
 
         public TrafficGame(int width, int height, string content_dir, int duration, float difficulty)
         {
@@ -150,13 +150,13 @@ namespace NewTrafficRacer
             //Mode = new MenuMode(this, GraphicsDevice, spriteBatch, Content);
         }
 
-        private void EndGame()
+        void EndGame()
         {
             Game.Activity.SetResult(Android.App.Result.Ok);
             Game.Activity.Finish();
         }
 
-        private void HandleInput(GameTime gameTime)
+        void HandleInput(GameTime gameTime)
         {
             InputManager.Update();
 
@@ -199,13 +199,13 @@ namespace NewTrafficRacer
             camera.Revolution += InputManager.MoveCameraAmount / 30;
         }
 
-        private void DodgeCompleted(Body b)
+        void DodgeCompleted(Body b)
         {
             //scoreUI.ShowPoints(dodgePoints);
             //score += dodgePoints;
         }
 
-        private void CoinGet(Body b)
+        void CoinGet(Body b)
         {
             scoreUI.ShowPoints(coinPoints);
             score += coinPoints;

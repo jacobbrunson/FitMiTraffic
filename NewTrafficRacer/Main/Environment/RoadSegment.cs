@@ -15,13 +15,13 @@ namespace NewTrafficRacer.Environment
         public float Y;
         public int HighlightedLane;
 
-        private Ground ground;
-        private RoadPiece road;
-        private Rail leftRail;
-        private Rail rightRail;
-        private Highlight highlight;
+        Ground ground;
+        RoadPiece road;
+        Rail leftRail;
+        Rail rightRail;
+        Highlight highlight;
 
-        private World world;
+        World world;
 
         public RoadSegment(ContentManager content, World world, float y, int highlightedLane, int groundWidth = 10, int groundOffsetX = 0, float biomeScale = 100)
         {

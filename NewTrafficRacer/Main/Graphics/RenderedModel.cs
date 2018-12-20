@@ -21,12 +21,12 @@ namespace NewTrafficRacer.Graphics
 		public Vector3 Scale = Vector3.One;
 		public Color Color = Color.White;
 
-		private Vector3 meshSize;
+		Vector3 meshSize;
 
-		private static Dictionary<string, string> names = new Dictionary<string, string>();
+		static Dictionary<string, string> names = new Dictionary<string, string>();
 
 
-		private BoundingBox GetBounds()
+		BoundingBox GetBounds()
 		{
 			if (Model.Tag == null)
 			{

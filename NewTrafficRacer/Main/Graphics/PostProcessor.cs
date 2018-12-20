@@ -10,10 +10,10 @@ namespace NewTrafficRacer.Graphics
 {
 	class PostProcessor
 	{
-		private SpriteBatch spriteBatch;
-		private GraphicsDevice graphics;
-		private RenderTarget2D target;
-		private Effect effect;
+		SpriteBatch spriteBatch;
+		GraphicsDevice graphics;
+		RenderTarget2D target;
+		Effect effect;
 
 		public PostProcessor(GraphicsDevice graphics, SpriteBatch spriteBatch, Effect effect)
 		{

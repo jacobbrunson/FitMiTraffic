@@ -46,7 +46,7 @@ namespace NewTrafficRacer.Vehicle
 
 		Queue<Dodge> Dodges = new Queue<Dodge>();
 
-        private float initialSpeed;
+        float initialSpeed;
 
 		SoundEffectInstance sound;
 

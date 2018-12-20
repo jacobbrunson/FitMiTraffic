@@ -22,7 +22,7 @@ namespace NewTrafficRacer.Gui
 
 	class MessageQueue : Queue<Message>
 	{
-		private const float defaultExpiration = 1;
+		const float defaultExpiration = 1;
 
 		public void Update(GameTime gameTime)
 		{

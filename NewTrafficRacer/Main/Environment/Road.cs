@@ -23,17 +23,17 @@ namespace NewTrafficRacer.Environment
         public double HighlightChangeTime = -10;
 
         public static Vector2 Scale;
-        //private static Texture2D Texture;
-        private static Vector2 TextureSize;
+        //static Texture2D Texture;
+        static Vector2 TextureSize;
 
-        private static ContentManager content;
+        static ContentManager content;
 
-        private World world;
+        World world;
 
         public bool CullBack = true;
-        private int groundWidth = 10;
-        private int groundOffsetX = 0;
-        private float biomeScale = 100;
+        int groundWidth = 10;
+        int groundOffsetX = 0;
+        float biomeScale = 100;
 
         public Road(World world, int groundWidth = 10, int groundOffsetX = 0, float biomeScale = 100)
         {

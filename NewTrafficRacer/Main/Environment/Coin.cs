@@ -12,9 +12,9 @@ namespace NewTrafficRacer.Environment
 {
     class Coin : RenderedModel
     {
-        private const string ModelName = "coin";
+        const string ModelName = "coin";
 
-        private World world;
+        World world;
         public Body Body;
 
         public Coin(ContentManager content, World world, Vector2 position) : base(content, ModelName, "CoinTex")

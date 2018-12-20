@@ -13,11 +13,11 @@ namespace NewTrafficRacer.Graphics
 	}
 	public class Camera
 	{
-		private const float orthoNearZ = -1000;
-		private const float orthoFarZ = 1000;
-		private const float perspNearZ = 0.1f;
-		private const float perspFarZ = 100;
-		private const float fov = MathHelper.PiOver2 * 0.8f;
+		const float orthoNearZ = -1000;
+		const float orthoFarZ = 1000;
+		const float perspNearZ = 0.1f;
+		const float perspFarZ = 100;
+		const float fov = MathHelper.PiOver2 * 0.8f;
 
 		public Vector2 Target;
 		public Vector2 Offset = Vector2.Zero;

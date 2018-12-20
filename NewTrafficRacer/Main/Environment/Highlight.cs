@@ -12,8 +12,8 @@ namespace NewTrafficRacer.Environment
 {
 	class Highlight : RenderedModel
 	{
-		private const string ModelName = "highlight";
-        private int lane = -1;
+		const string ModelName = "highlight";
+        int lane = -1;
 
         public int HighlightOn = -100;
 

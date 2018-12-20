@@ -10,10 +10,10 @@ namespace NewTrafficRacer.Graphics
 {
 	public class Lighting
 	{
-		private const float nearZ = -10;
-		private const float farZ = 40;
-		private const float width = 25;
-		private const float height = 50;
+		const float nearZ = -10;
+		const float farZ = 40;
+		const float width = 25;
+		const float height = 50;
 
 		public Vector3 Position;
 		public Vector3 Direction;

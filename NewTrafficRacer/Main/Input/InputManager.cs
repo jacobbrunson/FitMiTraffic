@@ -15,16 +15,16 @@ namespace NewTrafficRacer.Input
 	static class InputManager
 	{
 
-		private static KeyboardState PreviousKeyState;
-		private static KeyboardState CurrentKeyState;
+		static KeyboardState PreviousKeyState;
+		static KeyboardState CurrentKeyState;
 
-		private static MouseState PreviousMouseState;
-		private static MouseState CurrentMouseState;
+		static MouseState PreviousMouseState;
+		static MouseState CurrentMouseState;
 
-        private static bool PuckPack1ForceDebounce = false;
+        static bool PuckPack1ForceDebounce = false;
 
-		private static HIDPuckDongle PuckManager;
-		private static PuckPacket Puck
+		static HIDPuckDongle PuckManager;
+		static PuckPacket Puck
 		{
 			get
 			{
