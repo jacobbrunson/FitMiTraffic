@@ -118,7 +118,7 @@ namespace NewTrafficRacer
             Lighting.Initialize();
 
             effect = Content.Load<Effect>("effect");
-            postProcessor = new PostProcessor(GraphicsDevice, spriteBatch, Content.Load<Effect>("desaturate"));
+            postProcessor = new PostProcessor(spriteBatch, Content.Load<Effect>("desaturate"));
 
             scoreUI = new ScoreUI();
             gameOverUI = new GameOverUI();

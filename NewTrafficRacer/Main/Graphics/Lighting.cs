@@ -10,6 +10,7 @@ namespace NewTrafficRacer.Graphics
 {
 	public static class Lighting
 	{
+        //Parameters
 		const float nearZ = -10;
 		const float farZ = 40;
 		const float width = 25;
@@ -20,8 +21,8 @@ namespace NewTrafficRacer.Graphics
         public static readonly Vector4 diffuseColor = new Vector4(1f, 0.8f, 0.8f, 1f);
         public static readonly Vector3 Direction = new Vector3(-0.57735f, -0.57735f, -0.57735f); //Ensure that this is normalized
 
+        //State
         public static Vector3 Position;
-
 		public static Matrix View;
 		public static Matrix Projection;
 		public static RenderTarget2D ShadowMap;

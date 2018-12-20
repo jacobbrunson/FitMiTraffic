@@ -17,7 +17,8 @@ namespace NewTrafficRacer.Main.Graphics
 {
     public static class RenderHack
     {
-        //This is a really ugly hack that must be called before each and every model draw on Android
+        //This is a really ugly hack that must be called before each and every model draw on Android.
+        //For some reason, these parameters seem to reset to default values after each model draw on Android.
         public static void RENDER_FIX(Effect effect)
         {
             effect.Parameters["View"].SetValue(Camera.main.View);

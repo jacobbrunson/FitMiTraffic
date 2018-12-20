@@ -8,29 +8,30 @@ using System.Threading.Tasks;
 
 namespace NewTrafficRacer.Graphics
 {
+    //Class which allows us to render everything to a separate texture,
+    //and then apply an effect when rendering that texture to screen
 	class PostProcessor
 	{
 		SpriteBatch spriteBatch;
-		GraphicsDevice graphics;
 		RenderTarget2D target;
 		Effect effect;
 
-		public PostProcessor(GraphicsDevice graphics, SpriteBatch spriteBatch, Effect effect)
+		public PostProcessor(SpriteBatch spriteBatch, Effect effect)
 		{
-			this.graphics = graphics;
 			this.spriteBatch = spriteBatch;
 			this.effect = effect;
-			target = new RenderTarget2D(graphics, graphics.Viewport.Width, graphics.Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
+			target = new RenderTarget2D(TrafficGame.Graphics, TrafficGame.Graphics.Viewport.Width, TrafficGame.Graphics.Viewport.Height, false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
 		}
 
 		public void Begin()
 		{
-			graphics.SetRenderTarget(target);
+            TrafficGame.Graphics.SetRenderTarget(target);
 		}
 
+        //Only applies post processing effects if apply = true
 		public void End(bool apply=true)
 		{
-			graphics.SetRenderTarget(null);
+            TrafficGame.Graphics.SetRenderTarget(null);
 			if (apply)
 				spriteBatch.Begin(effect: effect);
 			else

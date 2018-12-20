@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace NewTrafficRacer.Graphics
 {
+    //Any object seen in game is a RenderedModel
 	public class RenderedModel
 	{
 		protected Model Model;
@@ -22,15 +23,17 @@ namespace NewTrafficRacer.Graphics
 		public Vector3 Scale = Vector3.One;
 		public Color Color = Color.White;
 
-		Vector3 meshSize;
+		Vector3 meshSize; //Size of bounding box (model space)
 
 		static Dictionary<string, string> names = new Dictionary<string, string>();
-
 
 		BoundingBox GetBounds()
 		{
 			if (Model.Tag == null)
 			{
+                //You MUST use the pre-processor even if you don't care about the visual effect.
+                //The pre-processor computes mesh bounding boxes.
+                //The bounding box cannot be computed at runtime using OpenGL ES.
 				throw new Exception("Model must be processed using Jacob's Flat Processor");
 			}
 			return (BoundingBox)Model.Tag;
@@ -46,6 +49,7 @@ namespace NewTrafficRacer.Graphics
 			}
 			else
 			{
+                throw new Exception("Textures must be explicitly specified on Android!");
 				if (names.ContainsKey(modelName))
 				{
                     Texture = content.Load<Texture2D>(names[modelName]);
@@ -64,14 +68,20 @@ namespace NewTrafficRacer.Graphics
 		public void Render(GameTime gameTime, Effect effect)
 		{
 			Matrix world =  Matrix.CreateScale(Size / meshSize * Scale) * Rotation * Matrix.CreateTranslation(Position + Offset);
+
+            //Set shader parametrs
 			effect.Parameters["World"].SetValue(world);
 			effect.Parameters["NormalMatrix"].SetValue(Matrix.Transpose(Matrix.Invert(world)));
             effect.Parameters["LightMatrix"].SetValue(world * Lighting.View * Lighting.Projection);
 			effect.Parameters["ModelTexture"].SetValue(Texture);
 
+            //The render hack resets chroma key replace.
+            //This is another hack which restores the chroma key to what it was before the hack.
             Vector4 ChromaKeyReplace = effect.Parameters["ChromaKeyReplace"].GetValueVector4();
             RenderHack.RENDER_FIX(effect);
             effect.Parameters["ChromaKeyReplace"].SetValue(ChromaKeyReplace);
+
+            //Render the mesh
             foreach (ModelMesh mesh in Model.Meshes)
 			{
 				foreach (ModelMeshPart part in mesh.MeshParts)
