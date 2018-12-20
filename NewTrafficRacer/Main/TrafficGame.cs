@@ -20,8 +20,6 @@ namespace NewTrafficRacer
 
         //Parameters
         const int coinPoints = 1000;
-        Vector3 initialLightPosition = new Vector3(5, 5, 5);
-        Vector3 lightDirection = new Vector3(-1, -1, -1);
         
         const float diffuseIntensity = 1;
         const float playerSpeed = 20;
@@ -120,10 +118,7 @@ namespace NewTrafficRacer
             environment = new EnvironmentManager(Content, world);
             trafficManager = new TrafficManager(Content, world, Road.NumLanes, Road.LaneWidth);
 
-            lightDirection.Normalize();
             Lighting.Initialize();
-            Lighting.Position = initialLightPosition;
-            Lighting.Direction = lightDirection;
 
             effect = Content.Load<Effect>("effect");
             postProcessor = new PostProcessor(GraphicsDevice, spriteBatch, Content.Load<Effect>("desaturate"));

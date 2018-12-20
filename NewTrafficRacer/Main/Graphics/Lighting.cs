@@ -18,9 +18,9 @@ namespace NewTrafficRacer.Graphics
 
         public static readonly Vector4 ambientColor = new Vector4(0.48f, 0.54f, 0.6f, 1f);
         public static readonly Vector4 diffuseColor = new Vector4(1f, 0.8f, 0.8f, 1f);
+        public static readonly Vector3 Direction = new Vector3(-1.0f/3, -1.0f/3, -1.0f/3); //Ensure that this is normalized
 
         public static Vector3 Position;
-		public static Vector3 Direction;
 
 		public static Matrix View;
 		public static Matrix Projection;
