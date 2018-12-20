@@ -29,7 +29,6 @@ namespace NewTrafficRacer.Vehicle
 		public string TextureName;
         public Vector3 Offset;
 
-
 		public CarType(string name, float width, float length, float height, float radiusTop, float radiusBottom, Vector3 offset)
 		{
 			Name = name;
@@ -45,9 +44,8 @@ namespace NewTrafficRacer.Vehicle
 		{
 			get
 			{
-				//return CarType.TEST;
 				Random random = new Random();
-				int i = random.Next(1, CarType.ALL.Length);
+				int i = random.Next(1, CarType.ALL.Length); //Skip the first out of all (i.e. non-sports car)
 
 				return CarType.ALL[i];
 			}

@@ -28,15 +28,15 @@ namespace NewTrafficRacer.Vehicle
 
 	class Player : Car
 	{
-		public bool crashed = false;
-		float crashTime;
+        const float maxLateralSpeed = 3.25f;
+        readonly Color playerColor = new Color(229, 189, 15, 255);
 
-		double recenterTime = -1;
-		int recenterDir = 1;
+        public bool crashed = false;
+		float crashTime; //Time when we hit something
 
-		float previousTime;
+		float previousTime; //Time of most recent update tick
 
-		Body ApproachingBody;
+		Body ApproachingBody; //Car that we may be about to run into
 
 		public delegate void DodgeCompleteDelegate(Body b);
 		public DodgeCompleteDelegate DodgeCompleteCallback;
@@ -44,13 +44,11 @@ namespace NewTrafficRacer.Vehicle
         public delegate void CoinGetDelegate(Body b);
         public CoinGetDelegate CoinGetCallback;
 
-		Queue<Dodge> Dodges = new Queue<Dodge>();
+        Queue<Dodge> Dodges = new Queue<Dodge>();
 
-        float initialSpeed;
+        float initialSpeed; //Speed which player should go
 
-		SoundEffectInstance sound;
-
-		public Vector2 Velocity
+		public new Vector2 Velocity
 		{
 			get { return Body.LinearVelocity; }
 			set
@@ -67,12 +65,7 @@ namespace NewTrafficRacer.Vehicle
 			Body.Mass = 4000.0f;
 			Reset();
 
-			//var s = content.Load<SoundEffect>("Buzz2");
-			//sound = s.CreateInstance();
-			//sound.IsLooped = true;
-			//sound.Play();
-			model.Color = new Color(229, 189, 15, 255);
-
+            model.Color = playerColor;
 		}
 
 		public void Reset()
@@ -89,25 +82,27 @@ namespace NewTrafficRacer.Vehicle
 		{
 			if (crashed)
 			{
+                //Normally our car would slide and spin forever
+                //This code gradually makes us stop after crashing
 				float dt = previousTime - crashTime;
 				float damping = dt * dt * 4;
 				Body.LinearDamping = damping;
 				Body.AngularDamping = damping;
 			} else
 			{
-				float maxLateralSpeed = 6.5f;
+				float desiredSpeed = movement * maxLateralSpeed; //Lateral speed based on controller input
 
-				float desiredSpeed = movement * 0.5f * maxLateralSpeed;
+				float lateralSpeed = desiredSpeed * 0.5f + Body.LinearVelocity.X * 0.5f; //Smoothly adjust real lateral speed
 
-				float lateralSpeed = desiredSpeed * 0.5f + Body.LinearVelocity.X * 0.5f;
-
-				Body.LinearVelocity = new Vector2(lateralSpeed, Body.LinearVelocity.Y * 0.98f + initialSpeed * 0.02f);
-				Body.Rotation = -lateralSpeed * 0.05f;
+				Body.LinearVelocity = new Vector2(lateralSpeed, Body.LinearVelocity.Y * 0.98f + initialSpeed * 0.02f); //Smoothly accelerate
+				Body.Rotation = -lateralSpeed * 0.05f; //Rotate based on lateral speed
 
 
-                //Dodge code
+                //Look for car in front of us
 				Body b = AnticipateCollision(4.0f);
 
+                //If we are about to hit a car and we weren't already approaching it
+                //TODO: I think this logic allows a dodge to be counted multiple times and generally glitch out
 				if (ApproachingBody != null && !ApproachingBody.Equals(b))
 				{
 					Dodges.Enqueue(new Dodge(ApproachingBody, gameTime.TotalGameTime.TotalSeconds));
@@ -119,6 +114,7 @@ namespace NewTrafficRacer.Vehicle
 					ApproachingBody = b;
 				}
 
+                //Once we pass a car that we were about to hit, we say we have completed a dodge
 				if (Dodges.Count > 0)
 				{
 					Dodge d = Dodges.Peek();
@@ -135,42 +131,21 @@ namespace NewTrafficRacer.Vehicle
 			previousTime = (float)gameTime.TotalGameTime.TotalSeconds;
 		}
 
-		public void Recenter(GameTime gameTime)
-		{
-			recenterTime = gameTime.TotalGameTime.TotalSeconds;
-			if (Position.X > 0 && Body.Rotation < 0 && Body.Rotation > -MathHelper.PiOver2 || Position.X <= 0 && Body.Rotation > 0 && Body.Rotation < MathHelper.PiOver2)
-			{
-				recenterDir = -1;
-			}
-			else
-			{
-				recenterDir = 1;
-			}
-		}
-
-		public Boolean IsRecentering()
-		{
-			return recenterTime > 0;
-		}
-
-		public static void LoadContent()
-		{
-
-		}
-
+        //Fired when player runs into something
 		bool Collision(Fixture a, Fixture b, Contact c)
 		{
-            if (b.Body.BodyType == BodyType.Static)
+            if (b.Body.BodyType == BodyType.Static) //Ran into wall, just ignore
             {
                 return true;
             }
 
-            if (b.Body.BodyType == BodyType.Kinematic)
+            if (b.Body.BodyType == BodyType.Kinematic) //Ran into coin
             {
                 CoinGetCallback(b.Body);
                 return true;
             }
 
+            //Ran into car
 			crashed = true;
 			crashTime = previousTime;
 			return true;

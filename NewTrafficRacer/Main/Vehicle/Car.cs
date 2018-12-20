@@ -16,50 +16,35 @@ using NewTrafficRacer.Utility;
 
 namespace NewTrafficRacer.Vehicle
 {
-	class CastedRay
-	{
-		public readonly Vector2 P1;
-		public readonly Vector2 P2;
-		public readonly bool Hit;
-
-		public CastedRay(Vector2 p1, Vector2 p2, bool hit)
-		{
-			P1 = p1;
-			P2 = p2;
-			Hit = hit;
-		}
-	}
-
 	class Car
 	{
-		public Body Body;
+        //Parameters
+        static readonly Color[] colors =
+        {
+            new Color(229, 189, 15, 255),
+            new Color(229, 28, 28, 255),
+            new Color(242, 139, 245, 255),
+            new Color(39, 119, 238, 255),
+            new Color(39, 238, 119, 255),
+            new Color(238, 133, 39, 255),
+            new Color(236, 247, 250, 255),
+            new Color(41, 41, 41, 255)
+        };
 
-		World World;
-		CarType Type;
+        //State
+        public Body Body;
+        CarType Type;
+        public RenderedModel model;
+        public Vector2 BodySize;
 
-		float DesiredSpeed;
+        float DesiredSpeed;
 		float InitialSpeed;
-
-		public RenderedModel model;
-
-		static Color[] colors =
-		{
-			new Color(229, 189, 15, 255),
-			new Color(229, 28, 28, 255),
-			new Color(242, 139, 245, 255),
-			new Color(39, 119, 238, 255),
-			new Color(39, 238, 119, 255),
-			new Color(238, 133, 39, 255),
-			new Color(236, 247, 250, 255),
-			new Color(41, 41, 41, 255)
-		};
-
         public int Lane;
 
 		public List<CastedRay> Rays = new List<CastedRay>();
+        World World;
 
-
-		public Vector2 Position
+        public Vector2 Position
 		{
 			get { return Body.Position; }
 			set { Body.Position = value; }
@@ -67,14 +52,12 @@ namespace NewTrafficRacer.Vehicle
 
 		public Vector2 Velocity
 		{
-			get { return Body.LinearVelocity; }
-			set {
+			get { return Body.LinearVelocity; } //Return actual velocity
+			set { //Set real X velocity but only desired Y velocity
 				Body.LinearVelocity = new Vector2(value.X, Body.LinearVelocity.Y);
 				DesiredSpeed = value.Y;
 			}
 		}
-
-		public Vector2 BodySize;
 
 		public Car(ContentManager content, CarType type, World world, float initialSpeed)
 		{
@@ -84,16 +67,14 @@ namespace NewTrafficRacer.Vehicle
 			InitialSpeed = initialSpeed;
 
 			model = new RenderedModel(content, type.ModelName, type.TextureName);
-			model.Color = colors[new Random().Next(0, colors.Length)];
-
-			var textureSize = new Vector2(type.Width, type.Length);
-
-
+			model.Color = colors[new Random().Next(0, colors.Length)];        
+      
 			BodySize = new Vector2(type.Width, type.Length);
 
 			float rTop = Type.RadiusTop;
 			float rBot = Type.RadiusBottom;
 
+            //Some cars rounded bumpers. This code computes the points for these curves. (see the debug view)
 			Vertices verts = new Vertices();
 			int steps = 4;
 			float angleStep = MathHelper.Pi / steps;
@@ -112,6 +93,7 @@ namespace NewTrafficRacer.Vehicle
 				verts.Add(new Vector2((float)Math.Cos(angle) * BodySize.X / 2, (float)Math.Sin(angle) * rBot - (BodySize.Y / 2 - rBot)));
 			}
 
+            //Create the physics object
 			Body = world.CreateBody();
 			Body.CreatePolygon(verts, 1f);
 			Body.BodyType = BodyType.Dynamic;
@@ -119,6 +101,7 @@ namespace NewTrafficRacer.Vehicle
 			Body.LinearVelocity = new Vector2(0, initialSpeed);
 		}
 
+        //Cast a ray and return what we hit (if its dynamic)
 		Body RayCast(Vector2 p1, Vector2 p2)
 		{
 			List<Fixture> hits = World.RayCast(p1, p2);
@@ -134,6 +117,7 @@ namespace NewTrafficRacer.Vehicle
 			return null;
 		}
 
+        //Cast several rays in front of the car and return what we hit
 		public Body AnticipateCollision(float maxDistance)
 		{
 			int numRays = 4;
@@ -165,24 +149,27 @@ namespace NewTrafficRacer.Vehicle
 
 			Body b = AnticipateCollision(3);
 
-			if (b != null)
+			if (b != null) //If we are about to crash into something
 			{
+                //Slow down
 				Velocity = new Vector2(0, Math.Max(0, Math.Min(Velocity.Y, b.LinearVelocity.Y - 1)));
-				if (Velocity.Y <= 0.1f)
+				if (Velocity.Y <= 0.1f) //Hack to prevent cars from inching forward
 				{
 					Velocity = new Vector2(0, 0);
 				}
 			}
 			else
 			{
-				Velocity = new Vector2(0, InitialSpeed);
+				Velocity = new Vector2(0, InitialSpeed); //Speed back up to original speed
 			}
 
+            //Make real velocity approach desired velocity
 			if (Math.Abs(Velocity.Y - DesiredSpeed) > 0.1)
 			{
 				Body.LinearVelocity = new Vector2(0, Velocity.Y * 0.9f + DesiredSpeed * 0.1f);
 			}
 
+            //Make real angle approach desired angle which is based on lateral velocity
 			float desiredAngle = -Velocity.X * 0.05f;
 			Body.Rotation = Body.Rotation * 0.5f + desiredAngle * 0.5f;
 		}
@@ -201,7 +188,21 @@ namespace NewTrafficRacer.Vehicle
 		public static void LoadContent(ContentManager content)
 		{
 			CarType.LoadContent(content);
-			//model = new RenderedModel(content, c)
 		}
 	}
+
+    //Helper class used to render raycasts in debug view
+    class CastedRay
+    {
+        public readonly Vector2 P1;
+        public readonly Vector2 P2;
+        public readonly bool Hit;
+
+        public CastedRay(Vector2 p1, Vector2 p2, bool hit)
+        {
+            P1 = p1;
+            P2 = p2;
+            Hit = hit;
+        }
+    }
 }

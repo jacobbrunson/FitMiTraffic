@@ -183,7 +183,6 @@ namespace NewTrafficRacer
 
             if (InputManager.Restart)
             {
-                player.Recenter(gameTime);
                 state = GameState.RECENTERING;
                 stateChangeTime = gameTime.TotalGameTime.TotalSeconds;
             }

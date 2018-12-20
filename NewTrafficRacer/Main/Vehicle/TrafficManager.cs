@@ -29,6 +29,7 @@ namespace NewTrafficRacer.Vehicle
             World = world;
             Content = content;
 
+            //TODO: This interval is set once. Should be set in update so that difficulty can be adjusted mid-game
             if (TrafficGame.Difficulty > 0.3f)
             {
                 Interval = (int)TrafficGame.Difficulty.Map(0.3f, 1, 10000, 1000);
@@ -41,31 +42,6 @@ namespace NewTrafficRacer.Vehicle
             }
 
             random = new Random();
-        }
-
-        public void RenderDebug(DebugView debugView, Matrix view, Matrix projection)
-        {
-            foreach (Car car in cars)
-            {
-                foreach (CastedRay ray in car.Rays)
-                {
-                    debugView.BeginCustomDraw(projection, view);
-
-                    if (ray.Hit)
-                    {
-                        debugView.DrawPoint(ray.P1, .25f, new Color(0.9f, 0.4f, 0.4f));
-                        debugView.DrawSegment(ray.P2, ray.P1, new Color(0.8f, 0.4f, 0.4f));
-                    }
-                    else
-                    {
-                        debugView.DrawPoint(ray.P1, .25f, new Color(0.4f, 0.9f, 0.4f));
-                        debugView.DrawSegment(ray.P2, ray.P1, new Color(0.8f, 0.8f, 0.8f));
-                    }
-                    debugView.EndCustomDraw();
-                }
-
-                car.Rays.Clear();
-            }
         }
 
         public void Reset()
@@ -95,11 +71,13 @@ namespace NewTrafficRacer.Vehicle
                 lane = random.Next(0, Road.NumLanes);
                 var lanePos = Road.GetCenterOfLane(lane);
 
-                var wiggleRoom = Math.Max(0, Road.LaneWidth - type.Width - 0.1f);
-                var laneOffset = (float)random.NextDouble() * wiggleRoom - wiggleRoom / 2;
+                var wiggleRoom = Math.Max(0, Road.LaneWidth - type.Width - 0.1f); //How much room the car has on either side of it
+                var laneOffset = (float)random.NextDouble() * wiggleRoom - wiggleRoom / 2; //Cars aren't always perfectly centered
 
                 posX = lanePos + laneOffset;
 
+                //If the player is going very slow or the game just started, cars should spawn behind the player
+                //Otherwise they should spawn some distance ahead
                 if (player.Velocity.Y < 10 || state == GameState.STARTING)
                 {
                     posY = player.Position.Y - (float)(random.NextDouble()) * 20 - 10;
@@ -110,6 +88,7 @@ namespace NewTrafficRacer.Vehicle
                 }
 
                 foundSpawnPos = true;
+                //Check to make sure this spawn position doesn't intersect any other cars
                 foreach (Car c in cars)
                 {
                     if (c.Lane == lane && Math.Abs(c.Position.Y - posY) < Math.Max(c.BodySize.Y, type.Length) + 1)
@@ -120,6 +99,7 @@ namespace NewTrafficRacer.Vehicle
                 }
             } while (!foundSpawnPos && spawnAttempts < 5);
 
+            //Spawn the car
             if (foundSpawnPos)
             {
                 float speed = player.Velocity.Y + (Road.NumLanes - lane + 1) * 1.0f + (float)random.NextDouble().Map(0, 1, -10, 0);
@@ -137,7 +117,7 @@ namespace NewTrafficRacer.Vehicle
         {
             float playerY = player.Position.Y;
 
-
+            //Spawn a car (maybe)
             if (gameTime.TotalGameTime.TotalMilliseconds - LastSpawnMillis >= Interval)
             {
                 LastSpawnMillis = (long)gameTime.TotalGameTime.TotalMilliseconds;
@@ -154,12 +134,12 @@ namespace NewTrafficRacer.Vehicle
                 }
             }
 
+            //Update all cars
             foreach (Car car in cars)
             {
                 car.Update(gameTime);
             }
         }
-
 
         public void RenderTraffic(GameTime gameTime, Effect effect)
         {
@@ -168,5 +148,31 @@ namespace NewTrafficRacer.Vehicle
                 car.Render(gameTime, effect);
             }
         }
+
+        public void RenderDebug(DebugView debugView, Matrix view, Matrix projection)
+        {
+            foreach (Car car in cars)
+            {
+                foreach (CastedRay ray in car.Rays)
+                {
+                    debugView.BeginCustomDraw(projection, view);
+
+                    if (ray.Hit)
+                    {
+                        debugView.DrawPoint(ray.P1, .25f, new Color(0.9f, 0.4f, 0.4f));
+                        debugView.DrawSegment(ray.P2, ray.P1, new Color(0.8f, 0.4f, 0.4f));
+                    }
+                    else
+                    {
+                        debugView.DrawPoint(ray.P1, .25f, new Color(0.4f, 0.9f, 0.4f));
+                        debugView.DrawSegment(ray.P2, ray.P1, new Color(0.8f, 0.8f, 0.8f));
+                    }
+                    debugView.EndCustomDraw();
+                }
+
+                car.Rays.Clear();
+            }
+        }
+
     }
 }
