@@ -13,48 +13,40 @@ namespace NewTrafficRacer.Environment
 {
     class Road
     {
-        LinkedList<RoadSegment> Segments = new LinkedList<RoadSegment>();
-
+        //Parameters
         public const int NumLanes = 4;
         public const float LaneWidth = 2.45f;
         public const float Size = NumLanes * LaneWidth;
-
+        const int highlightChangeInterval = 10;
+        
+        //State
+        LinkedList<RoadSegment> Segments = new LinkedList<RoadSegment>();
         public int Highlight = -1;
         public double HighlightChangeTime = -10;
 
         ContentManager content;
-
         World world;
 
-        int groundWidth = 10;
-        int groundOffsetX = 0;
-        float biomeScale = 100;
 
-        public Road(ContentManager content, World world, int groundWidth = 10, int groundOffsetX = 0, float biomeScale = 100)
+        public Road(ContentManager content, World world)
         {
             this.content = content;
             this.world = world;
-            this.groundWidth = groundWidth;
-            this.groundOffsetX = groundOffsetX;
-            this.biomeScale = biomeScale;
             Reset();
         }
 
+        //Destroy the road and initially generate 10 pieces at the beginning
         public void Reset()
         {
             Segments.Clear();
             for (int i = 0; i < 10; i++)
             {
-                var piece = new RoadSegment(content, world, Size * (i - 1), Highlight, groundWidth, groundOffsetX, biomeScale);
+                var piece = new RoadSegment(content, world, Size * (i - 1), Highlight);
                 Segments.AddLast(piece);
             }
         }
 
-        public int GetHighlightAtPlayerPos()
-        {
-            return Segments.First.Next.Value.HighlightedLane;
-        }
-
+        //Get the lane whose center is at a given x-coordinate
         public static int GetLane(float x, float tolerance = 0.1f)
         {
             float f = x.Map(-LaneWidth * NumLanes / 2, LaneWidth * NumLanes / 2, 0, NumLanes);
@@ -62,12 +54,13 @@ namespace NewTrafficRacer.Environment
 
             if (Math.Abs(x - GetCenterOfLane(i)) > tolerance)
             {
-                return -100;
+                return -100; //This value must be < 0 but must not == -1. Ugly hack.
             }
 
             return i;
         }
 
+        //Used to make a given lane have gold arrows
         public void SetHighlightStatus(int lane)
         {
             foreach (RoadSegment segment in Segments)
@@ -76,25 +69,35 @@ namespace NewTrafficRacer.Environment
             }
         }
 
+        //Returns a world-space X coordinate of a given lane center
         public static float GetCenterOfLane(int lane)
         {
             return LaneWidth * (lane - NumLanes / 2) + LaneWidth / 2;
         }
 
+        //Get which lane is highlighted at the player-end of the road
+        //(segments further ahead of the player may have a different highlighted lane)
+        public int GetHighlightAtPlayerPos()
+        {
+            return Segments.First.Next.Value.HighlightedLane;
+        }
+
         public void Update(GameTime gameTime, float playerY)
         {
+            //Destroy road segments which the player has passed,
+            //and create a new one far ahead of the player
             if (playerY - Segments.First.Value.Y > Size * 2)
             {
                 Segments.First.Value.Destroy();
                 Segments.RemoveFirst();
-                var piece = new RoadSegment(content, world, Segments.Last.Value.Y + Size, Highlight, groundWidth, groundOffsetX, biomeScale);
+                var piece = new RoadSegment(content, world, Segments.Last.Value.Y + Size, Highlight);
                 Segments.AddLast(piece);
             }
 
+            //Change the highlated lane
             double d = gameTime.TotalGameTime.TotalSeconds - HighlightChangeTime;
-            if (d > 10)
+            if (d > highlightChangeInterval)
             {
-                Highlight = -1;
                 HighlightChangeTime = gameTime.TotalGameTime.TotalSeconds;
                 Highlight = new Random().Next(4);
             }

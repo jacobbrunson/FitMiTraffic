@@ -15,26 +15,24 @@ namespace NewTrafficRacer.Environment
 {
 	class EnvironmentManager
 	{
+        //Game objects
 		public Road road;
-		//Ground ground;
 		List<RenderedModel> models = new List<RenderedModel>();
 
+        //State
+        Dictionary<Body, Coin> coins = new Dictionary<Body, Coin>();
+        Queue<Body> coinDeleteQueue = new Queue<Body>();
         float lastBigSignSpawn = 0;
         float lastCoinSpawn = 0;
 
-		ContentManager content;
-
-        Dictionary<Body, Coin> coins = new Dictionary<Body, Coin>();
-
-        Queue<Body> coinDeleteQueue = new Queue<Body>();
-
         World world;
+        ContentManager content;
 
-		public EnvironmentManager(ContentManager content, World world)
+        public EnvironmentManager(ContentManager content, World world)
 		{
 			this.content = content;
             this.world = world;
-			road = new Road(content, world, 24);            
+			road = new Road(content, world);            
 		}
 
         public void DestroyCoin(Body b)
@@ -56,13 +54,7 @@ namespace NewTrafficRacer.Environment
 		{
 			road.Update(gameTime, player.Position.Y);
 
-            while (coinDeleteQueue.Count > 0)
-            {
-                Body b = coinDeleteQueue.Dequeue();
-                world.Remove(b);
-                coins.Remove(b);
-            }
-
+            //Destroy coins which the player has passed
             foreach (KeyValuePair<Body, Coin> pair in coins)
             {
                 if (pair.Value.Position.Y < player.Position.Y - 10)
@@ -72,6 +64,7 @@ namespace NewTrafficRacer.Environment
                 pair.Value.Update(gameTime);
             }
 
+            //Destroy models which the player has passed
             for (int i = models.Count-1; i >= 0; i--)
             {
                 RenderedModel model = models[i];
@@ -81,6 +74,16 @@ namespace NewTrafficRacer.Environment
                 }
             }
 
+            //We can only delete bodies after a physics timestep, so we
+            //place coins to be deleted in a queue and delete them next frame
+            while (coinDeleteQueue.Count > 0)
+            {
+                Body b = coinDeleteQueue.Dequeue();
+                world.Remove(b);
+                coins.Remove(b);
+            }
+
+            //Spawn in a big orange sign
             if (player.Position.Y > lastBigSignSpawn + 200)
             {
                 lastBigSignSpawn = player.Position.Y + 30;
@@ -89,6 +92,7 @@ namespace NewTrafficRacer.Environment
                 models.Add(model);
             }
 
+            //Spawn in a coin
             if (TrafficGame.Difficulty >= 0.2f && player.Position.Y > lastCoinSpawn + 10)
             {
                 Random r = new Random();
@@ -97,7 +101,6 @@ namespace NewTrafficRacer.Environment
                 var coin = new Coin(content, world, pos);
                 coins.Add(coin.Body, coin);
             }
-			//ground.Position = new Vector2(0, playerY);
 		}
 
 		public void Render(GameTime gameTime, GraphicsDevice graphics, Effect effect)

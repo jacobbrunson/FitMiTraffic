@@ -23,7 +23,6 @@ namespace NewTrafficRacer.Environment
 			this.Offset = new Vector3(0.25f, -5, -0.25f);
 
 			this.Position = new Vector3(x, y, 0);
-			//this.Rotation = new Vector3(0, 0, 0);
 			this.Size = new Vector3(0.5f, Road.Size, 1f);
 
             this.world = world;

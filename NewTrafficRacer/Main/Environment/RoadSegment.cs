@@ -24,10 +24,10 @@ namespace NewTrafficRacer.Environment
 
         World world;
 
-        public RoadSegment(ContentManager content, World world, float y, int highlightedLane, int groundWidth = 10, int groundOffsetX = 0, float biomeScale = 100)
+        public RoadSegment(ContentManager content, World world, float y, int highlightedLane)
         {
 
-            ground = new Ground(content, y, groundWidth, groundOffsetX, biomeScale);
+            ground = new Ground(content, y);
             road = new RoadPiece(content, y);
             leftRail = new Rail(content, world, -Road.Size / 2, y);
             rightRail = new Rail(content, world, Road.Size / 2, y);
@@ -37,6 +37,7 @@ namespace NewTrafficRacer.Environment
             this.world = world;
         }
 
+        //Make a given lane have golden arrows
         public void SetHighlightStatus(int lane)
         {
             highlight.HighlightOn = lane;
@@ -48,10 +49,12 @@ namespace NewTrafficRacer.Environment
             road.Position = new Vector3(road.Position.X, Y, road.Position.Z);
             leftRail.Position = new Vector3(leftRail.Position.X, Y, leftRail.Position.Z);
             rightRail.Position = new Vector3(rightRail.Position.X, Y, rightRail.Position.Z);
-            if (effect.CurrentTechnique.Name == "ShadowedScene")
-            {
-                ground.Render(graphics, effect);
 
+            if (effect.CurrentTechnique.Name == "ShadowedScene") //Don't render to shadow map
+            {
+                ground.Render(graphics, effect); //Render the ground
+
+                //Render arrows in the highlight lane
                 if (HighlightedLane >= 0)
                 {
                     var X = (HighlightedLane - Road.NumLanes / 2 + 1) * Road.LaneWidth * 0.95f;
@@ -59,9 +62,10 @@ namespace NewTrafficRacer.Environment
                     highlight.Render(gameTime, effect);
                 }
 
-                road.Render(gameTime, effect);
+                road.Render(gameTime, effect); //Render the road
             }
 
+            //Render the rails
             leftRail.Render(gameTime, effect);
             rightRail.Render(gameTime, effect);
         }
