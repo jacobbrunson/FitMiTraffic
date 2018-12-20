@@ -97,7 +97,7 @@
     <Compile Include="Main\Vehicle\Car.cs" />
     <Compile Include="Main\Vehicle\CarType.cs" />
     <Compile Include="Main\Utility\ExtensionMethods.cs" />
-    <Compile Include="Main\Game1.cs" />
+    <Compile Include="Main\TrafficGame.cs" />
     <Compile Include="Main\Environment\Ground.cs" />
     <Compile Include="Main\Graphics\Lighting.cs" />
     <Compile Include="Main\Graphics\RenderedModel.cs" />
