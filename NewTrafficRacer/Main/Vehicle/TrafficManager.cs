@@ -8,7 +8,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using tainicom.Aether.Physics2D.Dynamics;
 using tainicom.Aether.Physics2D.Diagnostics;
-using NewTrafficRacer.Modes;
 using NewTrafficRacer.Environment;
 using NewTrafficRacer.Utility;
 

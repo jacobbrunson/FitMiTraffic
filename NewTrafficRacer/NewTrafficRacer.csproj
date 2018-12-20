@@ -97,9 +97,6 @@
     <Compile Include="Main\Gui\ScoreUI.cs" />
     <Compile Include="Main\Gui\TitleUI.cs" />
     <Compile Include="Main\Input\InputManager.cs" />
-    <Compile Include="Main\Modes\GameMode.cs" />
-    <Compile Include="Main\Modes\MenuMode.cs" />
-    <Compile Include="Main\Modes\Mode.cs" />
     <Compile Include="Main\Vehicle\Car.cs" />
     <Compile Include="Main\Vehicle\CarType.cs" />
     <Compile Include="Main\Utility\ExtensionMethods.cs" />

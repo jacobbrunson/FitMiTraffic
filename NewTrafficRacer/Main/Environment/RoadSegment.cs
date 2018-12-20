@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using NewTrafficRacer.Modes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +49,7 @@ namespace NewTrafficRacer.Environment
             rightRail.Position = new Vector3(rightRail.Position.X, Y, rightRail.Position.Z);
             if (effect.CurrentTechnique.Name == "ShadowedScene")
             {
-                GameMode.RENDER_FIX(effect);
+                TrafficGame.RENDER_FIX(effect);
                 ground.Render(graphics, effect);
 
                 if (HighlightedLane >= 0)
