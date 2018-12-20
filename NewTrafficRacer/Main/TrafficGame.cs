@@ -29,9 +29,12 @@ namespace NewTrafficRacer
         TrafficManager trafficManager;
 
         //Graphics
+        public static GraphicsDevice Graphics;
         PostProcessor postProcessor;
         DebugView debugView;
         Effect effect;
+        GraphicsDeviceManager graphicsManager;
+        SpriteBatch spriteBatch;
 
         //GUI
         ScoreUI scoreUI;
@@ -47,10 +50,9 @@ namespace NewTrafficRacer
         int startTime = -1;
         int countdown = -1;
         bool inTargetLane = false;
-
-
-        public static GraphicsDevice Graphics;
-
+        public static bool DEBUG;
+        public static int Duration;
+        public static float Difficulty;
         public float adjustedSpeed
         {
             get
@@ -58,24 +60,6 @@ namespace NewTrafficRacer
                 return playerSpeed * Math.Max(0.5f, TrafficGame.Difficulty);
             }
         }
-
-
-
-
-        public static bool DEBUG;
-        public static int Duration;
-        public static float Difficulty;
-
-        GraphicsDeviceManager graphicsManager;
-        SpriteBatch spriteBatch;
-
-
-
-
-
-
-
-
 
         public TrafficGame(int width, int height, string content_dir, int duration, float difficulty)
         {
@@ -102,44 +86,48 @@ namespace NewTrafficRacer
             base.Initialize();
             Graphics = GraphicsDevice;
 
+            //Initialize physics
             tainicom.Aether.Physics2D.Settings.MaxPolygonVertices = 16;
             world = new World(Vector2.Zero);
             debugView = new DebugView(world);
             debugView.AppendFlags(DebugViewFlags.DebugPanel | DebugViewFlags.PolygonPoints);
             debugView.LoadContent(GraphicsDevice, Content);
 
+            //Create player
             player = new Player(Content, CarType.SPORT, world, adjustedSpeed);
             player.DodgeCompleteCallback = DodgeCompleted;
             player.CoinGetCallback = CoinGet;
 
+            //Create objects
             environment = new EnvironmentManager(Content, world);
             trafficManager = new TrafficManager(Content, world);
 
+            //Setup graphics
             Lighting.Initialize();
-
             effect = Content.Load<Effect>("effect");
             postProcessor = new PostProcessor(spriteBatch, Content.Load<Effect>("desaturate"));
 
+            //Setup GUI
             scoreUI = new ScoreUI();
             gameOverUI = new GameOverUI();
             fpsUI = new FPSUI();
             countdownUI = new CountdownUI();
             titleUI = new TitleUI();
 
+            //Setup input
             InputManager.Initialize();
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
             Car.LoadContent(Content);
-
             ScoreUI.LoadContent(Content);
             GameOverUI.LoadContent(Content);
             FPSUI.LoadContent(Content);
             CountdownUI.LoadContent(Content);
             TitleUI.LoadContent(Content);
+            //TODO: probably should load ALL content here. Some content (e.g. sign models) still loaded at runtime
         }
 
         void EndGame()
@@ -183,19 +171,21 @@ namespace NewTrafficRacer
 
             if (InputManager.Restart)
             {
-                state = GameState.RECENTERING;
+                state = GameState.RESTARTING;
                 stateChangeTime = gameTime.TotalGameTime.TotalSeconds;
             }
 
             Camera.main.Revolution += InputManager.MoveCameraAmount / 30;
         }
 
+        //Fired when we dodge a car
         void DodgeCompleted(Body b)
         {
             //scoreUI.ShowPoints(dodgePoints);
             //score += dodgePoints;
         }
 
+        //Fired when we hit a coin
         void CoinGet(Body b)
         {
             scoreUI.ShowPoints(coinPoints);
@@ -207,8 +197,10 @@ namespace NewTrafficRacer
         {
             base.Update(gameTime);
 
+            //Get input
             HandleInput(gameTime);
 
+            //Get time of first frame
             if (startTime == -1)
             {
                 startTime = (int)gameTime.TotalGameTime.TotalSeconds;
@@ -235,11 +227,13 @@ namespace NewTrafficRacer
             }
             world.Step((float)gameTime.ElapsedGameTime.TotalSeconds * timeScale);
 
-            //TODO BETTER STATE SYSTEM
             if (state == GameState.RUNNING)
             {
                 if (!player.crashed)
                 {
+                    //Minimum of 1 point per frame.
+                    //Score based on velocity, double points if in correct lane
+                    //TODO: For low velocities, we may want less than 1 point per frame.
                     int deltaScore = (int)Math.Max(1, (player.Velocity.Y * gameTime.ElapsedGameTime.TotalSeconds));
                     if (inTargetLane)
                     {
@@ -250,18 +244,18 @@ namespace NewTrafficRacer
             }
             else if (state == GameState.STARTING)
             {
-                Camera.main.Zoom = Math.Min(1, Camera.main.Zoom + 0.05f);
-                if (gameTime.TotalGameTime.TotalSeconds - stateChangeTime > 3)
+                Camera.main.Zoom = Math.Min(1, Camera.main.Zoom + 0.05f); //Zoom out camera to normal position
+                if (gameTime.TotalGameTime.TotalSeconds - stateChangeTime > 3) //Start game after 3 seconds
                 {
                     state = GameState.RUNNING;
                     stateChangeTime = gameTime.TotalGameTime.TotalSeconds;
                     player.Velocity = new Vector2(player.Velocity.X, adjustedSpeed);
                 }
             }
-            else if (state == GameState.RECENTERING)
+            else if (state == GameState.RESTARTING)
             {
-                Camera.main.Zoom = Math.Max(0, Camera.main.Zoom - 0.05f);
-                if (gameTime.TotalGameTime.TotalSeconds - stateChangeTime > 1)
+                Camera.main.Zoom = Math.Max(0, Camera.main.Zoom - 0.05f); //Zoom camera in as a transition
+                if (gameTime.TotalGameTime.TotalSeconds - stateChangeTime > 1) //Reset world after 1 second
                 {
                     state = GameState.STARTING;
                     stateChangeTime = gameTime.TotalGameTime.TotalSeconds;
@@ -304,7 +298,6 @@ namespace NewTrafficRacer
             GraphicsDevice.RasterizerState = new RasterizerState() { CullMode = CullMode.CullClockwiseFace };
 
             //Render shadow map
-
             GraphicsDevice.SetRenderTarget(Lighting.ShadowMap);
             GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.White, 1.0f, 0);
             effect.CurrentTechnique = effect.Techniques["ShadowMap"];
@@ -336,7 +329,7 @@ namespace NewTrafficRacer
             countdownUI.Render(spriteBatch);
             titleUI.Render(spriteBatch, gameTime);
 
-            if (player.crashed && state != GameState.RECENTERING)
+            if (player.crashed && state != GameState.RESTARTING)
             {
                 gameOverUI.Render(spriteBatch, gameTime);
             }
@@ -362,6 +355,6 @@ namespace NewTrafficRacer
 
     public enum GameState
     {
-        STARTING, RUNNING, RECENTERING
+        STARTING, RUNNING, RESTARTING
     }
 }
