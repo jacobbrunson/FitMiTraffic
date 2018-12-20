@@ -77,6 +77,14 @@ namespace NewTrafficRacer
         GraphicsDeviceManager graphicsManager;
         SpriteBatch spriteBatch;
 
+
+
+
+
+
+
+
+
         public TrafficGame(int width, int height, string content_dir, int duration, float difficulty)
         {
             graphicsManager = new GraphicsDeviceManager(this);
@@ -128,6 +136,8 @@ namespace NewTrafficRacer
             fpsUI = new FPSUI();
             countdownUI = new CountdownUI();
             titleUI = new TitleUI();
+
+            InputManager.Initialize();
         }
 
         protected override void LoadContent()
@@ -143,11 +153,6 @@ namespace NewTrafficRacer
             FPSUI.LoadContent(Content);
             CountdownUI.LoadContent(Content);
             TitleUI.LoadContent(Content);
-
-            InputManager.Initialize();
-
-            //Mode = new GameMode(this, GraphicsDevice, spriteBatch, Content);
-            //Mode = new MenuMode(this, GraphicsDevice, spriteBatch, Content);
         }
 
         void EndGame()
@@ -331,11 +336,6 @@ namespace NewTrafficRacer
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.RasterizerState = new RasterizerState() { CullMode = CullMode.CullClockwiseFace };
 
-            //Set lighting parameters
-            //effect.LightViewProjection = lighting.View * lighting.Projection; //COMMENTED FOR COMPILE
-            //effect.Parameters["LightPosition"].SetValue(-lighting.Direction);//effect.Parameters["DiffuseLightDirection"].SetValue(lighting.Direction); //CHANGED
-            //effect.Parameters["AmbientColor"].SetValue(ambientColor);
-
             //Render shadow map
 
             GraphicsDevice.SetRenderTarget(lighting.ShadowMap);
@@ -353,16 +353,11 @@ namespace NewTrafficRacer
 
             postProcessor.Begin();
 
-            //effect.View = camera.View; //COMMENTED FOR COMPILE
-            //effect.Projection = camera.Projection; //COMMENTED FOR COMPILE
-            //effect.ShadowMap = lighting.ShadowMap; //COMMENTED FOR COMPILE
-
             RENDER_FIX(effect);
 
             effect.CurrentTechnique = effect.Techniques["ShadowedScene"];
             environment.Render(gameTime, GraphicsDevice, effect);
 
-            //effect.CurrentTechnique = effect.Techniques["ShadowedCar"]; //CHANGED
             player.Render(gameTime, effect);
             trafficManager.RenderTraffic(gameTime, effect);
 

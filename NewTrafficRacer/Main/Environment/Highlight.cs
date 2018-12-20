@@ -12,12 +12,14 @@ namespace NewTrafficRacer.Environment
 {
 	class Highlight : RenderedModel
 	{
-		const string ModelName = "highlight";
+		const string modelName = "highlight";
+        const string texName = "HighlightTex";
+
         int lane = -1;
 
         public int HighlightOn = -100;
 
-		public Highlight(ContentManager content, int lane) : base(content, ModelName, "HighlightTex")
+		public Highlight(ContentManager content, int lane) : base(content, modelName, texName)
 		{
             this.Size = new Vector3(Road.LaneWidth * 0.8f, Road.LaneWidth * 0.8f, 0.05f);
 			this.Offset = new Vector3(-Road.LaneWidth/2 + 0.05f, 0, 0.05f);

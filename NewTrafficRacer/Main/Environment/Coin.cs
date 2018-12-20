@@ -12,12 +12,13 @@ namespace NewTrafficRacer.Environment
 {
     class Coin : RenderedModel
     {
-        const string ModelName = "coin";
+        const string modelName = "coin";
+        const string texName = "CoinTex";
 
         World world;
         public Body Body;
 
-        public Coin(ContentManager content, World world, Vector2 position) : base(content, ModelName, "CoinTex")
+        public Coin(ContentManager content, World world, Vector2 position) : base(content, modelName, texName)
         {
             this.Position = new Vector3(position.X, position.Y, 0);
             this.Rotation = Matrix.CreateFromYawPitchRoll(MathHelper.PiOver2, MathHelper.PiOver2, 0);

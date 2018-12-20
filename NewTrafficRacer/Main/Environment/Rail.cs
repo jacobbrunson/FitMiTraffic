@@ -12,12 +12,13 @@ namespace NewTrafficRacer.Environment
 {
 	public class Rail : RenderedModel
 	{
-		const string ModelName = "rail2";
+		const string modelName = "rail2";
+        const string texName = "RailTex";
 
         World world;
         Body body;
 
-		public Rail(ContentManager content, World world, float x, float y) : base(content, ModelName, "RailTex")
+		public Rail(ContentManager content, World world, float x, float y) : base(content, modelName, texName)
 		{
 			this.Offset = new Vector3(0.25f, -5, -0.25f);
 

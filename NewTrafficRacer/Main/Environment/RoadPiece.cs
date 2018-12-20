@@ -11,8 +11,10 @@ namespace NewTrafficRacer.Environment
 {
 	public class RoadPiece : RenderedModel
 	{
-		const string ModelName = "road_model";
-		public RoadPiece(ContentManager content, float y) : base(content, ModelName, "road")
+		const string modelName = "road_model";
+        const string texName = "road";
+
+		public RoadPiece(ContentManager content, float y) : base(content, modelName, texName)
 		{
 			this.Scale = new Vector3(1, 1.05f, 1);
 			this.Position = new Vector3(0, y, 0);
