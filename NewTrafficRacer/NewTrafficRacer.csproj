@@ -90,8 +90,8 @@
     <Compile Include="Main\Gui\CountdownUI.cs" />
     <Compile Include="Main\Gui\FPSUI.cs" />
     <Compile Include="Main\Gui\GameOverUI.cs" />
+    <Compile Include="Main\Gui\Message.cs" />
     <Compile Include="Main\Gui\MessageQueue.cs" />
-    <Compile Include="Main\Gui\MessagesUI.cs" />
     <Compile Include="Main\Gui\ScoreUI.cs" />
     <Compile Include="Main\Gui\TitleUI.cs" />
     <Compile Include="Main\Input\InputManager.cs" />

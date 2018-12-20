@@ -11,11 +11,15 @@ namespace NewTrafficRacer.Gui
 {
 	class ScoreUI
 	{
-		static SpriteFont Font;
+        //Parameters
+        const string fontName = "GameFont";
 
+        //State
+		static SpriteFont Font;
 		int Score;
 		MessageQueue points = new MessageQueue();
 
+        //Put a "+xxxx" message around the points area.
 		public void ShowPoints(int amount)
 		{
 			Random r = new Random();
@@ -32,16 +36,21 @@ namespace NewTrafficRacer.Gui
 			points.Update(gameTime);
 		}
 
-		public void Render(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight, bool inTargetLane)
+		public void Render(SpriteBatch spriteBatch, bool inTargetLane)
 		{
-			string s = Score.ToString();
+            int viewportWidth = TrafficGame.Graphics.Viewport.Width;
+            int viewportHeight = TrafficGame.Graphics.Viewport.Height;
+
+            string s = Score.ToString();
 			Vector2 d = Font.MeasureString(s);
 			Vector2 scorePos = new Vector2(20, 10);
+
             Color c = Color.White;
             if (inTargetLane)
             {
                 c = Color.Gold;
             }
+
             spriteBatch.DrawString(Font, s, scorePos + new Vector2(-3, 3), Color.Black, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
             spriteBatch.DrawString(Font, s, scorePos, c, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
 
@@ -55,7 +64,7 @@ namespace NewTrafficRacer.Gui
 
 		public static void LoadContent(ContentManager content)
 		{
-            Font = content.Load<SpriteFont>("GameFont");
+            Font = content.Load<SpriteFont>(fontName);
 		}
 
 	}

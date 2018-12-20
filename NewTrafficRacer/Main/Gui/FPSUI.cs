@@ -11,6 +11,10 @@ namespace NewTrafficRacer.Gui
 { 
     class FPSUI
     {
+        //Parameters
+        const string fontName = "GameFont";
+
+        //State
         static SpriteFont Font;
         int total_frames;
         float total_time;
@@ -28,15 +32,18 @@ namespace NewTrafficRacer.Gui
             }
         }
 
-        public void Render(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight)
+        public void Render(SpriteBatch spriteBatch)
         {
+            int viewportWidth = TrafficGame.Graphics.Viewport.Width;
+            int viewportHeight = TrafficGame.Graphics.Viewport.Height;
+
             total_frames += 1;
             spriteBatch.DrawString(Font, "FPS: " + fps, new Vector2(viewportWidth - 80, 10), Color.White, 0, Vector2.Zero, 0.25f, SpriteEffects.None, 0);
         }
 
         public static void LoadContent(ContentManager content)
         {
-            Font = content.Load<SpriteFont>("GameFont");
+            Font = content.Load<SpriteFont>(fontName);
         }
 
     }

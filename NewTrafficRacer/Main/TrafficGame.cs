@@ -34,7 +34,6 @@ namespace NewTrafficRacer
         Effect effect;
 
         //GUI
-        MessagesUI messagesUI;
         ScoreUI scoreUI;
         GameOverUI gameOverUI;
         FPSUI fpsUI;
@@ -121,7 +120,6 @@ namespace NewTrafficRacer
             effect = Content.Load<Effect>("effect");
             postProcessor = new PostProcessor(GraphicsDevice, spriteBatch, Content.Load<Effect>("desaturate"));
 
-            messagesUI = new MessagesUI();
             scoreUI = new ScoreUI();
             gameOverUI = new GameOverUI();
             fpsUI = new FPSUI();
@@ -137,7 +135,6 @@ namespace NewTrafficRacer
 
             Car.LoadContent(Content);
 
-            MessagesUI.LoadContent(Content);
             ScoreUI.LoadContent(Content);
             GameOverUI.LoadContent(Content);
             FPSUI.LoadContent(Content);
@@ -221,12 +218,9 @@ namespace NewTrafficRacer
             //Countdown
             countdown = startTime + TrafficGame.Duration - (int)gameTime.TotalGameTime.TotalSeconds;
             countdownUI.Update(countdown);
-            if (countdown <= 5)
+            if (countdown == -3)
             {
-                if (countdown == -3)
-                {
-                    EndGame();
-                }
+                EndGame();
             }
 
             //Detect if in target lane
@@ -289,7 +283,6 @@ namespace NewTrafficRacer
             Lighting.Position = new Vector3(Lighting.Position.X, player.Position.Y + 15, Lighting.Position.Z);
 
             //Update GUI
-            messagesUI.Update(gameTime);
             scoreUI.Update(gameTime, score);
             fpsUI.Update(gameTime);
             titleUI.Update(gameTime);
@@ -340,14 +333,13 @@ namespace NewTrafficRacer
             //Render GUI
             spriteBatch.Begin();
 
-            messagesUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-            scoreUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, inTargetLane);
-            countdownUI.Render(spriteBatch, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-            titleUI.Render(spriteBatch, gameTime, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            scoreUI.Render(spriteBatch, inTargetLane);
+            countdownUI.Render(spriteBatch);
+            titleUI.Render(spriteBatch, gameTime);
 
             if (player.crashed && state != GameState.RECENTERING)
             {
-                gameOverUI.Render(spriteBatch, gameTime, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+                gameOverUI.Render(spriteBatch, gameTime);
             }
 
             spriteBatch.End();
@@ -358,7 +350,7 @@ namespace NewTrafficRacer
                 trafficManager.RenderDebug(debugView, Camera.main.View, Camera.main.Projection);
                 debugView.RenderDebugData(Camera.main.Projection, Camera.main.View, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, 0.8f);
                 spriteBatch.Begin();
-                fpsUI.Render(spriteBatch, 600, 800);
+                fpsUI.Render(spriteBatch);
                 spriteBatch.End();
 
                 //DEBUG: show shadow map

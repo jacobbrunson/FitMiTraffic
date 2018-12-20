@@ -7,28 +7,17 @@ using System.Threading.Tasks;
 
 namespace NewTrafficRacer.Gui
 {
-	class Message
-	{
-		public String Text;
-		public double Expiration;
-		public Vector2 Offset;
-
-		public Message(String text)
-		{
-			Text = text;
-			Expiration = -1;
-		}
-	}
-
+    //Queue which will remove messages after their expiration date
 	class MessageQueue : Queue<Message>
 	{
+        //Parameters
 		const float defaultExpiration = 1;
 
 		public void Update(GameTime gameTime)
 		{
 			foreach (Message m in this)
 			{
-				if (m.Expiration < 0)
+				if (m.Expiration < 0) //A message will have a -1 expiration by default.
 				{
 					m.Expiration = gameTime.TotalGameTime.TotalSeconds + defaultExpiration;
 				}

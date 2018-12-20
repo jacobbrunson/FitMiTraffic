@@ -11,6 +11,12 @@ namespace NewTrafficRacer.Gui
 {
     class CountdownUI
     {
+        //Parameters
+        const string finalText = "GREAT WORKOUT";
+        const string fontName = "GameFont";
+        const int threshold = 10;
+
+        //State
         static SpriteFont Font;
         int countdown;
 
@@ -19,9 +25,12 @@ namespace NewTrafficRacer.Gui
             this.countdown = countdown;
         }
 
-        public void Render(SpriteBatch spriteBatch, int viewportWidth, int viewportHeight)
+        public void Render(SpriteBatch spriteBatch)
         {
-            if (countdown > 10)
+            int viewportWidth = TrafficGame.Graphics.Viewport.Width;
+            int viewportHeight = TrafficGame.Graphics.Viewport.Height;
+
+            if (countdown > threshold)
             {
                 return;
             }
@@ -30,7 +39,7 @@ namespace NewTrafficRacer.Gui
 
             if (countdown <= 0)
             {
-                s = "GREAT WORKOUT!";
+                s = finalText;
             } else
             {
                 s = countdown.ToString();
@@ -46,7 +55,7 @@ namespace NewTrafficRacer.Gui
 
         public static void LoadContent(ContentManager content)
         {
-            Font = content.Load<SpriteFont>("GameFont");
+            Font = content.Load<SpriteFont>(fontName);
         }
 
     }
