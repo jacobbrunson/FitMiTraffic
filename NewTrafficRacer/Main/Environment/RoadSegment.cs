@@ -50,7 +50,6 @@ namespace NewTrafficRacer.Environment
             rightRail.Position = new Vector3(rightRail.Position.X, Y, rightRail.Position.Z);
             if (effect.CurrentTechnique.Name == "ShadowedScene")
             {
-                RenderHack.RENDER_FIX(effect);
                 ground.Render(graphics, effect);
 
                 if (HighlightedLane >= 0)

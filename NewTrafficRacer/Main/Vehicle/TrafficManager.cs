@@ -21,20 +21,13 @@ namespace NewTrafficRacer.Vehicle
         World World;
         long LastSpawnMillis;
         ContentManager Content;
-        int NumLanes;
-        public float LaneWidth;
-
-        float LastOnRamp = -1;
-        float LastOnRampSeconds;
 
         Random random;
 
-        public TrafficManager(ContentManager content, World world, int numLanes, float laneWidth)
+        public TrafficManager(ContentManager content, World world)
         {
             World = world;
             Content = content;
-            NumLanes = numLanes;
-            LaneWidth = laneWidth;
 
             if (TrafficGame.Difficulty > 0.3f)
             {
@@ -85,6 +78,61 @@ namespace NewTrafficRacer.Vehicle
             cars.Clear();
         }
 
+        void AttemptToSpawnCar(Player player, GameState state)
+        {
+            CarType type;
+
+            int lane = 0;
+            float posX = 0, posY = 0;
+
+            var foundSpawnPos = true;
+            var spawnAttempts = 0;
+            do
+            {
+                type = CarType.RANDOM;
+                spawnAttempts += 1;
+
+                lane = random.Next(0, Road.NumLanes);
+                var lanePos = Road.GetCenterOfLane(lane);
+
+                var wiggleRoom = Math.Max(0, Road.LaneWidth - type.Width - 0.1f);
+                var laneOffset = (float)random.NextDouble() * wiggleRoom - wiggleRoom / 2;
+
+                posX = lanePos + laneOffset;
+
+                if (player.Velocity.Y < 10 || state == GameState.STARTING)
+                {
+                    posY = player.Position.Y - (float)(random.NextDouble()) * 20 - 10;
+                }
+                else
+                {
+                    posY = player.Position.Y + (float)(random.NextDouble()) * 20 * player.Velocity.Y.Map(10, 30, 0, 1) + 30;
+                }
+
+                foundSpawnPos = true;
+                foreach (Car c in cars)
+                {
+                    if (c.Lane == lane && Math.Abs(c.Position.Y - posY) < Math.Max(c.BodySize.Y, type.Length) + 1)
+                    {
+                        foundSpawnPos = false;
+                        break;
+                    }
+                }
+            } while (!foundSpawnPos && spawnAttempts < 5);
+
+            if (foundSpawnPos)
+            {
+                float speed = player.Velocity.Y + (Road.NumLanes - lane + 1) * 1.0f + (float)random.NextDouble().Map(0, 1, -10, 0);
+                speed *= (1 - Math.Min(0.5f, TrafficGame.Difficulty));
+
+                Car car = new Car(Content, type, World, speed);
+                car.Position = new Vector2(posX, posY);
+                car.Lane = lane;
+
+                cars.Add(car);
+            }
+        }
+
         public void Update(GameTime gameTime, Player player, GameState state)
         {
             float playerY = player.Position.Y;
@@ -93,59 +141,7 @@ namespace NewTrafficRacer.Vehicle
             if (gameTime.TotalGameTime.TotalMilliseconds - LastSpawnMillis >= Interval)
             {
                 LastSpawnMillis = (long)gameTime.TotalGameTime.TotalMilliseconds;
-
-                CarType type;
-
-                int lane = 0;
-                float posX = 0, posY = 0;
-
-                var foundSpawnPos = true;
-                var spawnAttempts = 0;
-                do
-                {
-                    type = CarType.RANDOM;
-                    spawnAttempts += 1;
-
-                    lane = random.Next(0, NumLanes);
-                    var lanePos = Road.GetCenterOfLane(lane);
-
-                    var wiggleRoom = Math.Max(0, LaneWidth - type.Width - 0.1f);
-                    var laneOffset = (float)random.NextDouble() * wiggleRoom - wiggleRoom / 2;
-
-                    posX = lanePos + laneOffset;
-
-                    if (player.Velocity.Y < 10 || state == GameState.STARTING)
-                    {
-                        posY = playerY - (float)(random.NextDouble()) * 20 - 10;
-                    }
-                    else
-                    {
-                        posY = playerY + (float)(random.NextDouble()) * 20 * player.Velocity.Y.Map(10, 30, 0, 1) + 30;
-                    }
-
-                    foundSpawnPos = true;
-                    foreach (Car c in cars)
-                    {
-                        if ((c.Lane == lane || c.Lane == lane - 1 && c.State == CarState.MovingRight || c.Lane == lane + 1 && (c.State == CarState.MovingLeft || c.State == CarState.Merging)) && Math.Abs(c.Position.Y - posY) < Math.Max(c.BodySize.Y, type.Length) + 1)
-                        {
-                            foundSpawnPos = false;
-                            break;
-                        }
-                    }
-                } while (!foundSpawnPos && spawnAttempts < 5);
-
-                if (foundSpawnPos)
-                {
-                    float speed = player.Velocity.Y + (NumLanes - lane + 1) * 1.0f + (float)random.NextDouble().Map(0, 1, -10, 0);
-                    speed *= (1 - Math.Min(0.5f, TrafficGame.Difficulty));
-
-                    Car car = new Car(Content, type, World, speed);
-                    car.Position = new Vector2(posX, posY);
-                    car.Lane = lane;
-                    car.DesiredLane = lane;
-
-                    cars.Add(car);
-                }
+                AttemptToSpawnCar(player, state);
             }
 
             //Despawn cars we left in the dust
@@ -162,8 +158,6 @@ namespace NewTrafficRacer.Vehicle
             {
                 car.Update(gameTime);
             }
-
-            //rays.RemoveAll(ray => gameTime.TotalGameTime.TotalSeconds >= ray.SpawnTime + 0.25f);
         }
 
 

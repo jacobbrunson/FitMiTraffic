@@ -30,8 +30,6 @@ namespace NewTrafficRacer.Vehicle
 		}
 	}
 
-	enum CarState { Driving, LookingRight, MovingRight, LookingLeft, MovingLeft, Merging, Exiting }
-
 	class Car
 	{
 		public Body Body;
@@ -41,10 +39,6 @@ namespace NewTrafficRacer.Vehicle
 
 		float DesiredSpeed;
 		float InitialSpeed;
-
-		public int DesiredLane = 0;
-		int _Lane;
-		int PreviousLane = -1;
 
 		public RenderedModel model;
 
@@ -60,21 +54,10 @@ namespace NewTrafficRacer.Vehicle
 			new Color(41, 41, 41, 255)
 		};
 
-		public int Lane
-		{
-			get { return _Lane; }
-			set
-			{
-				PreviousLane = Lane;
-				_Lane = value;
-			}
-		}
+        public int Lane;
 
 		public List<CastedRay> Rays = new List<CastedRay>();
 
-		public CarState State = CarState.Driving;
-
-		double StateChangeTime;
 
 		public Vector2 Position
 		{
@@ -178,7 +161,7 @@ namespace NewTrafficRacer.Vehicle
 
 		public void Update(GameTime gameTime)
 		{
-			Random random = new Random((int)gameTime.TotalGameTime.TotalMilliseconds + (int)State + (int)(Velocity.Y*100) + GetHashCode());
+			Random random = new Random((int)gameTime.TotalGameTime.TotalMilliseconds + (int)(Velocity.Y*100) + GetHashCode());
 
 			Body b = AnticipateCollision(3);
 

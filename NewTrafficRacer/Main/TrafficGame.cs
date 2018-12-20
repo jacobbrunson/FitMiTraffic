@@ -20,8 +20,6 @@ namespace NewTrafficRacer
 
         //Parameters
         const int coinPoints = 1000;
-        
-        const float diffuseIntensity = 1;
         const float playerSpeed = 20;
 
         //Things
@@ -116,7 +114,7 @@ namespace NewTrafficRacer
             player.CoinGetCallback = CoinGet;
 
             environment = new EnvironmentManager(Content, world);
-            trafficManager = new TrafficManager(Content, world, Road.NumLanes, Road.LaneWidth);
+            trafficManager = new TrafficManager(Content, world);
 
             Lighting.Initialize();
 
@@ -329,8 +327,6 @@ namespace NewTrafficRacer
             GraphicsDevice.SetRenderTarget(null);
 
             postProcessor.Begin();
-
-            RenderHack.RENDER_FIX(effect);
 
             effect.CurrentTechnique = effect.Techniques["ShadowedScene"];
             environment.Render(gameTime, GraphicsDevice, effect);
