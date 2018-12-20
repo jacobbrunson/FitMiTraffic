@@ -16,7 +16,10 @@ namespace NewTrafficRacer.Graphics
 		const float height = 50;
         const int shadowRes = 2048;
 
-		public static Vector3 Position;
+        public static readonly Vector4 ambientColor = new Vector4(0.48f, 0.54f, 0.6f, 1f);
+        public static readonly Vector4 diffuseColor = new Vector4(1f, 0.8f, 0.8f, 1f);
+
+        public static Vector3 Position;
 		public static Vector3 Direction;
 
 		public static Matrix View;

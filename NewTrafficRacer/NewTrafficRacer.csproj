@@ -86,6 +86,7 @@
     <Compile Include="Main\Environment\RoadSegment.cs" />
     <Compile Include="Main\Graphics\Camera.cs" />
     <Compile Include="Main\Graphics\PostProcessor.cs" />
+    <Compile Include="Main\Graphics\RenderHack.cs" />
     <Compile Include="Main\Gui\CountdownUI.cs" />
     <Compile Include="Main\Gui\FPSUI.cs" />
     <Compile Include="Main\Gui\GameOverUI.cs" />

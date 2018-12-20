@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using NewTrafficRacer.Main.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,7 +70,7 @@ namespace NewTrafficRacer.Graphics
 			effect.Parameters["ModelTexture"].SetValue(Texture);
 
             Vector4 ChromaKeyReplace = effect.Parameters["ChromaKeyReplace"].GetValueVector4();
-            TrafficGame.RENDER_FIX(effect);
+            RenderHack.RENDER_FIX(effect);
             effect.Parameters["ChromaKeyReplace"].SetValue(ChromaKeyReplace);
             foreach (ModelMesh mesh in Model.Meshes)
 			{

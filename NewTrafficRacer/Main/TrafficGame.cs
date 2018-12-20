@@ -10,6 +10,7 @@ using NewTrafficRacer.Gui;
 using NewTrafficRacer.Input;
 using Android.Util;
 using NewTrafficRacer.Graphics;
+using NewTrafficRacer.Main.Graphics;
 
 namespace NewTrafficRacer
 {
@@ -21,8 +22,7 @@ namespace NewTrafficRacer
         const int coinPoints = 1000;
         Vector3 initialLightPosition = new Vector3(5, 5, 5);
         Vector3 lightDirection = new Vector3(-1, -1, -1);
-        static Vector4 ambientColor = new Vector4(0.48f, 0.54f, 0.6f, 1f);
-        static Vector4 diffuseColor = new Vector4(1f, 0.8f, 0.8f, 1f);
+        
         const float diffuseIntensity = 1;
         const float playerSpeed = 20;
 
@@ -33,7 +33,6 @@ namespace NewTrafficRacer
         TrafficManager trafficManager;
 
         //Graphics
-        static Camera camera;
         PostProcessor postProcessor;
         DebugView debugView;
         Effect effect;
@@ -122,7 +121,6 @@ namespace NewTrafficRacer
             trafficManager = new TrafficManager(Content, world, Road.NumLanes, Road.LaneWidth);
 
             lightDirection.Normalize();
-            camera = new Camera(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             Lighting.Initialize();
             Lighting.Position = initialLightPosition;
             Lighting.Direction = lightDirection;
@@ -172,25 +170,25 @@ namespace NewTrafficRacer
             if (InputManager.ToggleDebug)
             {
                 TrafficGame.DEBUG = !TrafficGame.DEBUG;
-                camera.Revolution = Vector2.Zero;
-                if (camera.Mode == CameraMode.FLAT)
+                Camera.main.Revolution = Vector2.Zero;
+                if (Camera.main.Mode == CameraMode.FLAT)
                 {
-                    camera.Mode = CameraMode.PERSPECTIVE;
+                    Camera.main.Mode = CameraMode.PERSPECTIVE;
                 }
                 else
                 {
-                    camera.Mode = CameraMode.FLAT;
+                    Camera.main.Mode = CameraMode.FLAT;
                 }
             }
 
             if (InputManager.ZoomOut)
             {
-                camera.Scale /= 1.5f;
+                Camera.main.Scale /= 1.5f;
             }
 
             if (InputManager.ZoomIn)
             {
-                camera.Scale *= 1.5f;
+                Camera.main.Scale *= 1.5f;
             }
 
             if (InputManager.Restart)
@@ -200,7 +198,7 @@ namespace NewTrafficRacer
                 stateChangeTime = gameTime.TotalGameTime.TotalSeconds;
             }
 
-            camera.Revolution += InputManager.MoveCameraAmount / 30;
+            Camera.main.Revolution += InputManager.MoveCameraAmount / 30;
         }
 
         void DodgeCompleted(Body b)
@@ -266,7 +264,7 @@ namespace NewTrafficRacer
             }
             else if (state == GameState.STARTING)
             {
-                camera.Zoom = Math.Min(1, camera.Zoom + 0.05f);
+                Camera.main.Zoom = Math.Min(1, Camera.main.Zoom + 0.05f);
                 if (gameTime.TotalGameTime.TotalSeconds - stateChangeTime > 3)
                 {
                     state = GameState.RUNNING;
@@ -276,7 +274,7 @@ namespace NewTrafficRacer
             }
             else if (state == GameState.RECENTERING)
             {
-                camera.Zoom = Math.Max(0, camera.Zoom - 0.05f);
+                Camera.main.Zoom = Math.Max(0, Camera.main.Zoom - 0.05f);
                 if (gameTime.TotalGameTime.TotalSeconds - stateChangeTime > 1)
                 {
                     state = GameState.STARTING;
@@ -294,7 +292,7 @@ namespace NewTrafficRacer
             player.Update(gameTime, InputManager.LateralMovement);
 
             //Light & camera follow player
-            camera.Target = new Vector2(player.Position.X, player.Position.Y);
+            Camera.main.Target = new Vector2(player.Position.X, player.Position.Y);
             Lighting.Position = new Vector3(Lighting.Position.X, player.Position.Y + 15, Lighting.Position.Z);
 
             //Update GUI
@@ -304,22 +302,7 @@ namespace NewTrafficRacer
             titleUI.Update(gameTime);
         }
 
-        //This is a really ugly hack that must be called before each and every model draw on Android
-        public static void RENDER_FIX(Effect effect)
-        {
-            effect.Parameters["View"].SetValue(camera.View);
-            effect.Parameters["Projection"].SetValue(camera.Projection);
-
-            effect.Parameters["AmbientColor"].SetValue(ambientColor);
-
-            //lighting.Position.Normalize();
-            effect.Parameters["LightPosition"].SetValue(-Lighting.Direction);
-            effect.Parameters["DiffuseColor"].SetValue(diffuseColor);
-
-            effect.Parameters["ShadowMap"]?.SetValue(Lighting.ShadowMap);
-
-            effect.Parameters["ChromaKeyReplace"].SetValue(new Vector4(-1, -1, -1, -1));
-        }
+        
 
         protected override void Draw(GameTime gameTime)
         {
@@ -327,7 +310,7 @@ namespace NewTrafficRacer
             GraphicsDevice.Clear(Color.Black);
 
             //Update lights and camera
-            camera.Update();
+            Camera.main.Update();
             Lighting.Update();
 
             //Update graphics state
@@ -352,7 +335,7 @@ namespace NewTrafficRacer
 
             postProcessor.Begin();
 
-            RENDER_FIX(effect);
+            RenderHack.RENDER_FIX(effect);
 
             effect.CurrentTechnique = effect.Techniques["ShadowedScene"];
             environment.Render(gameTime, GraphicsDevice, effect);
@@ -381,8 +364,8 @@ namespace NewTrafficRacer
             //Render debug
             if (TrafficGame.DEBUG)
             {
-                trafficManager.RenderDebug(debugView, camera.View, camera.Projection);
-                debugView.RenderDebugData(camera.Projection, camera.View, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, 0.8f);
+                trafficManager.RenderDebug(debugView, Camera.main.View, Camera.main.Projection);
+                debugView.RenderDebugData(Camera.main.Projection, Camera.main.View, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, 0.8f);
                 spriteBatch.Begin();
                 fpsUI.Render(spriteBatch, 600, 800);
                 spriteBatch.End();

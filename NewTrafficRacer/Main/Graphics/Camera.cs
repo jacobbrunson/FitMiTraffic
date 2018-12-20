@@ -32,7 +32,20 @@ namespace NewTrafficRacer.Graphics
 		public float Zoom = 1;
 		public float Scale = 40;
 
-		public Camera(int width, int height)
+        private static Camera instance;
+        public static Camera main
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Camera(TrafficGame.Graphics.Viewport.Width, TrafficGame.Graphics.Viewport.Height);
+                }
+                return instance;
+            }
+        }
+
+		Camera(int width, int height)
 		{
 			Width = width;
 			Height = height;
