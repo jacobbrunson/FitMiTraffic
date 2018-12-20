@@ -58,7 +58,6 @@ namespace NewTrafficRacer.Environment
             vertices = new VertexPositionColorNormal[width * length * 6]; //we are intentionally duplicating vertices, hence the * 6 and lack of indexing
             positionY = Y;
 
-            Console.WriteLine("tryna load effect");
             effect = content.Load<Effect>("effect");
 
             var random = new Random();

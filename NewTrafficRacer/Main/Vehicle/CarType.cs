@@ -75,8 +75,6 @@ namespace NewTrafficRacer.Vehicle
 
                 ct.TextureName = "new_cars/texture/" + ct.Name;
 				ct.ModelName = "new_cars/" + ct.Name;
-                Console.WriteLine("tryna load " + ct.ModelName);
-                Console.WriteLine("tryna load " + ct.TextureName);
 
                 ct.Texture = content.Load<Texture2D>(ct.TextureName);
 				ct.Model = content.Load<Model>(ct.ModelName);

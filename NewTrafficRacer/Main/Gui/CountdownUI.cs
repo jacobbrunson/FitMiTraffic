@@ -46,8 +46,6 @@ namespace NewTrafficRacer.Gui
 
         public static void LoadContent(ContentManager content)
         {
-            Console.WriteLine("tryna load gamefont");
-
             Font = content.Load<SpriteFont>("GameFont");
         }
 

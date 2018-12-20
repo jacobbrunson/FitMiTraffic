@@ -58,8 +58,6 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
             BoundingBox bb = GetBoundingBox(model);
             model.Tag = bb;
 
-            Console.WriteLine(bb.Min);
-
             return model;
         }
 
@@ -134,7 +132,6 @@ namespace Microsoft.Xna.Framework.Content.Pipeline.Processors
                     IndexCollection indices = part.IndexBuffer;
                     for (int i = 0; i < indices.Count; i += 3)
                     {
-						Console.WriteLine("TEST TEST 123");
                         Vector3 p1 = GetVertexPosition(part.VertexBuffer, indices[i + 0]);
                         Vector3 p2 = GetVertexPosition(part.VertexBuffer, indices[i + 1]);
                         Vector3 p3 = GetVertexPosition(part.VertexBuffer, indices[i + 2]);

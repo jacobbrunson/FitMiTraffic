@@ -107,7 +107,7 @@ namespace NewTrafficRacer
             debugView.LoadContent(GraphicsDevice, Content);
 
             player = new Player(Content, CarType.SPORT, world, adjustedSpeed);
-            //player.DodgeCompleteCallback = DodgeCompleted;
+            player.DodgeCompleteCallback = DodgeCompleted;
             player.CoinGetCallback = CoinGet;
 
             environment = new EnvironmentManager(Content, world);
@@ -228,10 +228,8 @@ namespace NewTrafficRacer
             countdownUI.Update(countdown);
             if (countdown <= 5)
             {
-                Console.WriteLine("COUNTDOWN: " + countdown);
                 if (countdown == -3)
                 {
-                    Console.WriteLine("GAME OVER");
                     EndGame();
                 }
             }

@@ -106,7 +106,7 @@ namespace NewTrafficRacer.Vehicle
 
 
                 //Dodge code
-				/*Body b = AnticipateCollision(4.0f);
+				Body b = AnticipateCollision(4.0f);
 
 				if (ApproachingBody != null && !ApproachingBody.Equals(b))
 				{
@@ -129,7 +129,7 @@ namespace NewTrafficRacer.Vehicle
 						DodgeCompleteCallback(d.Body);
 						Dodges.Dequeue();
 					}
-				}*/
+				}
 			}
 
 			previousTime = (float)gameTime.TotalGameTime.TotalSeconds;
@@ -173,7 +173,6 @@ namespace NewTrafficRacer.Vehicle
 
 			crashed = true;
 			crashTime = previousTime;
-			//b.Body.ApplyLinearImpulse(new Vector2(-100, 20));
 			return true;
 		}
 	}

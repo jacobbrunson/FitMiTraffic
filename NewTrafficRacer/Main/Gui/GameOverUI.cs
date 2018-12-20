@@ -25,8 +25,6 @@ namespace NewTrafficRacer.Gui
 
 		public static void LoadContent(ContentManager content)
 		{
-            Console.WriteLine("tryna load ouch and retry");
-
             ouch = content.Load<Texture2D>("ouch");
 			retry = content.Load<Texture2D>("retry");
 		}

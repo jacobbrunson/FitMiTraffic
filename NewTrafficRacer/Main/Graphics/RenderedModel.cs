@@ -37,19 +37,16 @@ namespace NewTrafficRacer.Graphics
 
 		public RenderedModel(ContentManager content, string modelName, string textureName = null)
 		{
-            Console.WriteLine("bout to load model: " + modelName);
 			Model = content.Load<Model>(modelName);
 
 			if (textureName != null)
 			{
-                Console.WriteLine("bout to load tex: " + textureName);
 				Texture = content.Load<Texture2D>(textureName);
 			}
 			else
 			{
 				if (names.ContainsKey(modelName))
 				{
-                    Console.WriteLine("tryna load " + names[modelName]);
                     Texture = content.Load<Texture2D>(names[modelName]);
 				}
 				else
